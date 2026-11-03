@@ -1,0 +1,51 @@
+name: acc-local
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Run local:configure}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run local:configure}
+      POSTGRES_DB: ${POSTGRES_DB:-acc}
+    ports: ['127.0.0.1:55432:5432']
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7.4-alpine
+    command: ['sh', '-c', 'exec redis-server --requirepass "$$REDIS_PASSWORD" --appendonly yes']
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Run local:configure}
+    ports: ['127.0.0.1:56379:6379']
+    volumes: [redis-data:/data]
+    healthcheck:
+      test: ['CMD-SHELL', 'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -q PONG']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.7
+    command: ['start-dev', '--import-realm']
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-acc-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Run local:configure}
+      KC_HEALTH_ENABLED: 'true'
+      KC_HOSTNAME: http://localhost:58080
+    ports: ['127.0.0.1:58080:8080']
+    volumes:
+      - ../.cache/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          "bash -c 'exec 3<>/dev/tcp/localhost/9000; printf \"GET /health/ready HTTP/1.0\\r\\n\\r\\n\" >&3; grep -q UP <&3'",
+        ]
+      interval: 10s
+      timeout: 5s
+      start_period: 40s
+      retries: 30
+volumes:
+  postgres-data:
+  redis-data:

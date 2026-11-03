@@ -1,0 +1,182 @@
+import { z } from 'zod';
+
+export const taskStatusSchema = z.enum([
+  'BACKLOG',
+  'READY',
+  'IN_PROGRESS',
+  'BLOCKED',
+  'IN_REVIEW',
+  'IN_QA',
+  'DONE',
+  'CANCELLED',
+]);
+const version = z.number().int().positive().max(Number.MAX_SAFE_INTEGER);
+const text = z.string().transform((value) => value.normalize('NFC').trim().replace(/\s+/gu, ' '));
+const title = text.pipe(z.string().min(1).max(300));
+const description = text.pipe(z.string().min(1).max(4000));
+const token = z
+  .string()
+  .regex(/^[1-9]\d{0,18}$/u)
+  .pipe(z.string().refine((value) => BigInt(value) <= 9223372036854775807n));
+const criterion = z.strictObject({
+  id: z.string().trim().min(1).max(100),
+  description,
+  required: z.boolean(),
+});
+export const createTaskSchema = z.strictObject({
+  title,
+  workType: z.enum(['CODE', 'OTHER']).default('OTHER'),
+  criteria: z
+    .array(criterion)
+    .min(1)
+    .max(100)
+    .refine(
+      (items) => new Set(items.map((item) => item.id)).size === items.length,
+      'Duplicate criterion ID',
+    ),
+  externalRef: z.string().trim().min(1).max(300).optional(),
+});
+export const claimTaskSchema = z.strictObject({ sessionId: z.uuid(), expectedVersion: version });
+export const emptyCommandSchema = z.strictObject({});
+export const sessionHeartbeatSchema = z.strictObject({ expectedVersion: version });
+export const heartbeatClaimSchema = claimTaskSchema.extend({ fencingToken: token });
+export const revokeClaimSchema = z.strictObject({ expectedVersion: version, reason: description });
+export const updateWorkSchema = heartbeatClaimSchema.extend({ summary: description });
+export const reviseTaskSchema = createTaskSchema
+  .omit({ externalRef: true })
+  .extend({ expectedVersion: version, reason: description });
+export const approvalKindSchema = z.enum(['REVIEW', 'QA', 'CLOSURE']);
+export const approveTaskSchema = z.strictObject({
+  expectedVersion: version,
+  workRevision: version,
+  kind: approvalKindSchema,
+});
+export const acceptEvidenceSchema = z.strictObject({
+  expectedVersion: version,
+  evidenceId: z.uuid(),
+});
+export const dependencySchema = z.strictObject({
+  expectedVersion: version,
+  dependsOn: z.uuid(),
+  operation: z.enum(['ADD', 'REMOVE']),
+  reason: description,
+});
+export const transitionTaskSchema = z
+  .strictObject({
+    to: taskStatusSchema,
+    expectedVersion: version,
+    reason: description.optional(),
+    sessionId: z.uuid().optional(),
+    fencingToken: token.optional(),
+  })
+  .refine(
+    (value) => Boolean(value.sessionId) === Boolean(value.fencingToken),
+    'Session and fencing token must be supplied together',
+  );
+export const taskQuerySchema = z.strictObject({
+  limit: z
+    .union([z.number(), z.string().regex(/^\d+$/u).transform(Number)])
+    .pipe(z.number().int().min(1).max(100))
+    .default(20),
+  cursor: z.string().min(1).max(512).optional(),
+  status: taskStatusSchema.optional(),
+});
+const testResultSchema = z
+  .strictObject({
+    outcome: z.enum(['PASS', 'FAIL']),
+    total: z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+    passed: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER),
+  })
+  .refine(
+    (value) =>
+      value.passed <= value.total &&
+      (value.outcome === 'PASS' ? value.passed === value.total : value.passed < value.total),
+    'Inconsistent test result',
+  );
+export const evidenceSchema = z
+  .strictObject({
+    kind: z.enum(['CODE', 'TEST', 'REVIEW', 'OTHER']),
+    url: z.url({ protocol: /^https$/u }).pipe(
+      z.string().refine((value) => {
+        const url = new URL(value);
+        return !url.username && !url.password;
+      }),
+    ),
+    repositoryId: z.uuid().optional(),
+    result: testResultSchema.optional(),
+    commit: z
+      .string()
+      .regex(/^(?:[a-f0-9]{40}|[a-f0-9]{64})$/u)
+      .optional(),
+  })
+  .refine(
+    (value) =>
+      !['CODE', 'TEST'].includes(value.kind) || Boolean(value.repositoryId && value.commit),
+    'Code and test evidence requires repository and commit',
+  )
+  .refine(
+    (value) => (value.kind === 'TEST' ? Boolean(value.result) : !value.result),
+    'Only test evidence requires a structured result',
+  );
+
+export const addEvidenceSchema = evidenceSchema
+  .safeExtend({
+    expectedVersion: version,
+    sessionId: z.uuid().optional(),
+    fencingToken: token.optional(),
+    criterionIds: z
+      .array(z.string().trim().min(1).max(100))
+      .min(1)
+      .max(100)
+      .refine((ids) => new Set(ids).size === ids.length),
+  })
+  .refine(
+    (value) => Boolean(value.sessionId) === Boolean(value.fencingToken),
+    'Session and fencing token must be supplied together',
+  );
+
+export type CreateTask = z.infer<typeof createTaskSchema>;
+export type ClaimTask = z.infer<typeof claimTaskSchema>;
+export type TransitionTask = z.infer<typeof transitionTaskSchema>;
+export type Evidence = z.infer<typeof evidenceSchema>;
+export type SuccessEnvelope<T> = {
+  data: T;
+  meta: { requestId: string; version?: number; projectSeq?: string };
+};
+export type ErrorEnvelope = {
+  error: { code: string; message: string; details?: unknown; requestId: string };
+};
+
+export const sequenceSchema = z
+  .string()
+  .regex(/^(?:0|[1-9]\d{0,18})$/u)
+  .pipe(z.string().refine((value) => BigInt(value) <= 9223372036854775807n));
+const pageLimitSchema = z
+  .union([z.number(), z.string().regex(/^\d+$/u).transform(Number)])
+  .pipe(z.number().int().min(1).max(100));
+export const contextQuerySchema = z.strictObject({
+  cursor: z.string().min(1).max(1024).optional(),
+  limit: pageLimitSchema.optional(),
+});
+export const eventsQuerySchema = z
+  .strictObject({
+    cursor: z.string().min(1).max(1024).optional(),
+    afterSeq: sequenceSchema.optional(),
+    limit: pageLimitSchema.default(20),
+  })
+  .refine((value) => !(value.cursor && value.afterSeq !== undefined), 'Use cursor or afterSeq');
+export const eventEnvelopeSchema = z.strictObject({
+  eventId: z.uuid(),
+  projectId: z.uuid(),
+  seq: sequenceSchema.pipe(z.string().refine((value) => BigInt(value) > 0n)),
+  schemaVersion: z.literal(1),
+  type: z.string().min(1).max(100),
+  occurredAt: z.iso.datetime({ offset: true }),
+  entity: z.strictObject({ id: z.uuid(), type: z.enum(['TASK', 'SESSION', 'PRINCIPAL']) }),
+  actorId: z.uuid(),
+  sessionId: z.uuid().nullable(),
+  traceId: z.uuid(),
+  payload: z.record(z.string(), z.unknown()),
+});
+export type EventEnvelope = z.infer<typeof eventEnvelopeSchema>;
+export type ContextRecord = { entityType: string; data: Record<string, unknown> };

@@ -1,0 +1,45 @@
+{
+  "name": "agent-control-center",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo run typecheck",
+    "typecheck:foundation": "pnpm --filter @acc/domain --filter @acc/contracts --filter @acc/db typecheck && tsc --noEmit -p tests/tsconfig.json",
+    "typecheck:api": "pnpm --filter @acc/api typecheck",
+    "build": "turbo run build",
+    "build:foundation": "pnpm --filter @acc/domain --filter @acc/contracts --filter @acc/db build",
+    "build:api": "pnpm --filter @acc/api build",
+    "typecheck:web": "pnpm --filter web typecheck",
+    "build:web": "pnpm --filter web build",
+    "dev:web": "pnpm --filter web dev",
+    "preview:web": "pnpm --filter web preview",
+    "test": "node --experimental-strip-types --test packages/domain/src/*.test.ts packages/contracts/src/*.test.ts apps/api/src/*.test.ts apps/web/src/*.test.ts",
+    "test:integration": "node --env-file=.env --import tsx --test --test-concurrency=1 tests/integration/*.test.ts",
+    "dev": "turbo run dev",
+    "local:configure": "node scripts/configure-local.mjs",
+    "local:bootstrap": "node --env-file=.env --import tsx apps/api/src/local-bootstrap.ts",
+    "outbox:dev": "node --env-file=.env --import tsx apps/api/src/outbox/main.ts",
+    "outbox:start": "node --env-file=.env apps/api/dist/outbox/main.js",
+    "mcp:smoke": "node --env-file=.env --import tsx apps/api/src/mcp/smoke.ts",
+    "db:migrate": "node --env-file=.env --import tsx packages/db/src/migrate.ts",
+    "db:generate": "pnpm --filter @acc/db generate"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.14.0",
+    "typescript-eslint": "8.72.1",
+    "typescript": "5.9.3",
+    "turbo": "2.11.10",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "@types/node": "24.10.1",
+    "@types/pg": "8.23.1"
+  }
+}

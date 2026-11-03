@@ -1,0 +1,21 @@
+// Every source is scoped to $1. HTTP sessions, OIDC subjects and credentials are excluded.
+export const materializeContextSql = `
+WITH records(entity_type,entity_key,data) AS (
+  SELECT 'PROJECT',p.id::text,jsonb_build_object('id',p.id,'name',p.name,'archived',p.archived,'claimsPaused',p.claims_paused) FROM projects p WHERE p.id=$1
+  UNION ALL SELECT 'MEMBER',m.principal_id::text,jsonb_build_object('principalId',m.principal_id,'kind',p.kind,'disabled',p.disabled,'roles',m.roles,'scopes',m.scopes,'active',m.active,'version',m.version) FROM project_members m JOIN principals p ON p.id=m.principal_id WHERE m.project_id=$1
+  UNION ALL SELECT 'TASK',w.id::text,jsonb_build_object('id',w.id,'publicId',w.public_id,'title',w.title,'status',w.status,'version',w.version,'workRevision',w.work_revision,'workType',w.work_type,'summary',w.work_summary,'criteria',w.criteria,'impactPending',w.impact_pending,'manualBlocked',w.manual_blocked) FROM work_items w WHERE w.project_id=$1
+  UNION ALL SELECT 'REPOSITORY',r.id::text,jsonb_build_object('id',r.id,'name',r.name,'url',r.url) FROM repositories r WHERE r.project_id=$1
+  UNION ALL SELECT 'SESSION',s.id::text,jsonb_build_object('id',s.id,'principalId',s.principal_id,'version',s.version,'expiresAt',s.expires_at,'endedAt',s.ended_at) FROM agent_sessions s WHERE s.project_id=$1
+  UNION ALL SELECT 'CLAIM',c.task_id::text,jsonb_build_object('taskId',c.task_id,'principalId',c.principal_id,'sessionId',c.session_id,'expiresAt',c.expires_at,'revoked',c.revoked,'fencingToken',CASE WHEN c.principal_id=$2 THEN c.fencing_token::text ELSE NULL END,'active',NOT c.revoked AND c.expires_at>statement_timestamp() AND s.ended_at IS NULL AND s.expires_at>statement_timestamp() AND NOT p.disabled AND m.active) FROM task_claims c JOIN agent_sessions s ON s.id=c.session_id JOIN principals p ON p.id=c.principal_id JOIN project_members m ON m.project_id=c.project_id AND m.principal_id=c.principal_id WHERE c.project_id=$1
+  UNION ALL SELECT 'EVIDENCE',e.id::text,jsonb_build_object('id',e.id,'taskId',e.task_id,'workRevision',e.work_revision,'kind',e.kind,'url',e.url,'repositoryId',e.repository_id,'commit',e.commit_sha,'result',e.test_result,'declaredBy',e.declared_by,'acceptedBy',e.accepted_by,'acceptedAt',e.accepted_at) FROM evidence e WHERE e.project_id=$1
+  UNION ALL SELECT 'EVIDENCE_LINK',c.evidence_id::text||':'||c.criterion_id,jsonb_build_object('taskId',c.task_id,'evidenceId',c.evidence_id,'criterionId',c.criterion_id) FROM evidence_criteria c WHERE c.project_id=$1
+  UNION ALL SELECT 'APPROVAL',a.id::text,jsonb_build_object('id',a.id,'taskId',a.task_id,'workRevision',a.work_revision,'kind',a.kind,'principalId',a.principal_id,'approvedRoles',a.approved_roles,'invalidatedAt',a.invalidated_at) FROM approvals a WHERE a.project_id=$1
+  UNION ALL SELECT 'DEPENDENCY',d.task_id::text||':'||d.depends_on::text,jsonb_build_object('taskId',d.task_id,'dependsOn',d.depends_on) FROM task_dependencies d WHERE d.project_id=$1
+  UNION ALL SELECT 'ALERT',a.id::text,jsonb_build_object('id',a.id,'taskId',a.task_id,'dependsOn',a.depends_on,'reason',a.reason,'createdAt',a.created_at) FROM task_alerts a WHERE a.project_id=$1
+), numbered AS (
+  SELECT row_number() OVER(ORDER BY entity_type,entity_key)-1 AS ordinal,
+    jsonb_build_object('entityType',entity_type,'data',data) AS record FROM records
+)
+INSERT INTO context_snapshot_pages(snapshot_id,page_index,records)
+SELECT $4, (ordinal/$3::bigint)::int,jsonb_agg(record ORDER BY ordinal) FROM numbered GROUP BY ordinal/$3::bigint
+`;

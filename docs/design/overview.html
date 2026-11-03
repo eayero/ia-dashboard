@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="es">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>ACC — propuesta visual</title>
+  <style>
+    :root {
+      font-family: Inter, system-ui, sans-serif;
+      color: #1b2926;
+      background: #f4f6f3;
+      font-size: 14px;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: 100vh;
+    }
+    aside {
+      background: #172923;
+      color: #d6e4dd;
+      padding: 32px 24px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 650;
+      margin: 8px 0;
+    }
+    h2 {
+      font-size: 16px;
+    }
+    nav {
+      display: grid;
+      gap: 8px;
+      margin-top: 38px;
+    }
+    nav span {
+      padding: 12px;
+      border-radius: 6px;
+    }
+    nav .active {
+      background: #30473d;
+      color: white;
+    }
+    main {
+      padding: 28px 40px;
+      max-width: 1500px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid #d9e1db;
+    }
+    .label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #64766c;
+    }
+    .notice {
+      background: #fff4d9;
+      border: 1px solid #dfc57f;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin: 22px 0;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 28px;
+      margin: 30px 0;
+    }
+    .stat {
+      border-left: 3px solid #b5c6bb;
+      padding-left: 16px;
+    }
+    .stat b {
+      font-size: 32px;
+      display: block;
+      margin-top: 8px;
+    }
+    .columns {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    section {
+      background: white;
+      border: 1px solid #dce3dd;
+      border-radius: 8px;
+      padding: 22px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    td,
+    th {
+      padding: 16px 8px;
+      border-bottom: 1px solid #edf0ec;
+    }
+    th {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #6b786f;
+    }
+    .pill {
+      padding: 5px 9px;
+      border-radius: 4px;
+      background: #e1efe5;
+      color: #28583b;
+      font-size: 12px;
+    }
+    .warn {
+      background: #fff0cc;
+      color: #775516;
+    }
+    .muted {
+      color: #617267;
+    }
+    .action {
+      background: #254f3e;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 5px;
+      border: 0;
+    }
+    article {
+      border-bottom: 1px solid #e0e6df;
+      padding: 14px 0;
+      line-height: 1.6;
+    }
+    footer {
+      margin-top: 24px;
+      color: #65766b;
+      font-size: 12px;
+    }
+    @media (max-width: 800px) {
+      body {
+        display: block;
+      }
+      aside {
+        padding: 16px;
+      }
+      nav {
+        display: flex;
+        margin-top: 12px;
+        overflow: auto;
+      }
+      nav span {
+        white-space: nowrap;
+      }
+      main {
+        padding: 20px;
+      }
+      .columns {
+        grid-template-columns: 1fr;
+      }
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+      section {
+        overflow: auto;
+      }
+      header {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+  <aside>
+    <b>◈ &nbsp; ACC</b>
+    <div class="muted" style="color: #a7bdb0; margin-top: 8px">Agent Control Center</div>
+    <nav>
+      <span class="active">Resumen</span><span>Tareas</span><span>Inbox humano · 2</span
+      ><span>Agentes</span><span>Actividad</span>
+    </nav>
+  </aside>
+  <main>
+    <header>
+      <div>
+        <div class="label">Proyecto / Agent Control Center</div>
+        <h1>Resumen de ejecución</h1>
+        <span class="muted">Iteración 01 · Fundación</span>
+      </div>
+      <div>
+        <span class="pill">● Sincronizado</span> &nbsp; <button class="action">Crear tarea</button>
+      </div>
+    </header>
+    <div class="notice">
+      <b>Propuesta visual — datos sintéticos.</b> Maqueta para revisar jerarquía, densidad y
+      colores. No representa funciones implementadas.
+    </div>
+    <div class="stats">
+      <div class="stat"><span>Alcance definido</span><b>12 tareas</b></div>
+      <div class="stat"><span>Completadas</span><b>3 / 12</b></div>
+      <div class="stat"><span>En ejecución</span><b>2</b></div>
+      <div class="stat"><span>Requieren atención</span><b>2</b></div>
+    </div>
+    <div class="columns">
+      <section>
+        <h2>Trabajo en curso</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tarea</th>
+              <th>Estado</th>
+              <th>Propietario</th>
+              <th>Lease</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><small class="muted">TASK-000004</small><br />Reclamación exclusiva de tareas</td>
+              <td><span class="pill">En ejecución</span></td>
+              <td>Codex · sesión 02</td>
+              <td>08:42</td>
+            </tr>
+            <tr>
+              <td><small class="muted">TASK-000005</small><br />Reconciliación del dashboard</td>
+              <td><span class="pill warn">En revisión</span></td>
+              <td>Sin claim</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><small class="muted">TASK-000006</small><br />Contrato de evidencias</td>
+              <td><span class="pill warn">Bloqueada</span></td>
+              <td>Sin claim</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section>
+        <h2>Necesita tu decisión</h2>
+        <article>
+          <span class="label">Aprobación de revisión</span><br /><b>Reconciliación del dashboard</b
+          ><br /><span class="muted">Revisión 2 · 3 evidencias</span>
+        </article>
+        <article>
+          <span class="label">Pregunta bloqueante</span><br /><b
+            >Validar el contrato de evidencias</b
+          ><br /><span class="muted">Bloquea 1 tarea</span>
+        </article>
+      </section>
+    </div>
+    <footer>
+      Principios: acciones humanas visibles · estado con texto, no solo color · fechas y
+      denominadores explícitos · detalle con gates y evidencia · navegación por teclado · móvil con
+      navegación compacta.
+    </footer>
+  </main>
+</html>
