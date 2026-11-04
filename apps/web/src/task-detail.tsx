@@ -48,10 +48,7 @@ export function TaskPanel({
   const claim = owned
     ? { sessionId: task!.claim!.sessionId, fencingToken: task!.claim!.fencingToken }
     : {};
-  const approved = (kind: string) =>
-    task?.approvals.some(
-      (a) => a.kind === kind && a.workRevision === task.workRevision && !a.invalidatedAt,
-    );
+  const validated = task?.validations.some((validation) => validation.current);
   async function act(name: string, payload: Record<string, unknown> = {}) {
     if (!task || disabled) return;
     try {
@@ -133,34 +130,37 @@ export function TaskPanel({
               <article key={e.id} className="evidence">
                 <div>
                   <b>{e.kind}</b> · Revisión {e.workRevision} ·{' '}
-                  {e.acceptedBy ? 'Aceptada por una persona' : 'Declarada, pendiente de aceptación'}
+                  {e.acceptedBy ? 'Aceptada por una persona' : 'Declarada por su autor'}
                 </div>
                 <a href={e.url} target="_blank" rel="noopener noreferrer">
                   Abrir evidencia ↗
                 </a>
                 {e.commit && <code>{e.commit}</code>}
-                {reviews &&
-                  !e.acceptedBy &&
-                  e.workRevision === task.workRevision &&
-                  !['DONE', 'CANCELLED'].includes(task.status) && (
-                    <button
-                      disabled={disabled}
-                      onClick={() => void act('accept-evidence', { evidenceId: e.id })}
-                    >
-                      Aceptar evidencia
-                    </button>
-                  )}
               </article>
             ))
           )}
-          <h3>Aprobaciones de esta revisión</h3>
-          <div className="approval-list">
-            {(['REVIEW', 'QA', 'CLOSURE'] as const).map((kind, i) => (
-              <span key={kind} className={approved(kind) ? 'success' : 'muted'}>
-                {['Revisión', 'QA', 'Cierre'][i]}: {approved(kind) ? 'aprobada' : 'pendiente'}
-              </span>
-            ))}
-          </div>
+          <h3>Validación humana</h3>
+          <p className={validated ? 'success' : 'muted'}>
+            {validated
+              ? 'Validada por una persona'
+              : task.status === 'DONE'
+                ? 'Completada · pendiente de validación humana'
+                : 'Disponible al completar la tarea'}
+          </p>
+          {task.validations.length > 0 && (
+            <ul>
+              {task.validations.map((validation) => (
+                <li key={validation.id}>
+                  {validation.current ? 'OK vigente' : 'OK histórico'} ·{' '}
+                  {date(validation.createdAt)} · {validation.principalId}
+                  {validation.note && <p>{validation.note}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+          {task.approvals.length > 0 && (
+            <p className="muted">Aprobaciones históricas conservadas: {task.approvals.length}.</p>
+          )}
           {writable && (
             <section className="work-actions">
               <h3>Acciones de tarea</h3>
@@ -201,18 +201,7 @@ export function TaskPanel({
                     Enviar a revisión
                   </button>
                 )}
-                {reviews && task.status === 'IN_REVIEW' && !approved('REVIEW') && (
-                  <button
-                    className="primary"
-                    disabled={disabled}
-                    onClick={() =>
-                      void act('approve', { kind: 'REVIEW', workRevision: task.workRevision })
-                    }
-                  >
-                    Aprobar revisión
-                  </button>
-                )}
-                {reviews && task.status === 'IN_REVIEW' && approved('REVIEW') && (
+                {reviews && task.status === 'IN_REVIEW' && (
                   <button
                     className="primary"
                     disabled={disabled}
@@ -221,34 +210,35 @@ export function TaskPanel({
                     Pasar a QA
                   </button>
                 )}
-                {reviews && task.status === 'IN_QA' && !approved('QA') && (
-                  <button
-                    className="primary"
-                    disabled={disabled}
-                    onClick={() =>
-                      void act('approve', { kind: 'QA', workRevision: task.workRevision })
-                    }
-                  >
-                    Aprobar QA
-                  </button>
-                )}
-                {reviews && task.status === 'IN_QA' && !approved('CLOSURE') && (
-                  <button
-                    disabled={disabled || !approved('QA')}
-                    onClick={() =>
-                      void act('approve', { kind: 'CLOSURE', workRevision: task.workRevision })
-                    }
-                  >
-                    Aprobar cierre
-                  </button>
-                )}
-                {reviews && task.status === 'IN_QA' && approved('QA') && approved('CLOSURE') && (
+                {reviews && task.status === 'IN_QA' && (
                   <button
                     className="primary"
                     disabled={disabled}
                     onClick={() => void act('transition', { to: 'DONE' })}
                   >
                     Completar tarea
+                  </button>
+                )}
+                {writable && task.status === 'DONE' && !validated && (
+                  <button
+                    className="primary"
+                    disabled={disabled}
+                    onClick={() => void act('validate', { workRevision: task.workRevision })}
+                  >
+                    Validar tarea
+                  </button>
+                )}
+                {manages && task.status === 'DONE' && (
+                  <button
+                    disabled={disabled}
+                    onClick={() =>
+                      void act('transition', {
+                        to: 'READY',
+                        reason: 'Reabrir para continuar el trabajo',
+                      })
+                    }
+                  >
+                    Reabrir tarea
                   </button>
                 )}
                 <button

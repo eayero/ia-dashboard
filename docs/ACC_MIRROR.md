@@ -9,7 +9,58 @@ El catálogo es [acc-tasks.json](acc-tasks.json). Cada entrada tiene un identifi
 estable, archivo de origen, contexto y criterios. Las referencias `repo:dashboard:`
 permiten repetir la importación sin crear tareas duplicadas. Los hitos históricos
 se importan en BACKLOG: el estado documentado no equivale a aprobación de ACC.
-Los gates humanos se mantienen; el agente no acepta evidencias ni aprueba cierres.
+El agente puede recorrer todos los estados válidos, incluido DONE, sin aprobación
+humana previa. La validación humana posterior es un OK de auditoría separado.
+
+## Duplicación obligatoria de todo el trabajo
+
+Por instrucción expresa del usuario, todo trabajo debe tener reflejo mediante MCP:
+implementación, correcciones, documentación, decisiones, pruebas, revisión y
+publicación. Cada bloque conserva tarea/referencia, alcance, avance, resultados,
+evidencias y pendientes. Los documentos completos permanecen en archivos; ACC
+recibe su contexto y enlaces. No copiar secretos ni artefactos privados de sesión.
+
+1. Consultar `acc_list_projects`, seleccionar el proyecto y pasar `projectId` en
+   cada llamada. Aquí se usa `3268b4d2-cd9d-4afc-bc76-ea631997cd73`.
+2. Listar tareas y terminar todas las páginas de contexto. Reutilizar `externalRef`
+   exacta; crear solo trabajo que falte con clave idempotente estable.
+3. Registrar sesión ACC. En tareas habilitadas, adquirir claim y registrar avances
+   con `acc_update_task`, renovando sesión y claim por separado.
+4. Adjuntar evidencias HTTPS con `acc_add_evidence` bajo los requisitos vigentes.
+   Recorrer revisión, QA y DONE con `acc_transition_task`, sin aprobaciones humanas.
+   La validación posterior a DONE se registra por una persona y no cambia estado.
+5. Al terminar el bloque, reflejar verificaciones, commit/push y pendientes;
+   comprobar detalle/delta y finalizar sesión. Registrar en archivos IDs y resultado.
+
+READY ya puede establecerlo el agente con task:write. Las tareas BACKLOG deben
+pasar a READY antes del claim y la evidencia de implementación. La evidencia
+declarada elegible permite avanzar sin aceptación humana previa.
+`acc_update_task` exige claim vigente; no existe edición libre
+de contexto, comentarios o documentos por MCP. Si estas restricciones impiden
+copiar un avance, registrarlo explícitamente y conservar una conciliación con
+referencias a las tareas, sin crear tareas sustitutas ni modificar sus criterios.
+Si falta un campo o herramienta para duplicar información, registrar la carencia;
+no declarar sincronización completa ni escribir directamente en la BD para eludirla.
+
+La conciliación actual está en [ACC_WORK_SYNC.json](ACC_WORK_SYNC.json). La nueva
+tarea ACC-LOCAL-016 recoge esta petición y el resumen del trabajo publicado; las
+15 tareas anteriores conservan sus IDs y criterios. Es un registro consolidado,
+no una aceptación de evidencias ni un cierre retroactivo de esas tareas.
+
+Ese informe conserva las restricciones anteriores como registro histórico. La
+decisión posterior de estados autónomos las sustituye; su implementación y
+comprobación se registran en [AGENT_WORKFLOW_RESULT.json](AGENT_WORKFLOW_RESULT.json).
+
+## Conciliación posterior del trabajo publicado
+
+ACC-LOCAL-010 (documentación de autenticación) y ACC-LOCAL-012 (reinicio/bootstrap
+de Compose) se conciliaron mediante MCP nativo hasta DONE, bajo sesión y claim.
+Se adjuntaron enlaces reales al commit `c273f4d`, con resumen y criterios
+correspondientes. El agente las cerró sin validarlas. Después ACC registró una
+validación humana para ACC-LOCAL-012; ACC-LOCAL-010 seguía pendiente de OK humano
+en la lectura de conciliación. DONE y validación siguen siendo hechos distintos.
+Los IDs, versiones y evidencias se conservan en
+[ACC_WORK_SYNC.json](ACC_WORK_SYNC.json). No se alteraron los criterios originales.
 
 ## Integración directa con Codex
 
@@ -52,9 +103,9 @@ Al trabajar, actualizar primero los archivos y después su copia en ACC. Si ACC
 no está disponible, conservar el trabajo en archivos y registrar la sincronización
 pendiente. No declarar terminada una tarea por haberla importado.
 
-Las comprobaciones posteriores de Compose/bootstrap y actualización de guías se
-registran en [COMPOSE_VERIFICATION.json](COMPOSE_VERIFICATION.json) y en el estado
-de implementación. La asociación de esa evidencia a ACC-LOCAL-012 y ACC-LOCAL-010
-sigue pendiente: el archivo es local, sin URL HTTPS publicada, y MCP exige HTTPS
-para adjuntar evidencias. No sustituirlo por una URL inventada ni modificar los
-criterios históricos del catálogo para simular una aprobación.
+Las comprobaciones de Compose/bootstrap y actualización de guías se publicaron
+en el commit `c273f4d`, con URLs HTTPS reales. Están referenciadas en la conciliación
+MCP. Su asociación formal a ACC-LOCAL-012 y ACC-LOCAL-010 ya se completó bajo claim
+y ambas tareas llegaron a DONE. Queda sustituida la habilitación humana anterior;
+el agente no emitió el OK humano posterior. No modificar criterios históricos ni inventar
+evidencias para simular validación.

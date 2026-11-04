@@ -72,10 +72,28 @@ de otro proyecto. Adaptar los comandos al entorno de la sesión.
 
 ## 6. Documentación y comunicación
 
-Mantener el seguimiento en archivos y duplicarlo en ACC para comprobar el producto.
-Los archivos son la referencia principal. Aplicar [el procedimiento de copia](docs/ACC_MIRROR.md)
-y conservar referencias estables; registrar conflictos o sincronizaciones pendientes.
-La importación no constituye aceptación de evidencia ni aprobación humana.
+Duplicar todo el trabajo del proyecto en ACC mediante sus herramientas MCP:
+desarrollo, correcciones, documentación, decisiones, pruebas, revisiones y
+publicación. No limitar la copia a importar el backlog inicial. Los archivos
+siguen siendo la referencia principal; ACC refleja alcance, avances, resultados,
+evidencias, bloqueos y pendientes de cada trabajo, sin incluir secretos.
+
+Antes de trabajar, consultar el proyecto y las tareas por MCP, reutilizar su
+referencia estable o registrar la tarea que falte y abrir una sesión ACC. Cuando
+el estado y los permisos lo permitan, reclamar antes de implementar, renovar
+sesión/claim, registrar avances y evidencias, solicitar revisión y liberar o
+finalizar la sesión. El agente con permisos de escritura puede recorrer todos los
+estados, incluidos READY, QA, DONE, cancelación y reapertura, respetando transiciones,
+versiones, claims, dependencias y evidencia técnica. No necesita aprobaciones
+humanas previas. En DONE, una persona con permisos puede registrar Validar tarea:
+es un OK de auditoría que no cambia estado ni revisión y no puede darlo el agente.
+
+Al terminar cada bloque, actualizar archivos y su copia por MCP y comprobarla
+mediante lectura y delta. Registrar IDs, resultados, commit/push si existen y
+cualquier diferencia o sincronización pendiente. No afirmar sincronización
+completa cuando falten datos o el contrato MCP no permita copiarlos. Aplicar
+[el procedimiento de copia](docs/ACC_MIRROR.md). Importar o adjuntar no constituye
+aceptación de evidencia ni aprobación humana.
 
 Mantener la documentación proporcional al proyecto y actualizarla cuando cambien
 el comportamiento, la configuración o las decisiones relevantes. Enlazar desde

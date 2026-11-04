@@ -1,0 +1,147 @@
+{
+  "checkedAt": "2026-11-04T05:51:00Z",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "scope": "ACC-LOCAL-013: WebSocket autorizado y recuperación del dashboard por contexto/delta.",
+  "implementation": {
+    "socketIoPath": "/ws/v1",
+    "transport": "websocket",
+    "redisStreams": true,
+    "perProcessCursors": true,
+    "originExact": true,
+    "humanCookie": true,
+    "agentBearerAudience": "api",
+    "agentReadScope": "task:read",
+    "serverAssignedRooms": true,
+    "reauthorizeBeforeDelivery": true,
+    "idleAuthorizationIntervalMs": 1000,
+    "redisPollIntervalMs": 250,
+    "redisBatchLimit": 100,
+    "perProcessConnectionLimit": 200,
+    "perPrincipalConnectionLimit": 8,
+    "incomingPayloadLimitBytes": 8192,
+    "clientInvalidationDebounceMs": 75,
+    "clientEventDeduplicationLimit": 256,
+    "restFallbackIntervalMs": 5000,
+    "newDependencies": false,
+    "newMigrations": false
+  },
+  "verification": {
+    "unitTests": {
+      "passed": 53,
+      "failed": 0
+    },
+    "integrationTests": {
+      "passed": 90,
+      "failed": 0
+    },
+    "realtimeIntegrationTests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "apiTypes": true,
+    "webTypes": true,
+    "integrationTypes": true,
+    "lint": true,
+    "format": true,
+    "dockerBuild": {
+      "successfulPackages": 5
+    },
+    "finalWebChangeRetested": true
+  },
+  "coverage": [
+    "Origin ajeno, anónimo, UUID inválido y proyecto ajeno rechazados.",
+    "Entrega real de envelope desde mutación/outbox/worker/Redis, sin fencing.",
+    "Desconexión y pérdida del stream no eliminan recuperación duradera por delta.",
+    "Logout, reset, caducidad, cambio obligatorio y retiro de membresía invalidan conexión abierta.",
+    "Bearer API válido, token solo MCP rechazado, credencial revocada y propietario deshabilitado invalidan conexión.",
+    "Redis inaccesible no bloquea REST ni autorización y app.close termina sockets abiertos.",
+    "Cliente deduplica eventId, conserva eventos fuera de orden y secuencias BIGINT sin aplicar payloads parciales."
+  ],
+  "browser": {
+    "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+    "taskIds": ["5e54fa67-1c26-4c18-ad0d-6162ad6432c2", "5eb8e04a-fe0c-4d93-b23a-dad9805a405a"],
+    "websocketConnections": 2,
+    "authorizedReadyMessages": 2,
+    "receivedEventIds": ["cff99de1-283e-4fce-ace6-bd6fdbbedb20"],
+    "liveVisibleMs": 836,
+    "recoveryVisibleMs": 92,
+    "offlineDetected": true,
+    "automaticReconnect": true,
+    "offlineChangeRecovered": true,
+    "layouts": [
+      {
+        "width": 1440,
+        "height": 900,
+        "overflow": false
+      },
+      {
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    ],
+    "pageErrors": [],
+    "method": "Playwright CLI, dashboard compilado a través de nginx del origen público",
+    "visualInspection": true,
+    "initialOfflineReconnectionFailureReproduced": true,
+    "fix": "Cerrar explícitamente el socket en offline y abrirlo en online; recorrido repetido pasó.",
+    "measurementsAreSingleLocalSamples": true,
+    "performanceSloBenchmark": false,
+    "artifacts": [
+      "output/playwright/ws-dashboard-1440.png",
+      "output/playwright/ws-dashboard-390.png"
+    ],
+    "cleanup": {
+      "syntheticTasksCancelled": 4,
+      "allSyntheticTaskIds": [
+        "35dea5c2-8bcf-40b3-a7c0-76cabe089a6e",
+        "5e54fa67-1c26-4c18-ad0d-6162ad6432c2",
+        "5eb8e04a-fe0c-4d93-b23a-dad9805a405a",
+        "8b88c000-9a7b-4a30-9a2c-2d417d4b91f2"
+      ],
+      "sharedVolumesDeleted": false
+    }
+  },
+  "nativeMcp": {
+    "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a",
+    "externalRef": "repo:dashboard:ACC-LOCAL-013",
+    "status": "IN_PROGRESS",
+    "version": 9,
+    "workRevision": 3,
+    "summaryReadVerified": true,
+    "sessionId": "df4b63d0-3c64-472d-be62-816bc1fbb508",
+    "sessionEnded": true,
+    "claimReleased": true,
+    "context": {
+      "pages": 1,
+      "complete": true,
+      "projectSeq": "132"
+    },
+    "delta": {
+      "complete": true,
+      "eventsAfterSnapshot": 0
+    },
+    "temporaryProxyDowntime": "La UI se detuvo para liberar el puerto de las integraciones; MCP volvió a funcionar tras restaurar el proxy."
+  },
+  "runtime": {
+    "apiHealthy": true,
+    "uiHealthy": true,
+    "postgresHealthy": true,
+    "redisHealthy": true,
+    "workerRunning": true,
+    "migrationExitCode": 0,
+    "bootstrapExitCode": 0
+  },
+  "limitations": [
+    "Una corrida bajo carga agotó tiempos; repetición aislada 9/9 y global 90/90 pasaron sin ampliar límites ni relajar aserciones.",
+    "WS es una señal de actualización; pérdida, duplicados y desorden se reconcilian por REST. El stream no sustituye auditoría duradera.",
+    "No se ha medido la carga objetivo ni p95. La revalidación del cliente Claude y otras entidades del MVP continúan pendientes.",
+    "Vite informa un chunk web de aproximadamente 520 kB minificado; el build pasa."
+  ],
+  "publication": {
+    "newCommit": false,
+    "pushed": false,
+    "formalEvidencePending": true,
+    "reason": "Resultado local sin URL HTTPS publicada; la tarea conserva IN_PROGRESS."
+  }
+}

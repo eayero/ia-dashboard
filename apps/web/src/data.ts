@@ -103,6 +103,9 @@ export function entities<T>(state: DashboardState, type: string): T[] {
 }
 export type Project = { id: string; name: string; archived: boolean; claimsPaused: boolean };
 export type Member = {
+  ownerUserId?: string | null;
+  ownerUsername?: string | null;
+  agentName?: string | null;
   principalId: string;
   kind: string;
   active: boolean;
@@ -137,6 +140,16 @@ export type Session = {
   endedAt: string | null;
 };
 export type TaskDetail = Task & {
+  completionVersion: number | null;
+  validations: {
+    id: string;
+    workRevision: number;
+    completionVersion: number;
+    principalId: string;
+    note: string;
+    createdAt: string;
+    current: boolean;
+  }[];
   claim: Omit<Claim, 'taskId' | 'active'> | null;
   evidence: {
     id: string;

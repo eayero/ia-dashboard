@@ -731,6 +731,17 @@ code {
   }
 }
 @media (max-width: 1150px) {
+  .app-shell {
+    grid-template-rows: auto 1fr;
+  }
+  .topbar {
+    flex-wrap: wrap;
+    padding: 12px 24px;
+    gap: 12px;
+  }
+  .project-picker {
+    min-width: 180px;
+  }
   .columns {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -762,7 +773,7 @@ code {
   }
   .topbar .brand {
     min-width: 0;
-    flex: 1;
+    flex: 1 0 100%;
   }
   .project-picker {
     order: 3;

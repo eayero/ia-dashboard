@@ -12,6 +12,7 @@ export type LocalAgent = {
 export async function provisionAgents(
   db: pg.PoolClient,
   projectId: string,
+  ownerUserId: string,
   cached: LocalAgent[] = [],
 ) {
   const agents: { label: string; principalId: string; apiToken: string; mcpToken: string }[] = [];
@@ -34,6 +35,10 @@ export async function provisionAgents(
     await db.query("INSERT INTO principals(id,kind) VALUES ($1,'AGENT') ON CONFLICT DO NOTHING", [
       principalId,
     ]);
+    await db.query(
+      'INSERT INTO agent_profiles(principal_id,owner_user_id,name) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING',
+      [principalId, ownerUserId, label],
+    );
     await db.query(
       "INSERT INTO project_members(project_id,principal_id,scopes) VALUES ($1,$2,ARRAY['task:read','task:write']) ON CONFLICT DO NOTHING",
       [projectId, principalId],

@@ -31,7 +31,9 @@ devuelve 400 con la misma indicación. En esos casos obtener un snapshot nuevo.
 Las secuencias BIGINT son strings decimales: no convertirlas a Number de JavaScript.
 
 Envelope: `eventId`, `projectId`, `seq`, `schemaVersion:1`, `type`, `occurredAt`,
-`entity:{id,type}`, `actorId`, `sessionId`, `traceId`, `payload`.
+`entity:{id,type}`, `actorId`, `actorUserId`, `sessionId`, `traceId`, `payload`.
+Los eventos nuevos atribuyen acciones del agente a su propietario; los anteriores
+pueden conservar `actorUserId:null`.
 Los payloads son señales auditables, no reemplazos completos de entidades.
 Reconciliar tareas con su detalle REST, sesiones con el listado y miembros con un
 contexto actualizado. Comparar versiones antes de reemplazar datos ya cargados.
@@ -76,8 +78,50 @@ Variables: `DATABASE_URL`, `REDIS_URL`, `OUTBOX_POLL_MS` opcional (250 ms inicia
 - El worker elimina snapshots expirados en lotes de hasta cien por segundo, con
   sus páginas por FK. No elimina tareas, auditoría ni eventos de dominio.
 
-Redis es transporte interno. WS y autorización de rooms siguen pendientes;
-sus credenciales no se entregan al navegador.
+Redis es transporte interno; sus credenciales no se entregan al navegador.
+
+## WebSocket autorizado
+
+Socket.IO usa el path `/ws/v1`, exclusivamente transporte WebSocket, a través del
+mismo proxy/origen público. `auth:{projectId}` selecciona un proyecto por conexión;
+el cliente no elige rooms ni ejecuta comandos de negocio por este canal. El
+servidor asigna `project:{projectId}` y `agent:{principalId}` de la identidad
+autenticada. Cambiar de proyecto cierra la conexión anterior.
+
+Humanos usan su cookie HttpOnly existente; agentes, Authorization Bearer con
+audiencia API y scope `task:read` (una credencial solo MCP no autoriza WS).
+Origin debe coincidir exactamente con PUBLIC_ORIGIN. No se aceptan secretos en
+query/auth. Contraseña temporal, usuario deshabilitado, token revocado/caducado o
+membresía ajena impiden la conexión. Se recarga la sesión HTTP y se revalida
+autenticación/membresía antes de entregar cada tanda y cada segundo en reposo.
+Los permisos vigentes del propietario también limitan las conexiones de agentes.
+
+Mensajes del servidor:
+
+- `acc:ready`: `{projectId,principalId}` después de autorizar; siempre consultar delta.
+- `acc:event`: envelope público del outbox, con seq decimal exacta y sin fencing.
+- `acc:resync`: `{projectId}` solicita reconciliación REST tras fallo/recuperación.
+- `acc:access-lost`: `{code,status}` antes de desconectar por pérdida de acceso.
+  El rechazo inicial llega como `connect_error` con esos campos en `error.data`.
+
+Cada proceso API lee los streams con sus propios cursores; no usa consumer groups
+que repartan eventos entre instancias. Consulta cada 250 ms, hasta 100 entradas
+por proyecto/tanda. No reproduce todo el histórico al suscribirse: `ready` cierra
+esa ventana mediante el delta duradero. Entrega duplicada/fuera de orden y pérdida
+de mensajes durante desconexiones se recuperan por REST; WS no reemplaza auditoría.
+Redis inaccesible no bloquea REST. Sin REDIS_URL, el canal autoriza pero la UI
+continúa con su respaldo periódico. API en Compose recibe REDIS_URL interna.
+
+Límites actuales por proceso: 200 conexiones y ocho por principal, handshake de
+cinco segundos y payload entrante de 8192 bytes. Un transporte que no puede enviar
+se desconecta antes de añadir otra tanda. El apagado cierra sockets/Redis antes
+del servidor HTTP. Son límites de implementación, no una prueba de la carga objetivo.
+
+El dashboard agrupa invalidaciones durante 75 ms, deduplica hasta 256 eventId y
+recupera contexto/delta y detalles vía TanStack Query. No aplica payloads parciales
+ni descarta eventos tardíos por comparar secuencias como Number. Reconecta con
+backoff entre 500 ms y cinco segundos y mantiene comprobación REST cada cinco
+segundos. Un 401 retira la sesión y cachés privadas; 403 retira datos del proyecto.
 
 ## Verificación
 
@@ -91,4 +135,7 @@ ni se vacía el Redis compartido.
 También se comprobaron API/worker compilados como procesos separados: una sesión
 ACC sintética creada y cerrada por REST produjo un evento consultable por delta,
 recibido en Redis y confirmado en outbox. No acredita aún la carga objetivo,
-un consumidor WS ni interoperabilidad MCP.
+el rendimiento objetivo. El transporte WS y la recuperación actuales se comprueban
+en `realtime.test.ts`, con Socket.IO, PostgreSQL y Redis reales, y en las pruebas
+unitarias del cliente. Resultado y recorrido del navegador:
+[WEBSOCKET_RESULT.json](../WEBSOCKET_RESULT.json).

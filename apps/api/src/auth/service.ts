@@ -142,8 +142,11 @@ export class AuthService {
         principal_id: string;
         token_hash: Buffer;
         scopes: string[];
+        owner_user_id: string;
+        owner_username: string;
+        agent_name: string;
       }>(
-        `SELECT c.principal_id,c.token_hash,c.scopes FROM agent_credentials c JOIN principals p ON p.id=c.principal_id WHERE c.id=$1 AND NOT p.disabled AND c.revoked_at IS NULL AND c.expires_at>clock_timestamp() AND $2::text=ANY(c.audiences)`,
+        `SELECT c.principal_id,c.token_hash,c.scopes,a.owner_user_id,u.username AS owner_username,a.name AS agent_name FROM agent_credentials c JOIN principals p ON p.id=c.principal_id JOIN agent_profiles a ON a.principal_id=p.id JOIN local_users u ON u.principal_id=a.owner_user_id JOIN principals owner ON owner.id=u.principal_id WHERE c.id=$1 AND NOT p.disabled AND NOT owner.disabled AND c.revoked_at IS NULL AND c.expires_at>clock_timestamp() AND $2::text=ANY(c.audiences)`,
         [match[2], target],
       );
       const credential = found.rows[0];
@@ -154,6 +157,9 @@ export class AuthService {
         kind: 'AGENT',
         mode: 'BEARER',
         scopes: credential.scopes,
+        ownerUserId: credential.owner_user_id,
+        ownerUsername: credential.owner_username,
+        agentName: credential.agent_name,
       };
     }
     const identity = req.session.identity;

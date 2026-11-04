@@ -154,7 +154,7 @@ export function createMcpServer(runtime: ApiRuntime, req: ApiRequest) {
     ),
     tool(
       'acc_transition_task',
-      'Request a workflow transition. Server enforces gates, ownership, role and human approval.',
+      'Move through the full workflow, including DONE, cancellation and reopening. Server enforces technical evidence, dependencies, versions and claims. Human validation after DONE is separate.',
       z.strictObject({ ...task, input: transitionTaskSchema }),
       false,
       (a) =>

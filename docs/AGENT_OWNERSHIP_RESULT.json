@@ -1,0 +1,111 @@
+{
+  "checkedAt": "2026-11-04T05:05:00Z",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "decision": "Cada usuario gestiona sus agentes y los asigna a proyectos donde tiene permisos; el administrador puede gestionar todos.",
+  "migration": {
+    "file": "007_agent_ownership.sql",
+    "appliedLocally": true,
+    "allExistingAgentsHaveOwners": true,
+    "existingStateUnchanged": true,
+    "credentialFilesUnchanged": true,
+    "preservedCounts": {
+      "principals": 7,
+      "localUsers": 3,
+      "agentCredentials": 6,
+      "projectMembers": 6
+    },
+    "historicalAuditNotRewritten": true,
+    "ambiguousLegacyOwnershipRollsBack": true
+  },
+  "verification": {
+    "unitTests": {
+      "passed": 50,
+      "failed": 0
+    },
+    "integrationTests": {
+      "passed": 81,
+      "failed": 0
+    },
+    "globalTypecheck": true,
+    "foundationAndIntegrationTypecheck": true,
+    "lint": true,
+    "format": true,
+    "dockerBuild": true
+  },
+  "coverage": [
+    "Un usuario gestiona exclusivamente sus agentes; ADMIN gestiona todos.",
+    "Una credencial MCP opera en dos proyectos con la misma identidad de agente.",
+    "El propietario vigente limita permisos de proyecto y escritura; retirar acceso o deshabilitarlo invalida sesiones y claims afectados.",
+    "Autenticación, contexto y eventos identifican agente y propietario resuelto por servidor.",
+    "Varias credenciales de la misma identidad se emiten y revocan independientemente.",
+    "Migración conserva IDs, hashes de tokens y revocaciones; asociación ambigua falla sin cambios parciales."
+  ],
+  "browser": {
+    "method": "Playwright CLI, navegador real y contextos aislados",
+    "fixtureSetup": "Usuario USER y dos asignaciones REVIEWER creados por API administrativa; login, cambio obligatorio y gestión de agentes mediante UI.",
+    "userId": "38ca8beb-dd3b-4553-8964-c87ef61080c7",
+    "agentId": "e309da0d-aabf-478b-b047-fbc60dac3995",
+    "ownManagement": true,
+    "adminUserList": true,
+    "agentAndOwnerAttribution": true,
+    "twoProjects": true,
+    "twoCredentialsSameIdentity": true,
+    "projectRemovalAffectsBothCredentials": true,
+    "independentCredentialRevocation": true,
+    "revokedTokensRejectedWith401": true,
+    "viewports": [
+      [1440, 900],
+      [1024, 768],
+      [390, 844]
+    ],
+    "horizontalOverflow": false,
+    "brandButtonOverlap": false,
+    "visualInspection": true,
+    "artifacts": [
+      "output/playwright/ownership-user-1440.png",
+      "output/playwright/ownership-user-1024.png",
+      "output/playwright/ownership-user-390.png",
+      "output/playwright/ownership-admin-desktop.png"
+    ],
+    "cleanup": {
+      "syntheticUserDisabled": true,
+      "syntheticCredentialsRevoked": 2,
+      "syntheticProjectRetained": "f655474d-6dbc-4723-b8e2-12250cb0607e",
+      "sharedVolumesDeleted": false
+    }
+  },
+  "nativeMcp": {
+    "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
+    "externalRef": "repo:dashboard:ACC-LOCAL-018",
+    "status": "IN_PROGRESS",
+    "version": 8,
+    "workRevision": 3,
+    "summaryReadVerified": true,
+    "sessionId": "68641fd7-e472-4f89-8d95-6d5773328c2d",
+    "sessionEnded": true,
+    "claimReleased": true,
+    "originalCredentialStillWorks": true,
+    "context": {
+      "pages": 1,
+      "complete": true,
+      "projectSeq": "113"
+    },
+    "delta": {
+      "complete": true,
+      "eventsAfterSnapshot": 0
+    },
+    "attributionEvent": {
+      "eventId": "a68657be-6e97-40ee-b170-f832abb0aca3",
+      "type": "task.workUpdated",
+      "seq": "111",
+      "actorId": "e5ea545f-c5c0-4c5e-875e-088950fd8288",
+      "actorUserId": "8a86d38f-a55d-402e-b5e0-4334ed6e53ad"
+    }
+  },
+  "publication": {
+    "newCommit": false,
+    "pushed": false,
+    "formalEvidencePending": true,
+    "reason": "La evidencia nueva está local y aún no tiene URL HTTPS publicada; la tarea permanece IN_PROGRESS."
+  }
+}

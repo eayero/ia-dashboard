@@ -1,8 +1,9 @@
 import { useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api.ts';
-import { Modal, Notice, date } from './components.tsx';
+import { Modal, Notice } from './components.tsx';
 import type { Me } from './auth-forms.tsx';
+import { Agents } from './agents.tsx';
 
 type Assignment = { id: string; name: string; roles: string[]; active: boolean; version: number };
 type User = {
@@ -13,17 +14,7 @@ type User = {
   mustChangePassword: boolean;
   disabled: boolean;
   projects: Assignment[];
-};
-type Credential = {
-  id: string;
-  principalId: string;
-  label: string;
-  scopes: string[];
-  audiences: string[];
-  expiresAt: string;
-  revokedAt: string | null;
-  token?: string;
-  projects: { id: string; name: string }[];
+  agents: { id: string; name: string }[];
 };
 export function Accounts({ me }: { me: Me }) {
   const client = useQueryClient();
@@ -32,14 +23,9 @@ export function Accounts({ me }: { me: Me }) {
     queryFn: ({ signal }) =>
       api<{ users: User[]; projects: { id: string; name: string }[] }>('/admin/users', { signal }),
   });
-  const agents = useQuery({
-    queryKey: ['credentials', me.principal.id],
-    queryFn: ({ signal }) => api<Credential[]>('/admin/agents', { signal }),
-  });
   const [selected, setSelected] = useState(''),
     [projectId, setProject] = useState('');
-  const [reset, setReset] = useState<User | null>(null),
-    [issued, setIssued] = useState<Credential | null>(null);
+  const [reset, setReset] = useState<User | null>(null);
   const command = useMutation({
     gcTime: 0,
     mutationFn: ({ path, body }: { path: string; body: unknown }) =>
@@ -92,7 +78,6 @@ export function Accounts({ me }: { me: Me }) {
         </div>
       </header>
       {users.error && <Notice error={users.error} retry={() => void users.refetch()} />}
-      {agents.error && <Notice error={agents.error} retry={() => void agents.refetch()} />}
       {command.error && <Notice error={command.error} />}
       {users.isPending ? (
         <p role="status">Cargando usuarios…</p>
@@ -116,6 +101,7 @@ export function Accounts({ me }: { me: Me }) {
                       <th>Usuario</th>
                       <th>Acceso</th>
                       <th>Proyectos asociados</th>
+                      <th>Agentes del usuario</th>
                       <th>Acciones</th>
                     </tr>
                   </thead>
@@ -143,6 +129,11 @@ export function Accounts({ me }: { me: Me }) {
                                 </div>
                               ))
                             : 'Sin asignación'}
+                        </td>
+                        <td>
+                          {user.agents.length
+                            ? user.agents.map((agent) => <div key={agent.id}>{agent.name}</div>)
+                            : 'Sin agentes'}
                         </td>
                         <td>
                           <div className="actions">
@@ -306,114 +297,7 @@ export function Accounts({ me }: { me: Me }) {
                 )}
               </section>
             )}
-            <section className="panel admin-form">
-              <h2>Credenciales de agentes</h2>
-              <p className="muted">
-                Cada credencial tiene proyecto, permisos, canales y caducidad. Su secreto se muestra
-                una sola vez.
-              </p>
-              <div
-                className="table-scroll"
-                role="region"
-                aria-label="Credenciales de agentes, tabla desplazable"
-                tabIndex={0}
-              >
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Agente</th>
-                      <th>Proyecto y permisos</th>
-                      <th>Vigencia</th>
-                      <th>Acción</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {agents.data?.map((agent) => (
-                      <tr key={agent.id}>
-                        <td>
-                          {agent.label}
-                          <small>{agent.audiences.join(' / ')}</small>
-                        </td>
-                        <td>
-                          {agent.projects.map((project) => project.name).join(', ')}
-                          <small>{agent.scopes.join(', ')}</small>
-                        </td>
-                        <td>{agent.revokedAt ? 'Revocada' : `Hasta ${date(agent.expiresAt)}`}</td>
-                        <td>
-                          {!agent.revokedAt && (
-                            <button
-                              disabled={command.isPending}
-                              onClick={() => void act(`/admin/agents/${agent.id}/revoke`, {})}
-                            >
-                              Revocar credencial
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <details className="admin-form">
-                <summary>Crear credencial de agente</summary>
-                <form
-                  onSubmit={(event) =>
-                    void submit(
-                      event,
-                      '/admin/agents',
-                      (data) => ({
-                        label: data.get('label'),
-                        projectId: data.get('projectId'),
-                        scopes:
-                          data.get('write') === 'on' ? ['task:read', 'task:write'] : ['task:read'],
-                        audiences: data.getAll('audiences'),
-                        expiresInDays: Number(data.get('days')),
-                      }),
-                      (data) => setIssued(data as unknown as Credential),
-                    )
-                  }
-                >
-                  <fieldset disabled={command.isPending}>
-                    <label>
-                      Nombre del agente
-                      <input name="label" required maxLength={120} />
-                    </label>
-                    <label>
-                      Proyecto del agente
-                      <select name="projectId" required>
-                        <option value="">Selecciona un proyecto</option>
-                        {users.data.projects.map((project) => (
-                          <option key={project.id} value={project.id}>
-                            {project.name}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <div className="checks">
-                      <label>
-                        <input type="checkbox" name="audiences" value="api" defaultChecked />
-                        API
-                      </label>
-                      <label>
-                        <input type="checkbox" name="audiences" value="mcp" defaultChecked />
-                        MCP
-                      </label>
-                      <label>
-                        <input type="checkbox" name="write" />
-                        Permitir escritura
-                      </label>
-                    </div>
-                    <label>
-                      Vigencia en días
-                      <input name="days" type="number" min={1} max={30} defaultValue={1} required />
-                    </label>
-                    <button className="primary" type="submit">
-                      Emitir credencial
-                    </button>
-                  </fieldset>
-                </form>
-              </details>
-            </section>
+            <Agents me={me} all />
           </>
         )
       )}
@@ -448,33 +332,6 @@ export function Accounts({ me }: { me: Me }) {
             </fieldset>
             {command.error && <Notice error={command.error} />}
           </form>
-        </Modal>
-      )}
-      {issued && (
-        <Modal
-          title="Credencial emitida"
-          close={() => {
-            setIssued(null);
-            command.reset();
-          }}
-        >
-          <p>Guarda este secreto ahora. No podrá consultarse de nuevo.</p>
-          <label>
-            Credencial del agente
-            <textarea readOnly rows={4} value={issued.token} />
-          </label>
-          <p className="muted">
-            Envíala en Authorization: Bearer. Caduca {date(issued.expiresAt)}.
-          </p>
-          <button
-            className="primary"
-            onClick={() => {
-              setIssued(null);
-              command.reset();
-            }}
-          >
-            Ya la guardé
-          </button>
         </Modal>
       )}
     </main>

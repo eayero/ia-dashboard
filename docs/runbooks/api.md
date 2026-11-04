@@ -3,8 +3,40 @@
 NestJS ejecuta autenticación propia, administración de identidades, tareas,
 sesiones ACC y contexto/delta. El [gateway MCP](mcp.md) comparte servicios y
 autorización; el [dashboard](web.md) usa cookies mediante proxy del mismo origen.
-El [worker outbox](events.md) publica eventos por separado. Creación general de
-proyectos, OpenAPI y servidor WS siguen pendientes.
+El [worker outbox](events.md) publica eventos por separado y Socket.IO entrega
+notificaciones autorizadas. La creación general de proyectos sigue pendiente.
+
+## Contrato OpenAPI
+
+`GET /api/v1/openapi.json` descarga OpenAPI 3.1.1 sin autenticar, con JSON directo
+(sin envelope ACC), no-store y el mismo proxy del origen público. Describe las
+45 operaciones REST actuales en 40 paths; MCP y WS conservan sus propios protocolos.
+No incluye URLs de base de datos/Redis, configuración privada ni secretos reales.
+El servidor relativo `/` permite usarlo desde el origen donde se descarga.
+
+Artefacto [openapi.json](../openapi.json), generado desde
+`apps/api/src/openapi/document.ts` y contratos compartidos. Para regenerar y comprobar:
+
+```powershell
+node --import tsx scripts/export-openapi.mjs
+node --import tsx scripts/export-openapi.mjs --check
+```
+
+La exportación no necesita servicios ni secretos.
+Las pruebas comparan el inventario de controllers Nest y comandos concretos con
+el documento, resuelven sus referencias y validan muestras reales de respuestas.
+
+Cookie `acc.sid` más `x-csrf-token` y Origin exacto para POST humano; Bearer con
+audiencia API y scopes para agentes. Login empieza obteniendo cookie/CSRF anónimos
+mediante auth/session. Las operaciones administrativas/propias y validar DONE
+exigen usuario humano. Idempotency-Key se exige en comandos transaccionales de
+proyecto, tareas y sesiones; cuentas/credenciales no ofrecen ese replay.
+
+Los esquemas de entrada se convierten desde Zod. Sus refinamientos de negocio y
+normalización se documentan como validaciones adicionales del servidor; no se
+pretende que JSON Schema las replique por completo. Las respuestas incluyen modelos
+de recursos y envelope; Mutation documenta campos comunes con extensiones propias
+de cada comando. [Resultado de verificación](../OPENAPI_RESULT.json).
 
 ## Preparar y ejecutar
 
@@ -57,6 +89,36 @@ Puerto API_PORT: 53000. Readiness: `/api/v1/health/ready`.
 
 ## Administración
 
+Usuarios son identidades humanas que entran con contraseña/sesión; agentes son
+automatizaciones que usan tokens API/MCP. Ambos tienen membresías por proyecto.
+Varias credenciales pueden pertenecer al mismo agente; emitir otra credencial no
+implica necesariamente otra identidad. Solo las personas pueden dar el OK humano
+posterior a DONE; los agentes pueden ejecutar el resto del flujo autorizado.
+
+Cada agente tiene un usuario propietario obligatorio. «Mis agentes» permite a
+cada usuario consultar/crear sus agentes, emitir varias credenciales, asignar
+proyectos y retirar acceso o revocar credenciales propias. El administrador puede
+gestionar todos. La lista global de usuarios incluye sus agentes y el contexto de
+proyecto identifica nombre del agente/propietario. Un token no elige ni suplanta
+al propietario: se resuelve desde la BD en cada autenticación.
+
+| Método   | Ruta bajo /api/v1                          | Operación                                      |
+| -------- | ------------------------------------------ | ---------------------------------------------- |
+| GET/POST | `/agents`                                  | Lista propia o creación con credencial inicial |
+| POST     | `/agents/:agentId/credentials`             | Otra credencial para la misma identidad        |
+| POST     | `/agents/:agentId/projects/:projectId`     | Asignar/retirar proyecto con versión           |
+| POST     | `/agents/credentials/:credentialId/revoke` | Revocar credencial propia; ADMIN puede todas   |
+| GET      | `/admin/agent-identities`                  | Identidades y propietarios globales para ADMIN |
+
+Crear recibe label, projectIds (uno o varios), scopes, audiences y expiresInDays.
+ADMIN puede indicar ownerUserId; un usuario solo puede elegir su propio ID. Se
+mantiene projectId singular en el endpoint anterior por compatibilidad. Una
+credencial adicional no crea otro agente. Las asignaciones reciben
+`{active,scopes,expectedVersion}` y exigen acceso suficiente del propietario.
+Deshabilitar al usuario bloquea sus agentes; retirar su acceso por proyecto los
+restringe y termina sesiones/claims afectados. Eventos nuevos incluyen actorUserId
+como atribución, además de actorId; los anteriores conservan atribución desconocida.
+
 Solo un humano con sesión y rol global ADMIN vigente, sin cambio de contraseña
 pendiente, puede administrar usuarios, membresías y credenciales. El rol global
 no da acceso al contenido de proyectos sin membresía.
@@ -108,6 +170,25 @@ El detalle usa REPEATABLE READ. Ver [contexto y eventos](events.md).
 Respuestas no-store, Helmet, JSON hasta 32 KiB y límite por proceso de 600
 solicitudes/minuto por IP. No se devuelven SQL, stacks ni tokens en errores.
 
+## Estados autónomos y validación posterior
+
+El agente con task:write puede mover tareas por todos los estados válidos hasta
+DONE, cancelar y reabrir; se mantienen evidencias técnicas, dependencias, versiones
+y claims. La evidencia elegible declarada satisface los gates sin aceptación
+humana previa. Los endpoints antiguos approve/accept-evidence se conservan para
+compatibilidad e historial, pero ya no bloquean las transiciones.
+
+`POST /api/v1/projects/:projectId/tasks/:taskId/validate` recibe
+`{expectedVersion,workRevision,note?}`, Idempotency-Key y CSRF de la sesión humana.
+Exige humano con rol OWNER/ADMIN/MANAGER/REVIEWER y estado DONE. Registra un OK
+append-only con autor/fecha/revisión/finalización; no cambia estado ni revisión,
+pero incrementa versión técnica y emite task.validated junto con outbox. Un OK
+por finalización; conflicto devuelve TASK_ALREADY_VALIDATED (409). Agentes y
+VIEWER reciben 403; antes de DONE devuelve TASK_NOT_DONE (422). La reapertura
+conserva el registro como histórico. Detalle expone validations/current y
+completionVersion; contexto incluye registros VALIDATION. No hay herramienta MCP
+de agente que pueda emitir el OK humano.
+
 ## Comprobar
 
 Ver los comandos de [verificación local](local.md). Las integraciones usan
@@ -115,5 +196,14 @@ PostgreSQL/Redis locales y esquemas aislados; Keycloak no es necesario.
 `local-auth.test.ts` cubre login/CSRF, cambio obligatorio, reset, administración,
 roles, revocación y límites. `bootstrap.test.ts` comprueba conservación de estado,
 concurrencia y rollback cuando faltan secretos. Las suites REST/MCP comprueban
-claims, fencing y gates humanos. La revisión web/móvil de la administración nueva
-sigue pendiente y no queda acreditada por estas pruebas.
+claims, fencing, flujo autónomo y validación posterior. La administración nueva
+también se revisó por navegador en escritorio y móvil; ver
+[resultado](../ADMIN_BROWSER_RESULT.json), con alcance y simulaciones explícitos.
+La propiedad de agentes, permisos y uso de una credencial MCP en varios proyectos
+se verifican en `local-auth.test.ts` y la conservación de identidades legadas en
+`agent-migration.test.ts`. Ver [resultado](../AGENT_OWNERSHIP_RESULT.json).
+
+Socket.IO `/ws/v1` comparte sesiones y autorización de proyecto con REST. Usa
+REDIS_URL opcional para las notificaciones del outbox; REST sigue operativo sin
+Redis. No ofrece comandos de escritura por WS. Protocolo, revocación y recuperación:
+[eventos](events.md).

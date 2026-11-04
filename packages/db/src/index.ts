@@ -25,6 +25,7 @@ import {
   dependencySchema,
   emptyCommandSchema,
   sessionHeartbeatSchema,
+  validateTaskSchema,
 } from '@acc/contracts';
 export const Pool = pg.Pool;
 export { eventFromRow, type AuditEventRow } from './events.ts';
@@ -46,6 +47,7 @@ type LockedTask = {
   work_summary: string;
   impact_pending: boolean;
   manual_blocked: boolean;
+  completion_version: number | null;
 };
 
 export class CoordinationStore {
@@ -78,7 +80,7 @@ export class CoordinationStore {
       const membership = await client.query<Actor & { archived: boolean }>(
         `SELECT p.archived, u.kind, m.roles, m.scopes FROM projects p
          JOIN project_members m ON m.project_id=p.id JOIN principals u ON u.id=m.principal_id
-         WHERE p.id=$1 AND u.id=$2 AND NOT u.disabled AND m.active FOR SHARE OF p,m,u`,
+         WHERE p.id=$1 AND u.id=$2 AND NOT u.disabled AND m.active AND (u.kind='HUMAN' OR agent_owner_project_access(u.id,p.id,true)) FOR SHARE OF p,m,u`,
         [context.projectId, context.principalId],
       );
       const actor = membership.rows[0];
@@ -224,7 +226,7 @@ export class CoordinationStore {
     taskId: string,
   ): Promise<LockedTask> {
     const result = await client.query<LockedTask>(
-      'SELECT id,version,status,title,criteria,work_revision,work_type,work_summary,impact_pending,manual_blocked FROM work_items WHERE project_id=$1 AND id=$2 FOR UPDATE',
+      'SELECT id,version,status,title,criteria,work_revision,work_type,work_summary,impact_pending,manual_blocked,completion_version FROM work_items WHERE project_id=$1 AND id=$2 FOR UPDATE',
       [context.projectId, taskId],
     );
     if (!result.rows[0]) throw new DomainError('TASK_NOT_FOUND');
@@ -524,7 +526,7 @@ export class CoordinationStore {
       test_result: { outcome: 'PASS' | 'FAIL' } | null;
       criterion_ids: string[];
     }>(
-      `SELECT e.id,e.kind,e.repository_id,e.commit_sha,e.test_result,array_agg(c.criterion_id) AS criterion_ids FROM evidence e JOIN evidence_criteria c ON c.evidence_id=e.id WHERE e.project_id=$1 AND e.task_id=$2 AND e.work_revision=$3 AND e.accepted_by IS NOT NULL GROUP BY e.id`,
+      `SELECT e.id,e.kind,e.repository_id,e.commit_sha,e.test_result,array_agg(c.criterion_id) AS criterion_ids FROM evidence e JOIN evidence_criteria c ON c.evidence_id=e.id WHERE e.project_id=$1 AND e.task_id=$2 AND e.work_revision=$3 GROUP BY e.id`,
       [context.projectId, task.id, task.work_revision],
     );
     const accepted = evidence.rows;
@@ -762,7 +764,7 @@ export class CoordinationStore {
         if (input.to === 'IN_PROGRESS' || task.status === 'DONE' || input.to === 'CANCELLED')
           await this.invalidateApprovals(client, taskId);
         await client.query(
-          'UPDATE work_items SET status=$2,version=version+1,manual_blocked=$3 WHERE id=$1',
+          "UPDATE work_items SET status=$2,version=version+1,manual_blocked=$3,completion_version=CASE WHEN $2='DONE' THEN version+1 ELSE NULL END WHERE id=$1",
           [taskId, result.status, input.to === 'BLOCKED'],
         );
         const version = task.version + 1;
@@ -783,6 +785,57 @@ export class CoordinationStore {
         return { version, status: result.status, workRevision: task.work_revision, projectSeq };
       },
       true,
+    );
+  }
+
+  async validateTask(context: CommandContext, key: string, taskId: string, payload: unknown) {
+    const input = validateTaskSchema.parse(payload);
+    return this.command(
+      context,
+      'task.validate',
+      key,
+      { taskId, ...input },
+      async (client, actor) => {
+        this.requireRole(actor, ['OWNER', 'ADMIN', 'MANAGER', 'REVIEWER']);
+        const task = await this.lockTask(client, context, taskId);
+        this.assertVersion(task, input.expectedVersion);
+        if (task.status !== 'DONE') throw new DomainError('TASK_NOT_DONE');
+        if (task.work_revision !== input.workRevision)
+          throw new DomainError('WORK_REVISION_CONFLICT');
+        const id = randomUUID();
+        const added = await client.query(
+          'INSERT INTO task_validations(id,project_id,task_id,work_revision,completion_version,principal_id,note) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING RETURNING created_at',
+          [
+            id,
+            context.projectId,
+            taskId,
+            task.work_revision,
+            task.completion_version,
+            context.principalId,
+            input.note ?? '',
+          ],
+        );
+        if (!added.rowCount) throw new DomainError('TASK_ALREADY_VALIDATED');
+        await client.query('UPDATE work_items SET version=version+1 WHERE id=$1', [taskId]);
+        const version = task.version + 1;
+        const projectSeq = await this.event(client, context, taskId, 'task.validated', {
+          version,
+          validationId: id,
+          workRevision: task.work_revision,
+          completionVersion: task.completion_version,
+          note: input.note ?? '',
+        });
+        return {
+          id,
+          version,
+          status: 'DONE' as const,
+          workRevision: task.work_revision,
+          completionVersion: task.completion_version,
+          validatedBy: context.principalId,
+          validatedAt: added.rows[0]!.created_at,
+          projectSeq,
+        };
+      },
     );
   }
 

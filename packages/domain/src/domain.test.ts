@@ -39,16 +39,43 @@ for (const [field, value, gate] of [
   ['evidenceAccepted', false, 'EVIDENCE_REQUIRED'],
   ['dependenciesMet', false, 'DEPENDENCIES_UNMET'],
   ['impactPending', true, 'IMPACT_REVIEW_REQUIRED'],
-  ['reviewApproved', false, 'REVIEW_REQUIRED'],
-  ['qaApproved', false, 'QA_REQUIRED'],
-  ['closureApproved', false, 'HUMAN_APPROVAL_REQUIRED'],
 ] as const) {
   test(`DONE rechaza gate incumplido: ${gate}`, () => {
     assert.throws(() => transition({ ...valid, [field]: value }), { code: gate });
   });
 }
-test('un agente no puede aprobar cierre aunque declare todos los gates', () => {
-  assert.throws(() => transition({ ...valid, actor: agent }), { code: 'FORBIDDEN' });
+test('un agente completa sin aprobaciones humanas previas', () => {
+  assert.deepEqual(
+    transition({
+      ...valid,
+      actor: agent,
+      reviewApproved: false,
+      qaApproved: false,
+      closureApproved: false,
+    }),
+    { status: 'DONE', releaseClaim: true },
+  );
+});
+test('agente puede planificar, pasar a QA, devolver, cancelar y reabrir', () => {
+  for (const [from, to] of [
+    ['BACKLOG', 'READY'],
+    ['IN_REVIEW', 'IN_QA'],
+    ['IN_QA', 'IN_PROGRESS'],
+    ['READY', 'CANCELLED'],
+    ['DONE', 'READY'],
+  ] as const) {
+    assert.equal(
+      transition({
+        ...valid,
+        actor: agent,
+        from,
+        to,
+        reason: 'Cambio autorizado',
+        reviewApproved: false,
+      }).status,
+      to,
+    );
+  }
 });
 test('VIEWER no muta tareas', () => {
   assert.throws(() => transition({ ...valid, actor: { ...human, roles: ['VIEWER'] } }), {

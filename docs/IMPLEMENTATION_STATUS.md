@@ -1,12 +1,155 @@
 # Estado de implementación — bootstrap
 
+## Publicación autorizada de los bloques comprobados
+
+El usuario pidió «haz el push». Se publican los cambios acumulados en
+`feat/acc-foundation`: flujo autónomo/validación posterior, agentes de usuarios con
+varios proyectos, transporte WebSocket, OpenAPI y revisión de administración.
+Las comprobaciones vigentes son 56 unitarias, 92 integraciones, tipos, lint,
+formato y build. Tras el push se adjuntarán las URLs inmutables de los informes
+a las tareas terminadas y se comprobará el resultado por contexto/delta MCP.
+Los apartados siguientes conservan la evidencia y el estado previo a publicación.
+
+## OpenAPI de las rutas REST implementadas
+
+Completado localmente el pendiente OpenAPI de BOOT-006: contrato 3.1.1 público en
+`/api/v1/openapi.json`, con 45 operaciones, 40 paths y 57 esquemas. Incluye entradas
+generadas desde Zod, autenticación cookie/CSRF/Origin y bearer API, permisos humanos,
+idempotencia real, paginación y modelos de respuestas/errores. El inventario se
+compara con los controllers registrados por la API; los comandos concretos usan
+el mismo registro que el dispatch REST. Artefacto reproducible:
+[openapi.json](openapi.json), exportado con
+`node --import tsx scripts/export-openapi.mjs` y comprobado añadiendo `--check`.
+
+Las transformaciones/refinamientos de negocio se explican como validaciones
+adicionales del servidor; Mutation describe campos comunes con extensiones por
+comando. No se añaden entidades pendientes al documento. El contrato no contiene
+configuración privada ni habilita mutaciones sin permisos. Se comprobaron muestras
+reales de identidad, usuarios/agentes, tareas, contexto/delta y errores.
+
+Pasan 56 unitarias y 92 integraciones, tipos API/integraciones, lint, formato y
+build de cinco paquetes. La prueba nueva dejaba inicialmente una tarea BACKLOG
+en el esquema aislado y afectaba un conteo anterior: ahora la cancela por API;
+suite HTTP y global pasaron sin modificar las aserciones previas.
+La API compilada responde 200 por proxy y directamente, coincide con el artefacto,
+no crea cookie y no refleja Host ni configuración privada. Comandos de exportación
+directos con Node; manifiestos y dependencias sin cambios. El build conjunto tuvo
+un timeout de Docker Hub; el build API posterior pasó, incluyendo comprobación de
+políticas pnpm y compilación de cinco paquetes. API/UI/worker locales restaurados.
+[Plan](superpowers/plans/2026-11-04-openapi.md), [operación](runbooks/api.md) y
+[resultado](OPENAPI_RESULT.json). BOOT-006 conserva IN_PROGRESS hasta publicar
+evidencia formal; resumen duplicado por MCP, sesión finalizada y claim liberado.
+Sin nuevo commit/push. Siguientes pendientes: requisitos/decisiones/preguntas e
+impacto, creación general de proyectos y revalidación del cliente Claude.
+
+## WebSocket autorizado y recuperación comprobados
+
+Implementado localmente ACC-LOCAL-013: Socket.IO `/ws/v1` comparte autenticación
+y permisos de proyecto con REST; consume Redis Streams con cursores por proceso.
+Reautoriza conexiones abiertas antes de entregar eventos y cada segundo en reposo.
+Logout, reset, caducidad, cambio obligatorio, membresía retirada o propietario
+deshabilitado cortan el acceso; no se exponen credenciales Redis ni fencing.
+
+El dashboard invalida contexto/detalle, recupera por delta y mantiene consulta
+REST de cinco segundos como respaldo. La comprobación del navegador detectó que
+la pérdida de red podía dejar el socket esperando su timeout: se corrigió con
+cierre/reconexión explícitos en offline/online y el recorrido repetido pasó.
+Evento visible en 836 ms en una muestra local; nueva conexión autorizada y cambio
+creado durante desconexión recuperados. No acredita p95 ni carga objetivo.
+
+Pasan 53 unitarias, 90 integraciones, tipos API/web/integraciones, lint, formato y
+build Docker de cinco paquetes. API/UI/worker actualizados localmente. Revisión
+1440×900 y 390×844 sin desbordamiento; tareas sintéticas canceladas al terminar.
+[Plan](superpowers/plans/2026-11-04-websocket.md),
+[protocolo](runbooks/events.md) y [resultado](WEBSOCKET_RESULT.json).
+Resumen duplicado por MCP, sesión finalizada y claim liberado. ACC-LOCAL-013
+permanece IN_PROGRESS hasta publicar evidencia formal; sin nuevo commit/push.
+Siguientes bloques pendientes: OpenAPI, entidades de requisitos/decisiones/preguntas
+e impacto y la revalidación del cliente Claude con autenticación propia.
+
+## Agentes de usuarios y múltiples proyectos comprobados
+
+Implementado localmente: cada usuario gestiona sus agentes en **Mis agentes** y
+los asigna a proyectos donde tiene permisos; ADMIN gestiona todos y ve los agentes
+de cada usuario. La identidad se conserva al emitir varias credenciales API/MCP.
+Una configuración MCP accede a varios proyectos asignados. Autenticación, contexto
+y auditoría identifican agente y propietario; los permisos vigentes del usuario
+limitan el acceso y la escritura del agente.
+
+Migración 007 aplicada sin alterar las identidades, credenciales ni membresías
+existentes; configuración MCP original sigue operativa. Pasaron 50 pruebas
+unitarias, 81 integraciones, tipos, lint y build Docker. Navegador real comprobó
+gestión propia, dos proyectos, dos credenciales de la misma identidad, retiro de
+proyecto y revocación independiente. Pantallas 1440×900, 1024×768 y 390×844 sin
+desbordamiento ni solapamientos. Usuario sintético deshabilitado y credenciales
+revocadas; se conserva proyecto sintético para trazabilidad.
+
+[Diseño](AGENT_OWNERSHIP_DESIGN.md) y [resultado](AGENT_OWNERSHIP_RESULT.json).
+ACC-LOCAL-018 tiene resumen verificado por MCP; permanece IN_PROGRESS mientras
+la evidencia está local sin publicar. Sesión finalizada y claim liberado. Sin
+nuevo commit/push. Las notas siguientes conservan resultados anteriores.
+
+## Conciliación MCP del trabajo publicado
+
+ACC-LOCAL-010 y ACC-LOCAL-012 ya están en DONE con evidencias del commit `c273f4d`.
+El agente no las validó. Una lectura posterior registra OK humano para
+ACC-LOCAL-012; ACC-LOCAL-010 seguía sin validación. Se usaron sesión, claims, resúmenes, evidencias y transiciones
+MCP nativas; se confirmó el resultado por lectura. Ver
+[ACC_WORK_SYNC.json](ACC_WORK_SYNC.json). ACC-LOCAL-011 ya tiene revisión de navegador
+completada y resumen duplicado; su cierre formal espera publicar la evidencia.
+Sesión finalizada y claim liberado. Las referencias siguientes a BACKLOG o habilitación humana
+conservan contexto histórico y no sustituyen este registro actual.
+
+## Administración web y móvil comprobada
+
+La revisión real cubre creación/asignación VIEWER, login/cambio obligatorio,
+rechazo a reutilizar contraseña temporal, permisos, logout, reset y
+deshabilitación/reactivación. Reset/deshabilitación invalidan la sesión abierta.
+La pérdida/caducidad de cookie se simuló en el contexto aislado; no se esperó una
+hora. Credencial mostrada al emitir, ausente tras cerrar/recargar y de storage,
+revocada por UI y rechazada por API. Recursos sintéticos deshabilitados/revocados.
+
+Corregido el solapamiento real de logo/botones en la cabecera móvil con una fila
+propia para la marca. Se reprodujo antes y midió cero solapamientos después, sin
+desbordamiento, en 1440×900 y 390×844. Lint, formato, tipos web y build de cinco
+paquetes en Docker pasaron. [Resultado](ADMIN_BROWSER_RESULT.json). Sin nuevo
+commit/push; ACC-LOCAL-011 permanece IN_PROGRESS hasta publicar evidencia formal.
+
+## Flujo autónomo y validación posterior a DONE
+
+Implementado localmente por instrucción del usuario: agentes con task:write pueden
+recorrer todos los estados válidos hasta DONE, cancelar y reabrir sin aprobaciones
+humanas previas. Evidencias declaradas elegibles conservan los gates técnicos.
+Una persona con permisos puede validar en DONE sin cambiar estado ni revisión;
+solo avanzan versión técnica y auditoría/outbox. El OK es append-only y se liga a
+la finalización; reapertura conserva el historial y deja la siguiente sin validar.
+
+Migración 006 aplicada, REST validate y lecturas de detalle/contexto disponibles;
+UI distingue completada/validada. Recorrido sintético por MCP nativo hasta DONE y
+validación por interfaz comprobados en 1440×900 y 390×844, sin desbordamiento.
+Diseño: [AGENT_WORKFLOW_DESIGN.md](AGENT_WORKFLOW_DESIGN.md). Evidencia y seguimiento
+MCP: [AGENT_WORKFLOW_RESULT.json](AGENT_WORKFLOW_RESULT.json). Sin commit/push de
+este cambio. Las notas de gates humanos siguientes son históricas y quedan
+sustituidas por esta decisión.
+
 MCP directo de Codex comprobado con seis herramientas nativas: proyecto accesible,
 15 referencias del catálogo conservadas, títulos/criterios e IDs coincidentes,
 reintentos sin duplicados y contexto/delta completos en secuencia 35. Evidencia:
 [CODEX_MCP_RESULT.json](CODEX_MCP_RESULT.json). Las 15 tareas siguen en BACKLOG.
 Reinicio/idempotencia de Compose comprobados; guías operativas, ADR y sustituciones
 de Q8/Q36 actualizadas para autenticación propia. Siguiente acción: validar
-administración web/móvil. Sin commit ni push.
+administración web/móvil. La migración se publicó en `c273f4d` en
+`origin/feat/acc-foundation`; la ampliación posterior del flujo MCP sigue local.
+
+## Duplicación obligatoria de todo el trabajo
+
+La guía compartida exige duplicar cada bloque de trabajo por MCP. Conciliación
+actual de 16 referencias: [ACC_WORK_SYNC.json](ACC_WORK_SYNC.json). ACC-LOCAL-016
+registra la nueva instrucción y el resumen de avances/publicación de las 15 tareas
+anteriores, sin modificar sus criterios ni estados. BOOT-009 ya estaba en
+IN_PROGRESS y se conservó. Sesión de conciliación finalizada y delta comprobado.
+Las evidencias formales por tarea siguen pendientes de los estados/claims exigidos;
+no se declara sincronización completa de esos campos ni aprobación humana.
 
 ## Verificación posterior — Compose y bootstrap
 
@@ -25,8 +168,9 @@ Documentación de autenticación actualizada en decisiones, especificación, ADR
 runbooks local/API/MCP/web/eventos. El recorrido visual anterior queda identificado
 como histórico; administración/móvil nuevos siguen pendientes. Las tareas espejo
 siguen en BACKLOG: no se atribuyen aprobaciones ni cierre a estas comprobaciones.
-La evidencia local todavía no tiene URL HTTPS publicada para adjuntarla en ACC;
-queda pendiente su asociación a ACC-LOCAL-012 y ACC-LOCAL-010 tras publicarla.
+La evidencia ya tiene URL HTTPS en el commit publicado. Su asociación formal a
+ACC-LOCAL-012 y ACC-LOCAL-010 sigue pendiente de habilitación humana desde BACKLOG
+y del claim exigido; el avance está duplicado como contexto en ACC-LOCAL-016.
 
 ## Seguimiento duplicado en ACC
 

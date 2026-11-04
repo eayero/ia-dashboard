@@ -7,6 +7,7 @@ import { migrate } from '../../packages/db/src/migrate.ts';
 import { createApplication } from '../../apps/api/src/app.ts';
 import { loadConfiguration } from '../../apps/api/src/config.ts';
 import { hashPassword } from '../../apps/api/src/auth/password.ts';
+import { Client, StreamableHTTPClientTransport } from '../../apps/api/test/mcp-client.ts';
 const schema = `acc_test_${randomUUID().replaceAll('-', '')}`;
 const admin = new Pool({ connectionString: process.env.DATABASE_URL });
 const pool = new Pool({
@@ -93,6 +94,297 @@ async function signIn(username = 'local-admin', secret = password) {
 }
 const get = (path: string, session: { cookie: string }) =>
   fetch(`${origin}/api/v1${path}`, { headers: { cookie: session.cookie } });
+test('un usuario tiene agentes propios con una identidad y credencial para varios proyectos', async () => {
+  const adminSession = await signIn();
+  const user = await createUser(adminSession);
+  const projectIds = [randomUUID(), randomUUID()];
+  for (const id of projectIds) {
+    await pool.query('INSERT INTO projects(id,name) VALUES ($1,$2)', [id, 'Owned agent project']);
+    assert.equal(
+      (
+        await post(
+          `/admin/users/${user.id}/projects/${id}`,
+          { active: true, roles: ['OWNER'] },
+          adminSession,
+        )
+      ).status,
+      201,
+    );
+  }
+  const temporary = await signIn(user.username);
+  const changed = await post(
+    '/auth/password',
+    { currentPassword: password, newPassword: `${password}-owner` },
+    temporary,
+  );
+  assert.equal(changed.status, 201);
+  const owner = { cookie: cookie(changed), csrf: (await changed.json()).data.csrfToken as string };
+  const response = await post(
+    '/agents',
+    {
+      label: 'Owned multi-project agent',
+      projectIds,
+      scopes: ['task:read', 'task:write'],
+      audiences: ['api', 'mcp'],
+      expiresInDays: 1,
+    },
+    owner,
+  );
+  assert.equal(response.status, 201);
+  const credential = (await response.json()).data;
+  assert.equal(credential.ownerUserId, user.id);
+  const ownList = await get('/agents', owner);
+  assert.equal(ownList.status, 200);
+  const identities = (await ownList.json()).data;
+  assert.equal(identities.length, 1);
+  assert.equal(identities[0].id, credential.principalId);
+  assert.deepEqual(
+    identities[0].projects.map((p: { id: string }) => p.id).sort(),
+    projectIds.sort(),
+  );
+  assert.equal(JSON.stringify(identities).includes(credential.token), false);
+  assert.equal(JSON.stringify(identities).includes('token_hash'), false);
+  const projects = await fetch(`${origin}/api/v1/projects`, {
+    headers: { authorization: `Bearer ${credential.token}` },
+  });
+  assert.equal(projects.status, 200);
+  assert.deepEqual(
+    (await projects.json()).data.map((p: { id: string }) => p.id).sort(),
+    projectIds.sort(),
+  );
+  const me = await fetch(`${origin}/api/v1/auth/me`, {
+    headers: { authorization: `Bearer ${credential.token}` },
+  });
+  assert.equal((await me.json()).data.principal.ownerUserId, user.id);
+  const extra = await post(
+    `/agents/${credential.principalId}/credentials`,
+    {
+      label: 'Second credential same agent',
+      scopes: ['task:read'],
+      audiences: ['mcp'],
+      expiresInDays: 1,
+    },
+    owner,
+  );
+  assert.equal(extra.status, 201);
+  assert.equal((await extra.json()).data.principalId, credential.principalId);
+  const users = (await (await get('/admin/users', adminSession)).json()).data.users;
+  assert.equal(
+    users.find((u: { id: string }) => u.id === user.id).agents[0].id,
+    credential.principalId,
+  );
+  const client = new Client({ name: 'owned-agent-projects', version: '1.0.0' });
+  try {
+    await client.connect(
+      new StreamableHTTPClientTransport(new URL(`${origin}/mcp`), {
+        requestInit: { headers: { authorization: `Bearer ${credential.token}` } },
+      }),
+    );
+    const listed = await client.callTool({ name: 'acc_list_projects', arguments: {} });
+    assert.equal(listed.isError, undefined);
+    assert.deepEqual(
+      (listed.structuredContent as { data: { id: string }[] }).data.map((p) => p.id).sort(),
+      projectIds.sort(),
+    );
+    for (const id of projectIds) {
+      const created = await client.callTool({
+        name: 'acc_find_or_create_task',
+        arguments: {
+          projectId: id,
+          idempotencyKey: randomUUID(),
+          input: {
+            title: 'Owned agent attribution',
+            criteria: [{ id: 'c', description: 'Owner is auditable', required: true }],
+          },
+        },
+      });
+      assert.notEqual(created.isError, true);
+      const audit = (
+        await pool.query('SELECT actor_id,actor_user_id FROM audit_events WHERE entity_id=$1', [
+          (created.structuredContent as { data: { id: string } }).data.id,
+        ])
+      ).rows[0];
+      assert.equal(audit.actor_id, credential.principalId);
+      assert.equal(audit.actor_user_id, user.id);
+    }
+  } finally {
+    await client.close();
+  }
+  const another = await createUser(adminSession);
+  const anotherTemporary = await signIn(another.username);
+  const anotherChange = await post(
+    '/auth/password',
+    { currentPassword: password, newPassword: `${password}-another` },
+    anotherTemporary,
+  );
+  const anotherSession = {
+    cookie: cookie(anotherChange),
+    csrf: (await anotherChange.json()).data.csrfToken as string,
+  };
+  assert.equal((await (await get('/agents', anotherSession)).json()).data.length, 0);
+  assert.equal(
+    (
+      await post(
+        `/agents/${credential.principalId}/credentials`,
+        { label: 'Denied', scopes: ['task:read'], audiences: ['mcp'] },
+        anotherSession,
+      )
+    ).status,
+    403,
+  );
+  assert.equal(
+    (
+      await post(
+        `/agents/${credential.principalId}/projects/${projectIds[0]}`,
+        { active: false, scopes: ['task:read'], expectedVersion: 1 },
+        anotherSession,
+      )
+    ).status,
+    403,
+  );
+  const unrelated = randomUUID();
+  await pool.query("INSERT INTO projects(id,name) VALUES ($1,'Unrelated project')", [unrelated]);
+  assert.equal(
+    (
+      await post(
+        `/agents/${credential.principalId}/projects/${unrelated}`,
+        { active: false, scopes: ['task:read'], expectedVersion: 0 },
+        owner,
+      )
+    ).status,
+    404,
+  );
+  assert.equal(
+    (
+      await post(
+        '/agents',
+        {
+          label: 'Forged owner',
+          ownerUserId: user.id,
+          projectIds,
+          scopes: ['task:read'],
+          audiences: ['mcp'],
+        },
+        anotherSession,
+      )
+    ).status,
+    403,
+  );
+  for (const id of projectIds)
+    assert.equal(
+      (
+        await post(
+          `/admin/users/${userId}/projects/${id}`,
+          { active: true, roles: ['OWNER'] },
+          adminSession,
+        )
+      ).status,
+      201,
+    );
+  const store = new CoordinationStore(pool);
+  const logical = await store.registerSession(
+    { projectId: projectIds[0]!, principalId: credential.principalId },
+    randomUUID(),
+    {},
+  );
+  assert.equal(
+    (
+      await post(
+        `/admin/users/${user.id}/projects/${projectIds[0]}`,
+        { active: false, roles: ['OWNER'], expectedVersion: 1 },
+        adminSession,
+      )
+    ).status,
+    201,
+  );
+  const afterRemoval = await fetch(`${origin}/api/v1/projects`, {
+    headers: { authorization: `Bearer ${credential.token}` },
+  });
+  assert.deepEqual(
+    (await afterRemoval.json()).data.map((p: { id: string }) => p.id),
+    [projectIds[1]],
+  );
+  assert.equal(
+    (
+      await fetch(`${origin}/api/v1/projects/${projectIds[0]}/tasks`, {
+        headers: { authorization: `Bearer ${credential.token}` },
+      })
+    ).status,
+    403,
+  );
+  assert.equal(
+    (
+      await pool.query('SELECT ended_at IS NOT NULL AS ended FROM agent_sessions WHERE id=$1', [
+        logical.id,
+      ])
+    ).rows[0].ended,
+    true,
+  );
+  assert.equal(
+    (
+      await post(
+        `/admin/users/${user.id}/projects/${projectIds[0]}`,
+        { active: true, roles: ['VIEWER'], expectedVersion: 2 },
+        adminSession,
+      )
+    ).status,
+    201,
+  );
+  assert.equal(
+    (
+      await post(
+        '/agents',
+        {
+          label: 'Cannot exceed viewer',
+          projectIds: [projectIds[0]],
+          scopes: ['task:read', 'task:write'],
+          audiences: ['mcp'],
+        },
+        owner,
+      )
+    ).status,
+    403,
+  );
+  const agentContext = { projectId: projectIds[1]!, principalId: credential.principalId };
+  const work = await store.createTask(agentContext, randomUUID(), {
+    title: 'Owner disabling revokes claim',
+    criteria: [{ id: 'c', description: 'Claim revoked', required: true }],
+  });
+  const ready = await store.transitionTask(agentContext, randomUUID(), work.id, {
+    expectedVersion: work.version,
+    to: 'READY',
+  });
+  const activeSession = await store.registerSession(agentContext, randomUUID(), {});
+  await store.claimTask(agentContext, randomUUID(), work.id, {
+    expectedVersion: ready.version,
+    sessionId: activeSession.id,
+  });
+  assert.equal(
+    (await post(`/admin/users/${user.id}/status`, { disabled: true }, adminSession)).status,
+    201,
+  );
+  assert.equal(
+    (await pool.query('SELECT revoked FROM task_claims WHERE task_id=$1', [work.id])).rows[0]
+      .revoked,
+    true,
+  );
+  assert.equal(
+    (
+      await pool.query('SELECT ended_at IS NOT NULL AS ended FROM agent_sessions WHERE id=$1', [
+        activeSession.id,
+      ])
+    ).rows[0].ended,
+    true,
+  );
+  assert.equal(
+    (
+      await fetch(`${origin}/api/v1/projects`, {
+        headers: { authorization: `Bearer ${credential.token}` },
+      })
+    ).status,
+    401,
+  );
+});
 async function createUser(session: { cookie: string; csrf: string }, role = 'USER') {
   const username = `user-${randomUUID().slice(0, 8)}`;
   const response = await post(

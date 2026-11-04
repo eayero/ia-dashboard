@@ -84,7 +84,7 @@ export async function bootstrapLocal(
       "INSERT INTO project_members(project_id,principal_id,roles) VALUES ($1,$2,ARRAY['OWNER']) ON CONFLICT DO NOTHING",
       [projectId, principalId],
     );
-    const agents = await provisionAgents(db, projectId, cached);
+    const agents = await provisionAgents(db, projectId, principalId, cached);
     await db.query('COMMIT');
     return { projectId, principalId, username, password, agents };
   } catch (error) {

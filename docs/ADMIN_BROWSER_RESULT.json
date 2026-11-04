@@ -1,0 +1,104 @@
+{
+  "checkedAt": "2026-11-04T04:27:20.738Z",
+  "environment": "local Compose at http://localhost:55173",
+  "method": "Playwright CLI, synthetic users and credentials",
+  "userJourney": {
+    "completed": true,
+    "username": "acc-ui-check-mw1lsqyl",
+    "checks": {
+      "userCreatedThroughUi": true,
+      "viewerAssignedThroughUi": true,
+      "temporaryLoginBlocksProject": true,
+      "temporaryPasswordCannotBeReused": true,
+      "requiredPasswordChangeThroughUi": true,
+      "viewerCannotSeeAdministration": true,
+      "viewerCannotCreateTaskThroughUi": true,
+      "viewerAdministrationDeniedByServer": true,
+      "logoutRemovesProjectData": true,
+      "passwordResetInvalidatesOpenSession": true,
+      "resetRequiresNewPassword": true,
+      "disableInvalidatesOpenSession": true,
+      "disabledLoginUsesGenericError": true,
+      "reenabledUserCanLogin": true,
+      "missingOrExpiredCookieRemovesProjectData": true
+    }
+  },
+  "credentialJourney": {
+    "completed": true,
+    "label": "ACC safe synthetic credential mw1lz7xi",
+    "checks": {
+      "credentialShownOnIssuance": true,
+      "issuedCredentialAuthenticates": true,
+      "secretRemovedOnClose": true,
+      "secretNotInBrowserStorage": true,
+      "listContainsNeitherSecretNorHash": true,
+      "secretCannotBeReopenedAfterReload": true,
+      "revokedCredentialRejectedByServer": true,
+      "desktopNoDocumentOverflow": true,
+      "mobileNoDocumentOverflow": true,
+      "userTableHasAccessibleScrollRegion": true
+    }
+  },
+  "mobileFix": {
+    "file": "apps/web/src/style.css",
+    "rule": ".topbar .brand flex: 1 0 100% at max-width 760px",
+    "overlapBefore": ["Volver al proyecto"],
+    "overlapAfter": [],
+    "documentHorizontalOverflow": false
+  },
+  "viewports": [
+    {
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "artifacts": [
+    "output/playwright/accounts-viewer-mobile.png",
+    "output/playwright/accounts-admin-desktop.png",
+    "output/playwright/accounts-admin-mobile.png",
+    "output/playwright/accounts-credentials-mobile.png"
+  ],
+  "cleanup": {
+    "syntheticUsersDisabled": 2,
+    "syntheticCredentialsRevoked": 2,
+    "readBackVerified": true
+  },
+  "verification": {
+    "lint": true,
+    "format": true,
+    "webTypecheck": true,
+    "dockerBuildFivePackages": true,
+    "unitAndIntegrationRerun": false,
+    "reason": "This continuation changed only responsive CSS and documentation; browser checks and appropriate static/build verification passed."
+  },
+  "nativeMcp": {
+    "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85",
+    "externalRef": "repo:dashboard:ACC-LOCAL-011",
+    "status": "IN_PROGRESS",
+    "version": 8,
+    "workRevision": 3,
+    "summaryReadVerified": true,
+    "claimReleased": true,
+    "sessionId": "4e3ff60b-fd97-4bb9-88c4-6d6ec8195465",
+    "sessionEnded": true,
+    "projectSeq": "96",
+    "contextComplete": true,
+    "deltaComplete": true,
+    "deltaEvents": 0
+  },
+  "inspectionIncident": {
+    "description": "A browser state inspection included one synthetic test token. It was immediately revoked and its test account disabled. The final credential run avoided sensitive snapshots.",
+    "revoked": true,
+    "credentialOrPasswordIncludedInReport": false
+  },
+  "limitations": [
+    "Cookie loss/expiration handling was simulated by clearing cookies in an isolated browser context; the one-hour wall-clock expiry was not awaited.",
+    "No complete WCAG audit, permanent browser CI suite or production validation is claimed.",
+    "No new commit or push. Formal evidence attachment and closure of ACC-LOCAL-011 await publication of this local report.",
+    "Initial selectors for implicit select/textarea labels were corrected in the test helper; no product authentication failure was found."
+  ]
+}

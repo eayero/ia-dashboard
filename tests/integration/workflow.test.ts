@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { CoordinationStore, Pool } from '../../packages/db/src/index.ts';
+import { seedAgentOwner } from '../../apps/api/test/agent-owner-fixture.ts';
 
 const schema = `acc_test_${randomUUID().replaceAll('-', '')}`;
 const admin = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -36,6 +37,7 @@ async function fixture() {
     ownerId,
     agentId,
   ]);
+  await seedAgentOwner(pool, agentId, ownerId);
   await pool.query(
     "INSERT INTO project_members(project_id,principal_id,roles,scopes) VALUES ($1,$2,ARRAY['OWNER'],'{}'),($1,$3,'{}',ARRAY['task:write'])",
     [projectId, ownerId, agentId],
@@ -154,119 +156,211 @@ async function done(f: Fixture) {
   };
 }
 
-test('recorrido persistido hasta DONE rechaza evidencia declarada y falta de aprobaciones', async () => {
+test('agente recorre todos los estados sin aprobaciones y validación humana solo audita DONE', async () => {
   const f = await fixture();
-  const claimed = await implementation(f);
-  const work = await store.updateWork(f.agent, randomUUID(), claimed.id, {
-    expectedVersion: claimed.version,
+  const created = await store.createTask(f.agent, randomUUID(), { title: 'Autonomía', criteria });
+  const ready = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: created.version,
+    to: 'READY',
+  });
+  await assert.rejects(
+    store.validateTask(f.owner, randomUUID(), created.id, {
+      expectedVersion: ready.version,
+      workRevision: 1,
+    }),
+    { code: 'TASK_NOT_DONE' },
+  );
+  const claimed = await store.claimTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: ready.version,
+    sessionId: f.sessionId,
+  });
+  await assert.rejects(
+    store.transitionTask(f.agent, randomUUID(), created.id, {
+      expectedVersion: claimed.version,
+      sessionId: f.sessionId,
+      fencingToken: claimed.fencingToken,
+      to: 'IN_REVIEW',
+    }),
+    { code: 'EVIDENCE_REQUIRED' },
+  );
+  const declared = await evidence(f, { ...claimed, id: created.id, sessionId: f.sessionId });
+  const review = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: declared.version,
     sessionId: f.sessionId,
     fencingToken: claimed.fencingToken,
-    summary: 'Resultado implementado',
+    to: 'IN_REVIEW',
   });
-  assert.equal(work.workRevision, 2);
-  const declared = await evidence(f, { ...claimed, version: work.version });
-  const sendReview = (expectedVersion: number) =>
-    store.transitionTask(f.agent, randomUUID(), claimed.id, {
-      expectedVersion,
-      to: 'IN_REVIEW',
-      sessionId: f.sessionId,
-      fencingToken: claimed.fencingToken,
-    });
-  await assert.rejects(sendReview(declared.version), { code: 'EVIDENCE_REQUIRED' });
-  await assert.rejects(
-    store.acceptEvidence(f.agent, randomUUID(), claimed.id, {
-      expectedVersion: declared.version,
-      evidenceId: declared.evidenceId,
-    }),
-    { code: 'FORBIDDEN' },
-  );
-  const accepted = await store.acceptEvidence(f.owner, randomUUID(), claimed.id, {
-    expectedVersion: declared.version,
-    evidenceId: declared.evidenceId,
-  });
-  const review = await sendReview(accepted.version);
-  assert.equal(review.status, 'IN_REVIEW');
-  await assert.rejects(
-    store.heartbeatClaim(f.agent, randomUUID(), claimed.id, {
-      expectedVersion: review.version,
-      sessionId: f.sessionId,
-      fencingToken: claimed.fencingToken,
-    }),
-    { code: 'STALE_CLAIM' },
-  );
-  await assert.rejects(
-    store.transitionTask(f.owner, randomUUID(), claimed.id, {
-      expectedVersion: review.version,
-      to: 'IN_QA',
-    }),
-    { code: 'REVIEW_REQUIRED' },
-  );
-  await assert.rejects(
-    store.approveTask(f.agent, randomUUID(), claimed.id, {
-      expectedVersion: review.version,
-      workRevision: 2,
-      kind: 'REVIEW',
-    }),
-    { code: 'FORBIDDEN' },
-  );
-  const reviewApproval = await store.approveTask(f.owner, randomUUID(), claimed.id, {
+  const qa = await store.transitionTask(f.agent, randomUUID(), created.id, {
     expectedVersion: review.version,
-    workRevision: 2,
-    kind: 'REVIEW',
-  });
-  const inQa = await store.transitionTask(f.owner, randomUUID(), claimed.id, {
-    expectedVersion: reviewApproval.version,
     to: 'IN_QA',
   });
-  await assert.rejects(
-    store.transitionTask(f.owner, randomUUID(), claimed.id, {
-      expectedVersion: inQa.version,
-      to: 'DONE',
-    }),
-    { code: 'QA_REQUIRED' },
-  );
-  const qaApproval = await store.approveTask(f.owner, randomUUID(), claimed.id, {
-    expectedVersion: inQa.version,
-    workRevision: 2,
-    kind: 'QA',
-  });
-  await assert.rejects(
-    store.transitionTask(f.owner, randomUUID(), claimed.id, {
-      expectedVersion: qaApproval.version,
-      to: 'DONE',
-    }),
-    { code: 'HUMAN_APPROVAL_REQUIRED' },
-  );
-  const closure = await store.approveTask(f.owner, randomUUID(), claimed.id, {
-    expectedVersion: qaApproval.version,
-    workRevision: 2,
-    kind: 'CLOSURE',
-  });
-  const complete = await store.transitionTask(f.owner, randomUUID(), claimed.id, {
-    expectedVersion: closure.version,
+  const complete = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: qa.version,
     to: 'DONE',
   });
   assert.equal(complete.status, 'DONE');
   assert.equal(
     (
-      await pool.query(
-        'SELECT count(*)::int AS count FROM approvals WHERE task_id=$1 AND work_revision=2',
-        [claimed.id],
-      )
+      await pool.query('SELECT count(*)::int AS count FROM approvals WHERE task_id=$1', [
+        created.id,
+      ])
     ).rows[0].count,
-    3,
+    0,
+  );
+  await assert.rejects(
+    store.validateTask(f.agent, randomUUID(), created.id, {
+      expectedVersion: complete.version,
+      workRevision: 1,
+    }),
+    { code: 'FORBIDDEN' },
+  );
+  await assert.rejects(
+    store.validateTask(f.owner, randomUUID(), created.id, {
+      expectedVersion: complete.version,
+      workRevision: 2,
+    }),
+    { code: 'WORK_REVISION_CONFLICT' },
+  );
+  const key = randomUUID();
+  const input = { expectedVersion: complete.version, workRevision: 1, note: 'OK humano' };
+  const validated = await store.validateTask(f.owner, key, created.id, input);
+  assert.deepEqual(
+    await store.validateTask(f.owner, key, created.id, input),
+    JSON.parse(JSON.stringify(validated)),
+  );
+  assert.equal(validated.status, 'DONE');
+  assert.equal(validated.workRevision, 1);
+  assert.equal(validated.version, complete.version + 1);
+  await assert.rejects(
+    store.validateTask(f.owner, randomUUID(), created.id, {
+      ...input,
+      expectedVersion: validated.version,
+    }),
+    { code: 'TASK_ALREADY_VALIDATED' },
   );
   const state = (
-    await pool.query('SELECT status,work_revision FROM work_items WHERE id=$1', [claimed.id])
+    await pool.query('SELECT status,work_revision,completion_version FROM work_items WHERE id=$1', [
+      created.id,
+    ])
   ).rows[0];
-  assert.deepEqual(state, { status: 'DONE', work_revision: 2 });
+  assert.deepEqual(state, {
+    status: 'DONE',
+    work_revision: 1,
+    completion_version: complete.version,
+  });
+  const reopened = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: validated.version,
+    to: 'READY',
+    reason: 'Continuar',
+  });
+  assert.equal(reopened.status, 'READY');
+  assert.equal(
+    (await pool.query('SELECT completion_version FROM work_items WHERE id=$1', [created.id]))
+      .rows[0].completion_version,
+    null,
+  );
+  assert.equal(
+    (
+      await pool.query('SELECT count(*)::int AS count FROM task_validations WHERE task_id=$1', [
+        created.id,
+      ])
+    ).rows[0].count,
+    1,
+  );
+  await assert.rejects(pool.query('DELETE FROM task_validations WHERE task_id=$1', [created.id]));
+  const nextClaim = await store.claimTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: reopened.version,
+    sessionId: f.sessionId,
+  });
+  const nextReview = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: nextClaim.version,
+    sessionId: f.sessionId,
+    fencingToken: nextClaim.fencingToken,
+    to: 'IN_REVIEW',
+  });
+  const nextQa = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: nextReview.version,
+    to: 'IN_QA',
+  });
+  const nextDone = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: nextQa.version,
+    to: 'DONE',
+  });
+  const historical = await pool.query(
+    'SELECT v.completion_version=w.completion_version AS current FROM task_validations v JOIN work_items w ON w.id=v.task_id WHERE v.task_id=$1',
+    [created.id],
+  );
+  assert.equal(historical.rows[0].current, false);
+  const secondValidation = await store.validateTask(f.owner, randomUUID(), created.id, {
+    expectedVersion: nextDone.version,
+    workRevision: 1,
+  });
+  assert.equal(
+    (
+      await pool.query('SELECT count(*)::int AS count FROM task_validations WHERE task_id=$1', [
+        created.id,
+      ])
+    ).rows[0].count,
+    2,
+  );
+  const reopenedAgain = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: secondValidation.version,
+    to: 'READY',
+    reason: 'Cancelar trabajo futuro',
+  });
+  const cancelled = await store.transitionTask(f.agent, randomUUID(), created.id, {
+    expectedVersion: reopenedAgain.version,
+    to: 'CANCELLED',
+    reason: 'Ya no procede',
+  });
+  assert.equal(cancelled.status, 'CANCELLED');
   const counts = (
     await pool.query(
-      'SELECT (SELECT count(*)::int FROM audit_events WHERE entity_id=$1) AS events, (SELECT count(*)::int FROM event_outbox o JOIN audit_events e ON o.event_id=e.id WHERE e.entity_id=$1) AS outbox',
-      [claimed.id],
+      'SELECT (SELECT count(*)::int FROM audit_events WHERE entity_id=$1) AS events,(SELECT count(*)::int FROM event_outbox o JOIN audit_events e ON o.event_id=e.id WHERE e.entity_id=$1) AS outbox',
+      [created.id],
     )
   ).rows[0];
   assert.equal(counts.events, counts.outbox);
+});
+test('validación humana concurrente resuelve una vez y falla si no puede auditarse', async () => {
+  const f = await fixture();
+  const task = await done(f);
+  await pool.query(
+    "CREATE FUNCTION reject_validation_fixture() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN IF NEW.action='task.validated' THEN RAISE EXCEPTION 'Synthetic audit failure'; END IF; RETURN NEW; END; $$; CREATE TRIGGER reject_validation_fixture BEFORE INSERT ON audit_events FOR EACH ROW EXECUTE FUNCTION reject_validation_fixture()",
+  );
+  try {
+    await assert.rejects(
+      store.validateTask(f.owner, randomUUID(), task.id, {
+        expectedVersion: task.version,
+        workRevision: task.workRevision,
+      }),
+    );
+  } finally {
+    await pool.query(
+      'DROP TRIGGER reject_validation_fixture ON audit_events; DROP FUNCTION reject_validation_fixture()',
+    );
+  }
+  assert.equal(
+    (
+      await pool.query('SELECT count(*)::int AS count FROM task_validations WHERE task_id=$1', [
+        task.id,
+      ])
+    ).rows[0].count,
+    0,
+  );
+  const results = await Promise.allSettled(
+    [1, 2].map(() =>
+      store.validateTask(f.owner, randomUUID(), task.id, {
+        expectedVersion: task.version,
+        workRevision: task.workRevision,
+      }),
+    ),
+  );
+  assert.equal(results.filter((r) => r.status === 'fulfilled').length, 1);
+  assert.equal(
+    results.filter((r) => r.status === 'rejected' && r.reason.code === 'VERSION_CONFLICT').length,
+    1,
+  );
 });
 test('cambio protegido rechaza claim expirado y cambio humano explícito revoca y conserva historia', async () => {
   const f = await fixture();

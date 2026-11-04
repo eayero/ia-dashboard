@@ -6,6 +6,9 @@ export type AuthenticatedIdentity = {
   kind: 'HUMAN' | 'AGENT';
   mode: 'COOKIE' | 'BEARER';
   scopes: string[];
+  ownerUserId?: string;
+  ownerUsername?: string;
+  agentName?: string;
   user?: {
     username: string;
     displayName: string;

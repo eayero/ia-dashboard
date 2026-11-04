@@ -21,5 +21,10 @@ Usuarios sin registro público; administración global por humanos ADMIN, sin ac
 implícito al contenido de proyectos. Recuperación mediante contraseña temporal y
 cambio obligatorio. Se conservan IDs, historial y referencias OIDC anteriores;
 la migración 005 añade autenticación local sin eliminar esas referencias.
-Agentes no pueden aprobar gates humanos.
+La decisión posterior de flujo autónomo permite al agente todos los estados
+válidos, incluido DONE. No requiere aprobaciones humanas de revisión, QA o cierre;
+se mantienen evidencias técnicas, versiones, claims y dependencias. Un humano con
+permisos de escritura puede validar después de DONE sin cambiar estado ni revisión.
+Migración 006 conserva el OK append-only ligado a la versión de finalización;
+reabrir conserva el historial y no valida automáticamente la nueva finalización.
 Infraestructura local no constituye configuración segura para producción.

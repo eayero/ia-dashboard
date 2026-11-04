@@ -23,12 +23,23 @@ import { HealthController } from './health/controller.ts';
 import type { ApiRequest } from './auth/types.ts';
 import { mountMcp } from './mcp/gateway.ts';
 import { AccountAdministration } from './auth/admin.ts';
-import { AccountsController } from './auth/admin-controller.ts';
+import { AccountsController, UserAgentsController } from './auth/admin-controller.ts';
+import { mountRealtime } from './realtime/gateway.ts';
+import { OpenApiController } from './openapi/controller.ts';
+
+export const API_CONTROLLERS = [
+  AuthController,
+  ProjectsController,
+  HealthController,
+  AccountsController,
+  UserAgentsController,
+  OpenApiController,
+];
 
 export async function createApplication(config: ApiConfiguration, pool: pg.Pool) {
   await pool.query('SELECT 1');
   await pool.query(
-    'SELECT u.credential_version,t.token_hash,h.sid,m.active,s.version,c.seq FROM local_users u CROSS JOIN agent_credentials t CROSS JOIN http_sessions h CROSS JOIN project_members m CROSS JOIN agent_sessions s CROSS JOIN context_snapshots c LIMIT 0',
+    'SELECT u.credential_version,t.token_hash,h.sid,m.active,s.version,c.seq,v.completion_version,a.owner_user_id FROM local_users u CROSS JOIN agent_credentials t CROSS JOIN http_sessions h CROSS JOIN project_members m CROSS JOIN agent_sessions s CROSS JOIN context_snapshots c CROSS JOIN task_validations v CROSS JOIN agent_profiles a LIMIT 0',
   );
   const queries = new ProjectQueries(pool, config.sessionSecret);
   const runtime: ApiRuntime = {
@@ -41,8 +52,12 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     accounts: new AccountAdministration(pool),
   };
   @Module({
-    controllers: [AuthController, ProjectsController, HealthController, AccountsController],
-    providers: [{ provide: API_RUNTIME, useValue: runtime }, AuthenticationGuard],
+    controllers: API_CONTROLLERS,
+    providers: [
+      { provide: API_RUNTIME, useValue: runtime },
+      AuthenticationGuard,
+      { provide: 'REALTIME_SHUTDOWN', useValue: { onModuleDestroy: () => realtime?.close() } },
+    ],
   })
   class ApiModule {}
   const app = await NestFactory.create(ApiModule, {
@@ -92,27 +107,27 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     pruneSessionInterval: 60,
     errorLog: () => console.error('HTTP session store error'),
   });
-  app.use(
-    session({
-      name: 'acc.sid',
-      secret: config.sessionSecret,
-      store: sessionStore,
-      resave: false,
-      saveUninitialized: false,
-      rolling: false,
-      cookie: {
-        httpOnly: true,
-        secure: config.secureCookie,
-        sameSite: 'lax',
-        path: '/',
-        maxAge: 5 * 60 * 1000,
-      },
-    }),
-  );
+  const sessionMiddleware = session({
+    name: 'acc.sid',
+    secret: config.sessionSecret,
+    store: sessionStore,
+    resave: false,
+    saveUninitialized: false,
+    rolling: false,
+    cookie: {
+      httpOnly: true,
+      secure: config.secureCookie,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 5 * 60 * 1000,
+    },
+  });
+  app.use(sessionMiddleware);
   mountMcp(instance, runtime);
   app.useGlobalFilters(new ApiExceptionFilter());
   await app.init();
   const server = app.getHttpServer() as Server;
+  const realtime = mountRealtime(server, runtime, sessionMiddleware);
   server.once('close', () => {
     void sessionStore.close();
   });

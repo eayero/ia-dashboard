@@ -61,6 +61,7 @@ export function errorResponse(error: unknown, request: ApiRequest) {
                   'PROJECT_ARCHIVED',
                   'CLAIMS_PAUSED',
                   'APPROVAL_ALREADY_RESOLVED',
+                  'TASK_ALREADY_VALIDATED',
                   'DEPENDENCY_EXISTS',
                 ].includes(code)
               ? 409

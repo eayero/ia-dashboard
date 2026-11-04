@@ -4,6 +4,7 @@ import { API_RUNTIME, type ApiRuntime } from '../context.ts';
 import { AuthenticationGuard } from '../auth/guard.ts';
 import type { ApiRequest } from '../auth/types.ts';
 import { ApiError, success } from '../common/errors.ts';
+import { taskCommands, sessionCommands } from './commands.ts';
 
 @Controller('api/v1/projects')
 @UseGuards(AuthenticationGuard)
@@ -69,21 +70,8 @@ export class ProjectsController {
     @Param('taskId') taskId: string,
     @Param('command') command: string,
   ) {
-    const commands = {
-      claim: 'claimTask',
-      heartbeat: 'heartbeatClaim',
-      release: 'releaseClaim',
-      revoke: 'revokeClaim',
-      work: 'updateWork',
-      revise: 'reviseTask',
-      transition: 'transitionTask',
-      evidence: 'addEvidence',
-      'accept-evidence': 'acceptEvidence',
-      approve: 'approveTask',
-      dependency: 'changeDependency',
-    } as const;
-    if (!Object.hasOwn(commands, command)) throw new ApiError(404, 'NOT_FOUND');
-    const method = commands[command as keyof typeof commands];
+    if (!Object.hasOwn(taskCommands, command)) throw new ApiError(404, 'NOT_FOUND');
+    const { method } = taskCommands[command as keyof typeof taskCommands];
     const context = this.context(req, projectId);
     z.uuid().parse(taskId);
     return success(
@@ -129,26 +117,16 @@ export class ProjectsController {
   ) {
     const context = this.context(req, projectId);
     z.uuid().parse(sessionId);
-    if (command === 'heartbeat')
-      return success(
-        req,
-        await this.runtime.store.heartbeatSession(
-          context,
-          req.get('idempotency-key') ?? '',
-          sessionId,
-          req.body,
-        ),
-      );
-    if (command === 'end')
-      return success(
-        req,
-        await this.runtime.store.endSession(
-          context,
-          req.get('idempotency-key') ?? '',
-          sessionId,
-          req.body,
-        ),
-      );
-    throw new ApiError(404, 'NOT_FOUND');
+    if (!Object.hasOwn(sessionCommands, command)) throw new ApiError(404, 'NOT_FOUND');
+    const { method } = sessionCommands[command as keyof typeof sessionCommands];
+    return success(
+      req,
+      await this.runtime.store[method](
+        context,
+        req.get('idempotency-key') ?? '',
+        sessionId,
+        req.body,
+      ),
+    );
   }
 }

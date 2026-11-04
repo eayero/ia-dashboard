@@ -9,6 +9,7 @@ export type AuditEventRow = {
   entity_id: string;
   entity_type: 'TASK' | 'SESSION' | 'PRINCIPAL';
   actor_id: string;
+  actor_user_id: string | null;
   session_id: string | null;
   trace_id: string;
   payload: Record<string, unknown>;
@@ -26,6 +27,7 @@ export function eventFromRow(row: AuditEventRow) {
     occurredAt: row.occurred_at.toISOString(),
     entity: { id: row.entity_id, type: row.entity_type },
     actorId: row.actor_id,
+    actorUserId: row.actor_user_id ?? null,
     sessionId: row.session_id,
     traceId: row.trace_id,
     payload,

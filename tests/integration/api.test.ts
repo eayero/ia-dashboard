@@ -6,6 +6,8 @@ import { loadConfiguration } from '../../apps/api/src/config.ts';
 import { bootstrapLocal } from '../../apps/api/src/local-bootstrap.ts';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { Pool } from '../../packages/db/src/index.ts';
+import { restRouteInventory } from '../../apps/api/test/openapi-fixtures.ts';
+import { envelope, errorModel, responseModels } from '../../apps/api/src/openapi/models.ts';
 
 const schema = `acc_test_${randomUUID().replaceAll('-', '')}`;
 const admin = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -61,6 +63,79 @@ async function get(path: string, withCookie = cookie) {
     redirect: 'manual',
   });
 }
+
+test('OpenAPI público describe rutas concretas, autenticación y contrato sin datos del entorno', async () => {
+  const response = await get('/openapi.json', '');
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('content-type') ?? '', /application\/json/);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  const doc = await response.json();
+  assert.equal(doc.openapi, '3.1.1');
+  assert.deepEqual(doc.servers, [{ url: '/' }]);
+  assert.ok(doc.paths['/api/v1/projects/{projectId}/tasks/{taskId}/validate'].post);
+  assert.ok(doc.paths['/api/v1/agents/{id}/projects/{projectId}'].post);
+  assert.equal(JSON.stringify(doc).includes(process.env.SESSION_SECRET!), false);
+  assert.equal(JSON.stringify(doc).includes(process.env.DATABASE_URL!), false);
+  const documented = Object.entries(doc.paths).flatMap(([path, methods]) =>
+    Object.keys(methods as object).map((method) => `${method} ${path}`),
+  );
+  assert.deepEqual(documented.sort(), restRouteInventory().sort());
+});
+
+test('respuestas reales REST satisfacen modelos publicados y el contrato no autoriza mutaciones', async () => {
+  for (const [path, name] of [
+    ['/auth/me', 'Identity'],
+    ['/projects', 'Projects'],
+    ['/admin/users', 'Users'],
+    ['/admin/agent-identities', 'Agents'],
+    ['/admin/agents', 'AgentCredentials'],
+    ['/agents', 'Agents'],
+    [`/projects/${projectId}/tasks`, 'TaskList'],
+    [`/projects/${projectId}/agent-sessions`, 'Sessions'],
+  ] as const) {
+    const response = await get(path);
+    assert.equal(response.status, 200, path);
+    envelope(responseModels[name]).parse(await response.json());
+  }
+  const created = await post(`/projects/${projectId}/tasks`, {
+    title: 'OpenAPI synthetic contract',
+    workType: 'OTHER',
+    criteria: [{ id: 'a', description: 'Contrato verificado', required: true }],
+  });
+  assert.equal(created.status, 201);
+  const task = envelope(responseModels.CreatedTask).parse(await created.json()).data;
+  envelope(responseModels.TaskDetail).parse(
+    await (await get(`/projects/${projectId}/tasks/${task.id}`)).json(),
+  );
+  const snapshot = envelope(responseModels.Context).parse(
+    await (await get(`/projects/${projectId}/context?limit=100`)).json(),
+  ).data;
+  assert.equal(snapshot.complete, true);
+  envelope(responseModels.Changes).parse(
+    await (
+      await get(
+        `/projects/${projectId}/events?cursor=${encodeURIComponent(snapshot.changesCursor!)}`,
+      )
+    ).json(),
+  );
+  const denied = await post(
+    `/projects/${projectId}/tasks/${task.id}/transition`,
+    { to: 'READY', expectedVersion: task.version },
+    { 'x-csrf-token': 'wrong' },
+  );
+  assert.equal(denied.status, 403);
+  errorModel.parse(await denied.json());
+  const malformed = await post(`/projects/${projectId}/tasks`, { title: 'No criteria' });
+  assert.equal(malformed.status, 400);
+  errorModel.parse(await malformed.json());
+  const cancelled = await post(`/projects/${projectId}/tasks/${task.id}/transition`, {
+    to: 'CANCELLED',
+    expectedVersion: task.version,
+    reason: 'Comprobación sintética de contrato terminada',
+  });
+  assert.equal(cancelled.status, 201);
+  envelope(responseModels.Mutation).parse(await cancelled.json());
+});
 async function post(path: string, body: unknown, extra: Record<string, string> = {}) {
   return fetch(`${origin}/api/v1${path}`, {
     method: 'POST',
@@ -187,7 +262,7 @@ test('HTTP rechaza Origin y CSRF incorrectos, identidad inyectada y recursos aje
   assert.equal((await post(path, input, { 'idempotency-key': '' })).status, 400);
   assert.equal((await get(`/projects/${randomUUID()}/tasks`)).status, 403);
 });
-test('sesión ACC explícita y comandos REST recorren hasta DONE sin atajos de gates', async () => {
+test('REST completa con evidencia declarada y validación humana posterior sin cambiar estado', async () => {
   const base = `/projects/${projectId}`;
   const created = await post(`${base}/tasks`, {
     title: 'Recorrido autenticado',
@@ -217,48 +292,45 @@ test('sesión ACC explícita y comandos REST recorren hasta DONE sin atajos de g
       criterionIds: ['AC-1'],
     })
   ).data;
-  const blocked = await command(
-    'transition',
-    { ...claim, expectedVersion: declared.version, to: 'IN_REVIEW' },
-    422,
-  );
-  assert.equal(blocked.error.code, 'EVIDENCE_REQUIRED');
-  const accepted = (
-    await command('accept-evidence', { expectedVersion: declared.version, evidenceId: declared.id })
-  ).data;
   const review = (
-    await command('transition', { ...claim, expectedVersion: accepted.version, to: 'IN_REVIEW' })
+    await command('transition', { ...claim, expectedVersion: declared.version, to: 'IN_REVIEW' })
   ).data;
-  const reviewApproval = (
-    await command('approve', {
-      expectedVersion: review.version,
-      workRevision: review.workRevision,
-      kind: 'REVIEW',
-    })
-  ).data;
-  const qa = (await command('transition', { expectedVersion: reviewApproval.version, to: 'IN_QA' }))
-    .data;
-  const qaApproval = (
-    await command('approve', {
-      expectedVersion: qa.version,
-      workRevision: qa.workRevision,
-      kind: 'QA',
-    })
-  ).data;
-  const denied = await command(
-    'transition',
-    { expectedVersion: qaApproval.version, to: 'DONE' },
-    422,
+  const qa = (await command('transition', { expectedVersion: review.version, to: 'IN_QA' })).data;
+  const complete = await command('transition', { expectedVersion: qa.version, to: 'DONE' });
+  const validation = await command('validate', {
+    expectedVersion: complete.data.version,
+    workRevision: complete.data.workRevision,
+    note: 'Revisado por humano',
+  });
+  assert.equal(validation.data.status, 'DONE');
+  const validationPath = `${base}/tasks/${task.id}/validate`;
+  const validationBody = {
+    expectedVersion: validation.data.version,
+    workRevision: complete.data.workRevision,
+  };
+  assert.equal(
+    (await post(validationPath, validationBody, { authorization: `Bearer ${agents[0]!.apiToken}` }))
+      .status,
+    403,
   );
-  assert.equal(denied.error.code, 'HUMAN_APPROVAL_REQUIRED');
-  const closure = (
-    await command('approve', {
-      expectedVersion: qaApproval.version,
-      workRevision: qa.workRevision,
-      kind: 'CLOSURE',
-    })
-  ).data;
-  const complete = await command('transition', { expectedVersion: closure.version, to: 'DONE' });
+  await pool.query(
+    "UPDATE project_members SET roles=ARRAY['VIEWER'] WHERE project_id=$1 AND principal_id=(SELECT principal_id FROM local_users WHERE username=$2)",
+    [projectId, ownerLogin.username],
+  );
+  try {
+    assert.equal((await post(validationPath, validationBody)).status, 403);
+  } finally {
+    await pool.query(
+      "UPDATE project_members SET roles=ARRAY['OWNER'] WHERE project_id=$1 AND principal_id=(SELECT principal_id FROM local_users WHERE username=$2)",
+      [projectId, ownerLogin.username],
+    );
+  }
+  assert.equal(validation.data.workRevision, complete.data.workRevision);
+  const validatedDetail = (await (await get(`${base}/tasks/${task.id}`)).json()).data;
+  assert.equal(validatedDetail.validations.length, 1);
+  assert.equal(validatedDetail.validations[0].current, true);
+  const context = (await (await get(`${base}/context?limit=100`)).json()).data;
+  assert.ok(context.records.some((r: { entityType: string }) => r.entityType === 'VALIDATION'));
   assert.equal(complete.data.status, 'DONE');
   assert.equal(complete.meta.version, complete.data.version);
   assert.ok(complete.meta.projectSeq);

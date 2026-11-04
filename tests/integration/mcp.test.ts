@@ -264,7 +264,7 @@ test('MCP rechaza audiencia REST y limita herramientas según scopes de credenci
   }
 });
 
-test('dos clientes MCP compiten por claim; fencing, evidencia y gates humanos se conservan hasta DONE', async () => {
+test('dos clientes MCP compiten por claim y el agente recorre READY hasta DONE sin aprobaciones', async () => {
   const connections = await Promise.all([client(0), client(1)]);
   const projectId = randomUUID();
   const store = new CoordinationStore(pool);
@@ -310,9 +310,9 @@ test('dos clientes MCP compiten por claim; fencing, evidencia y gates humanos se
       },
     });
     const taskId = created.id as string;
-    const ready = await store.transitionTask(owner, randomUUID(), taskId, {
-      expectedVersion: created.version,
-      to: 'READY',
+    const ready = await call(0, 'acc_transition_task', {
+      taskId,
+      input: { expectedVersion: created.version, to: 'READY' },
     });
     const sessions = await Promise.all(
       [0, 1].map((i) => call(i, 'acc_register_session', { input: {} })),
@@ -382,69 +382,32 @@ test('dos clientes MCP compiten por claim; fencing, evidencia y gates humanos se
       },
     });
     lease = { ...lease, version: evidence.version };
-    await call(
-      winner,
-      'acc_transition_task',
-      { taskId, input: { ...claimInput(), to: 'IN_REVIEW' } },
-      'EVIDENCE_REQUIRED',
-    );
-    const accepted = await store.acceptEvidence(owner, randomUUID(), taskId, {
-      expectedVersion: evidence.version,
-      evidenceId: evidence.id,
-    });
-    lease = { ...lease, version: accepted.version };
     const review = await call(winner, 'acc_transition_task', {
       taskId,
       input: { ...claimInput(), to: 'IN_REVIEW' },
     });
-    const approvedReview = await store.approveTask(owner, randomUUID(), taskId, {
-      expectedVersion: review.version,
-      workRevision: updated.workRevision,
-      kind: 'REVIEW',
+    const qa = await call(winner, 'acc_transition_task', {
+      taskId,
+      input: { expectedVersion: review.version, to: 'IN_QA' },
     });
-    await call(
-      winner,
-      'acc_transition_task',
-      { taskId, input: { expectedVersion: approvedReview.version, to: 'IN_QA' } },
-      'FORBIDDEN',
-    );
-    const qa = await store.transitionTask(owner, randomUUID(), taskId, {
-      expectedVersion: approvedReview.version,
-      to: 'IN_QA',
+    const done = await call(winner, 'acc_transition_task', {
+      taskId,
+      input: { expectedVersion: qa.version, to: 'DONE' },
     });
-    const approvedQa = await store.approveTask(owner, randomUUID(), taskId, {
-      expectedVersion: qa.version,
-      workRevision: updated.workRevision,
-      kind: 'QA',
-    });
-    await call(
-      winner,
-      'acc_transition_task',
-      { taskId, input: { expectedVersion: approvedQa.version, to: 'DONE' } },
-      'FORBIDDEN',
-    );
     await assert.rejects(
-      store.transitionTask(owner, randomUUID(), taskId, {
-        expectedVersion: approvedQa.version,
-        to: 'DONE',
-      }),
-      { code: 'HUMAN_APPROVAL_REQUIRED' },
+      store.validateTask(
+        { projectId, principalId: seeded.agents[winner]!.principalId },
+        randomUUID(),
+        taskId,
+        { expectedVersion: done.version, workRevision: updated.workRevision },
+      ),
+      { code: 'FORBIDDEN' },
     );
-    const closure = await store.approveTask(owner, randomUUID(), taskId, {
-      expectedVersion: approvedQa.version,
+    const validated = await store.validateTask(owner, randomUUID(), taskId, {
+      expectedVersion: done.version,
       workRevision: updated.workRevision,
-      kind: 'CLOSURE',
     });
-    await call(
-      winner,
-      'acc_transition_task',
-      { taskId, input: { expectedVersion: closure.version, to: 'DONE' } },
-      'FORBIDDEN',
-    );
-    const done = await store.transitionTask(owner, randomUUID(), taskId, {
-      expectedVersion: closure.version,
-      to: 'DONE',
-    });
+    assert.equal(validated.status, 'DONE');
     assert.equal(done.status, 'DONE');
     const observed = await connections[winner]!.callTool({
       name: 'acc_get_task',
@@ -467,6 +430,10 @@ test('revocar membresía bloquea próximas llamadas del mismo cliente MCP y repl
   await pool.query(
     "INSERT INTO project_members(project_id,principal_id,scopes) VALUES ($1,$2,ARRAY['task:read','task:write'])",
     [projectId, principalId],
+  );
+  await pool.query(
+    "INSERT INTO project_members(project_id,principal_id,roles) VALUES ($1,$2,ARRAY['OWNER'])",
+    [projectId, seeded.principalId],
   );
   const args = { projectId, idempotencyKey: randomUUID(), input: {} };
   try {

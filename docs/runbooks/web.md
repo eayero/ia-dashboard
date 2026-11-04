@@ -36,6 +36,12 @@ sigue separado mediante `pnpm outbox:dev`.
 
 ## Comportamiento disponible
 
+- «Mis agentes» para cada usuario: identidad propia, propietario, proyectos,
+  credenciales API/MCP, emisión adicional y revocación. ADMIN ve todos los agentes
+  en Usuarios y accesos y cada fila de usuario muestra los agentes que posee.
+- Un agente puede tener varios proyectos y credenciales; la UI distingue ambos
+  conceptos. Las sesiones reclamadas muestran nombre del agente y su propietario.
+
 - Login local, cambio de contraseña y cambio obligatorio de contraseña temporal.
 - «Usuarios y accesos» para ADMIN del sistema: usuarios, acceso/roles por proyecto,
   reset temporal, habilitación y credenciales de agentes con revocación. El rol
@@ -50,8 +56,9 @@ sigue separado mediante `pnpm outbox:dev`.
 - Sesiones ACC explícitas y finalización; reclamar, renovar/liberar, actualizar
   implementación y adjuntar informes OTHER/REVIEW. Iniciar sesión de trabajo
   desde «Sesiones» antes de reclamar una tarea.
-- Aceptación humana de evidencia, revisión, paso a QA, aprobación de QA y de
-  cierre por separado, cierre DONE y devolución motivada a implementación.
+- Paso por revisión/QA hasta DONE sin aprobaciones humanas previas. En DONE,
+  «Validar tarea» registra un OK humano sin cambiar estado ni revisión. Se muestra
+  quién validó, cuándo y el historial; reapertura deja el OK anterior como histórico.
 - Permisos de interfaz derivados de la membresía del snapshot; servidor vuelve
   a validarlos en cada comando. VIEWER tiene detalle de consulta, sin mutaciones.
 - Diálogos nativos, etiquetas, foco visible, Escape y restitución de foco. Tabla
@@ -86,8 +93,10 @@ administración, edición de alcance/dependencias y gestión completa de alertas
 ## Verificación histórica anterior a la migración de autenticación
 
 El recorrido siguiente corresponde al dashboard con OIDC. Tras la migración se
-comprobó el login local de escritorio; los flujos de administración y móvil nuevos
-siguen pendientes. Los resultados anteriores no acreditan estos formularios.
+comprobó el login local de escritorio. Los flujos nuevos de administración y móvil
+se revisaron después: [resultado](../ADMIN_BROWSER_RESULT.json). Incluye reset,
+deshabilitación, permisos y credenciales, así como la corrección de cabecera móvil.
+Los resultados históricos siguientes no sustituyen esa revisión nueva.
 
 - Build y tipos globales, lint/formato, **50 unitarias** y **67 integraciones**.
   Tres unitarias web comprueban paginación consistente y limpieza observable de
@@ -116,3 +125,14 @@ ni a una suite de navegador permanente en CI.
 
 Las integraciones HTTP usan temporalmente 55173: detener web/preview antes de
 `pnpm test:integration`. La API normal en 53000 puede permanecer arrancada.
+
+La gestión propia de agentes se comprobó con un usuario USER real, dos proyectos,
+dos credenciales de la misma identidad, retiro de un proyecto y revocación
+independiente. ADMIN ve cada agente en la lista de su propietario. Se revisaron
+1440×900, 1024×768 y 390×844; ver [resultado](../AGENT_OWNERSHIP_RESULT.json).
+
+El dashboard escucha `/ws/v1` para invalidar contexto y detalles al recibir
+eventos, y reconcilia por delta al reconectarse. Conserva la consulta de cinco
+segundos como respaldo; un evento no sustituye una entidad completa. El protocolo,
+permisos y límites están en [eventos](events.md) y la comprobación en
+[WEBSOCKET_RESULT.json](../WEBSOCKET_RESULT.json).

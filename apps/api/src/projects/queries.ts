@@ -16,7 +16,7 @@ export class ProjectQueries {
       archived: boolean;
       claimsPaused: boolean;
     }>(
-      `SELECT p.id,p.name,p.archived,p.claims_paused AS "claimsPaused" FROM projects p JOIN project_members m ON m.project_id=p.id JOIN principals u ON u.id=m.principal_id WHERE m.principal_id=$1 AND NOT u.disabled AND m.active AND (u.kind='HUMAN' OR 'task:read'=ANY(m.scopes)) ORDER BY p.id`,
+      `SELECT p.id,p.name,p.archived,p.claims_paused AS "claimsPaused" FROM projects p JOIN project_members m ON m.project_id=p.id JOIN principals u ON u.id=m.principal_id WHERE m.principal_id=$1 AND NOT u.disabled AND m.active AND (u.kind='HUMAN' OR ('task:read'=ANY(m.scopes) AND agent_owner_project_access(u.id,p.id,false))) ORDER BY p.id`,
       [principalId],
     );
     return result.rows;
@@ -36,7 +36,7 @@ export class ProjectQueries {
           : 'BEGIN ISOLATION LEVEL REPEATABLE READ',
       );
       const access = await client.query(
-        "SELECT m.project_id FROM project_members m JOIN principals p ON p.id=m.principal_id WHERE m.project_id=$1 AND m.principal_id=$2 AND NOT p.disabled AND m.active AND (p.kind='HUMAN' OR 'task:read'=ANY(m.scopes))",
+        "SELECT m.project_id FROM project_members m JOIN principals p ON p.id=m.principal_id WHERE m.project_id=$1 AND m.principal_id=$2 AND NOT p.disabled AND m.active AND (p.kind='HUMAN' OR ('task:read'=ANY(m.scopes) AND agent_owner_project_access(p.id,$1,false)))",
         [projectId, principalId],
       );
       if (!access.rowCount) throw new ApiError(403, 'FORBIDDEN');
@@ -112,7 +112,7 @@ export class ProjectQueries {
         version: number;
         workRevision: number;
       }>(
-        `SELECT id,title,public_id AS "publicId",status,version,work_revision AS "workRevision",work_type AS "workType",work_summary AS summary,criteria,impact_pending AS "impactPending" FROM work_items WHERE project_id=$1 AND id=$2`,
+        `SELECT id,title,public_id AS "publicId",status,version,work_revision AS "workRevision",work_type AS "workType",work_summary AS summary,criteria,impact_pending AS "impactPending",completion_version AS "completionVersion" FROM work_items WHERE project_id=$1 AND id=$2`,
         [projectId, taskId],
       );
       if (!found.rows[0]) throw new ApiError(404, 'TASK_NOT_FOUND');
@@ -128,6 +128,10 @@ export class ProjectQueries {
         `SELECT c.principal_id AS "principalId",c.session_id AS "sessionId",c.expires_at AS "expiresAt",CASE WHEN c.principal_id=$3 THEN c.fencing_token::text ELSE NULL END AS "fencingToken" FROM task_claims c JOIN agent_sessions s ON s.id=c.session_id JOIN principals p ON p.id=c.principal_id WHERE c.project_id=$1 AND c.task_id=$2 AND NOT c.revoked AND c.expires_at>clock_timestamp() AND s.ended_at IS NULL AND s.expires_at>clock_timestamp() AND NOT p.disabled`,
         [projectId, taskId, principalId],
       );
+      const validations = await client.query(
+        'SELECT v.id,v.work_revision AS "workRevision",v.completion_version AS "completionVersion",v.principal_id AS "principalId",v.note,v.created_at AS "createdAt",(w.status=\'DONE\' AND w.completion_version=v.completion_version AND w.work_revision=v.work_revision) AS current FROM task_validations v JOIN work_items w ON w.project_id=v.project_id AND w.id=v.task_id WHERE v.project_id=$1 AND v.task_id=$2 ORDER BY v.created_at,v.id',
+        [projectId, taskId],
+      );
       const dependencies = await client.query(
         'SELECT d.depends_on AS id,w.public_id AS "publicId",w.status FROM task_dependencies d JOIN work_items w ON w.id=d.depends_on AND w.project_id=d.project_id WHERE d.project_id=$1 AND d.task_id=$2 ORDER BY d.depends_on',
         [projectId, taskId],
@@ -140,6 +144,7 @@ export class ProjectQueries {
         ...found.rows[0],
         evidence: evidence.rows,
         approvals: approvals.rows,
+        validations: validations.rows,
         claim: claim.rows[0] ?? null,
         dependencies: dependencies.rows,
         projectSeq: seq.rows[0]?.value ?? '0',

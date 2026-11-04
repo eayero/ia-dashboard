@@ -76,11 +76,22 @@ y lo incluye en cada llamada. En este repositorio el espejo usa
 `3268b4d2-cd9d-4afc-bc76-ea631997cd73`, «ACC · Demostración local». El token
 identifica al agente; no sustituye la membresía del proyecto.
 
+Cada agente tiene un usuario propietario. La misma credencial/configuración MCP
+puede listar y usar todos sus proyectos asignados, indicando projectId en cada
+llamada; no es necesario crear otra identidad para otro proyecto o credencial.
+El servidor comprueba token, membresía del agente y acceso vigente del propietario.
+Retirar acceso o deshabilitar a esa persona corta la vía del agente. Contexto
+incluye agentName/ownerUserId/ownerUsername en MEMBER; los eventos nuevos guardan
+actorId agente y actorUserId propietario. Estos campos no los elige el cliente.
+
 Buscar antes de crear. `externalRef` encuentra una identidad exacta; un título
 similar no fusiona tareas automáticamente. Repetir un comando con la misma clave
 y contenido conserva el resultado; cambiar el contenido produce conflicto.
 Las aprobaciones humanas y el cambio de alcance permanecen en los canales humanos.
-Un agente no puede mover a QA ni cerrar DONE, incluso con aprobaciones existentes.
+El agente con task:write puede mover a READY, QA y DONE, cancelar y reabrir dentro
+del grafo válido. Evidencias técnicas declaradas y criterios, dependencias,
+versiones y claims siguen siendo obligatorios. La validación humana posterior a
+DONE es independiente, no cambia estado y se realiza por el canal humano REST/UI.
 
 Secuencia recomendada: listar proyectos → registrar sesión → cargar todas las
 páginas de contexto → buscar/crear tarea → adquirir claim → implementar/renovar →
@@ -115,9 +126,11 @@ oficial a través de ese origen público en preview compilado.
 
 `tests/integration/mcp.test.ts` usa el cliente oficial, PostgreSQL real y autenticación propia:
 contratos, contexto/delta, reintentos, dos agentes/claims, fencing, evidencia,
-permisos humanos hasta DONE y revocación. Las acciones humanas del recorrido MCP
-se ejecutan por el servicio transaccional, no mediante una identidad agente.
-Las pruebas REST acreditan por separado login local, cookies y CSRF.
+flujo autónomo hasta DONE y revocación. Las pruebas REST acreditan por separado
+login local, cookies, CSRF y validación exclusivamente humana posterior a DONE.
+`local-auth.test.ts` comprueba con el cliente MCP oficial una misma credencial
+en dos proyectos, identidad del propietario y restricciones de acceso vigentes.
+Ver [resultado de propiedad y proyectos](../AGENT_OWNERSHIP_RESULT.json).
 
 Comprobación adicional: Claude Code **2.1.317**, `mcp list`, confirmó **Connected**
 contra la API compilada. Se usó `CLAUDE_CONFIG_DIR` dentro de `.cache` y un header
@@ -127,4 +140,6 @@ La conexión de Claude corresponde al hito anterior con autenticación OIDC; deb
 revalidarse tras la migración de autenticación. Codex ya ejecutó seis herramientas
 nativas con tokens propios de ACC: verificó 15 referencias, reintentos sin
 duplicados, contexto y delta. Ver [evidencia de Codex](../CODEX_MCP_RESULT.json).
-Los recorridos completos de clientes y gates humanos siguen pendientes.
+El recorrido autónomo se comprobó después por MCP nativo de Codex; ver
+[resultado del flujo](../AGENT_WORKFLOW_RESULT.json). La nueva conexión de Claude
+continúa pendiente de revalidación.

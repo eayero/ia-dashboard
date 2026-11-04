@@ -33,8 +33,10 @@ import { CreateTask } from './create-task.tsx';
 import { TaskPanel } from './task-detail.tsx';
 import { LoginForm, PasswordForm, type Me } from './auth-forms.tsx';
 import { Accounts } from './accounts.tsx';
+import { Agents } from './agents.tsx';
+import { watchProject } from './realtime.ts';
 
-type Search = { projectId?: string; taskId?: string; view?: 'accounts' };
+type Search = { projectId?: string; taskId?: string; view?: 'accounts' | 'agents' };
 function App() {
   const client = useQueryClient();
   const search = rootRoute.useSearch();
@@ -160,6 +162,15 @@ function App() {
             {search.view === 'accounts' ? 'Volver al proyecto' : 'Usuarios y accesos'}
           </button>
         )}
+        <button
+          onClick={() =>
+            void navigate({
+              search: search.view === 'agents' ? { projectId: project?.id } : { view: 'agents' },
+            })
+          }
+        >
+          {search.view === 'agents' ? 'Volver al proyecto' : 'Mis agentes'}
+        </button>
         <button onClick={() => setChangingPassword(true)}>Mi contraseña</button>
         <button onClick={() => void logout()} disabled={loggingOut}>
           {loggingOut ? 'Saliendo…' : 'Salir'}
@@ -168,6 +179,10 @@ function App() {
       {Boolean(logoutError) && <Notice error={logoutError} />}
       {search.view === 'accounts' && me.data.user.systemRole === 'ADMIN' ? (
         <Accounts me={me.data} />
+      ) : search.view === 'agents' ? (
+        <main id="main" className="page accounts-page">
+          <Agents me={me.data} />
+        </main>
       ) : projects.isPending ? (
         <main id="main" className="page">
           <p role="status">Cargando proyectos…</p>
@@ -236,6 +251,34 @@ function Dashboard({
       dashboard(project.id, client.getQueryData<DashboardState>(key), signal),
     refetchInterval: 5000,
   });
+  useEffect(() => {
+    let refreshTimer: ReturnType<typeof setTimeout> | undefined;
+    let active = true;
+    const refresh = () => {
+      if (!active || refreshTimer) return;
+      refreshTimer = setTimeout(() => {
+        refreshTimer = undefined;
+        void client.invalidateQueries({ queryKey: ['project', project.id] });
+      }, 75);
+    };
+    const close = watchProject(project.id, refresh, (status) => {
+      if (status === 401) window.dispatchEvent(new Event('acc:auth-expired'));
+      else {
+        // Cancel in-flight reads before removing project data after access revocation.
+        void client.cancelQueries({ queryKey: ['project', project.id] }).then(() => {
+          if (!active) return;
+          client.removeQueries({ queryKey: ['project', project.id] });
+          void client.invalidateQueries({ queryKey: ['projects'] });
+          refresh();
+        });
+      }
+    });
+    return () => {
+      active = false;
+      clearTimeout(refreshTimer);
+      close();
+    };
+  }, [client, project.id, me.principal.id]);
   const command = useCommand(project.id, me.csrfToken);
   const [view, setView] = useState('overview');
   const [filter, setFilter] = useState('ALL');
@@ -576,7 +619,14 @@ function Dashboard({
                                     owner.principalId === me.principal.id ? (
                                       'Tu sesión'
                                     ) : (
-                                      `Otra sesión · ${owner.principalId.slice(0, 6)}`
+                                      (() => {
+                                        const member = members.find(
+                                          (m) => m.principalId === owner.principalId,
+                                        );
+                                        return member?.kind === 'AGENT'
+                                          ? `${member.agentName ?? owner.principalId.slice(0, 6)} · de ${member.ownerUsername ?? member.ownerUserId}`
+                                          : `Otra sesión · ${owner.principalId.slice(0, 6)}`;
+                                      })()
                                     )
                                   ) : (
                                     <span className="muted">Sin claim</span>
@@ -668,7 +718,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const rootRoute = createRootRoute({
   component: Outlet,
   validateSearch: (value: Record<string, unknown>): Search => ({
-    ...(value.view === 'accounts' ? { view: 'accounts' as const } : {}),
+    ...(value.view === 'accounts' || value.view === 'agents' ? { view: value.view } : {}),
     ...(typeof value.projectId === 'string' && uuid.test(value.projectId)
       ? { projectId: value.projectId }
       : {}),

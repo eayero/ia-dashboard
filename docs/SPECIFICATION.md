@@ -26,7 +26,7 @@ Skills orientan; permisos, claims y gates se imponen en servidor.
 | FR-008 | Identidades, capacidades, sesiones y heartbeat                      | P0        |
 | FR-009 | Claim atómico con lease, renovación, liberación y expiración        | P0        |
 | FR-010 | Máquina de estados y concurrencia optimista                         | P0        |
-| FR-011 | DONE condicionado por criterios, evidencias y aprobaciones          | P0        |
+| FR-011 | DONE con criterios/evidencia técnica y validación humana posterior  | P0        |
 | FR-012 | Dashboard consistente de tareas, bloqueos, decisiones y sesiones    | P0        |
 | FR-013 | Detalles, filtros, búsqueda, Kanban y tabla                         | P1        |
 | FR-014 | Inbox humano y preguntas críticas                                   | P0        |
@@ -85,7 +85,12 @@ IN_PROGRESS → BLOCKED → READY. Rechazos de review/QA vuelven a IN_PROGRESS.
 DONE → READY solo reapertura autorizada con motivo. No terminal → CANCELLED
 requiere gestión y motivo. Cada transición valida autorización, versión, bloqueos
 y gates. Review/QA liberan claim. DONE exige criterios obligatorios, evidencias,
-dependencias y aprobaciones satisfechas; UI enumera gates fallidos.
+dependencias satisfechas; UI enumera gates técnicos fallidos. El agente con
+permisos puede recorrer todos los estados válidos, cancelar y reabrir, sin
+aprobaciones humanas previas. Después de DONE, un humano con permisos de escritura
+puede dar un OK de auditoría sin cambiar estado ni revisión. La validación guarda
+autor, fecha, nota y finalización; al reabrir permanece histórica y la próxima
+finalización requiere otro OK. Las aprobaciones antiguas se conservan como historia.
 
 ## Claims e idempotencia
 
@@ -160,7 +165,8 @@ Unitarias de estados/permisos/gates/normalización. PostgreSQL real para carrera
 100 claims → uno; 100 reintentos idempotentes → un efecto; clave reutilizada con
 otro payload rechazada; stale fencing tras expiración; heartbeat/expiración;
 dependencias opuestas sin ciclo; dos aprobaciones → una resolución; Redis caído
-sin pérdida; outbox tras crash; DONE sin pruebas/aprobación rechazado.
+sin pérdida; outbox tras crash; DONE sin evidencia técnica rechazado y validación
+por agente rechazada.
 
 Contratos REST/OpenAPI y MCP, aislamiento cross-project, tokens/Origin/WS,
 Vitest/RTL/MSW/axe y Playwright con deep links y reconexión. Carga controlada:

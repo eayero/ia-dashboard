@@ -1,0 +1,136 @@
+{
+  "checkedAt": "2026-11-04T06:19:00Z",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "scope": "Completar el pendiente OpenAPI de BOOT-006 para las rutas REST implementadas.",
+  "contract": {
+    "version": "3.1.1",
+    "endpoint": "/api/v1/openapi.json",
+    "artifact": "docs/openapi.json",
+    "paths": 40,
+    "operations": 45,
+    "schemas": 57,
+    "requestSchemasFromSharedZod": true,
+    "registeredControllerInventoryMatches": true,
+    "dispatchAndDocumentationShareCommandRegistry": true,
+    "localReferencesResolved": true,
+    "uniqueOperationIds": true,
+    "relativeServer": "/",
+    "rawJsonWithoutAccEnvelope": true,
+    "publicReadOnly": true,
+    "newDependencies": false,
+    "newMigrations": false,
+    "packageManifestsUnchanged": true,
+    "exportCommand": "node --import tsx scripts/export-openapi.mjs",
+    "checkCommand": "node --import tsx scripts/export-openapi.mjs --check"
+  },
+  "verification": {
+    "unitTests": {
+      "passed": 56,
+      "failed": 0
+    },
+    "integrationTests": {
+      "passed": 92,
+      "failed": 0
+    },
+    "apiSuiteAfterFinalInventoryChange": {
+      "passed": 16,
+      "failed": 0
+    },
+    "apiTypes": true,
+    "integrationTypes": true,
+    "lint": true,
+    "format": true,
+    "diffCheck": true,
+    "artifactCurrent": true,
+    "nativeBuild": {
+      "successfulPackages": 5
+    },
+    "dockerApiBuild": {
+      "successfulPackages": 5
+    },
+    "supplyChainPolicies": {
+      "entriesChecked": 478,
+      "passed": true,
+      "controlsRelaxed": false
+    }
+  },
+  "coverage": [
+    "Cada ruta realmente registrada por Nest tiene operación OpenAPI, expandiendo comandos concretos.",
+    "ID de operación único, parámetros de path completos y referencias locales resolubles.",
+    "Cookie/CSRF/Origin y bearer API se distinguen; validate exige humano e Idempotency-Key se limita a operaciones que lo implementan.",
+    "Respuestas reales de identidad, usuarios/agentes, tareas/detalle, contexto/delta y errores satisfacen los modelos publicados.",
+    "El documento y su artefacto coinciden, sin URL privada ni secreto del entorno; no crea cookies ni refleja Host.",
+    "El documento no permite eludir CSRF ni validación de cuerpos al mutar."
+  ],
+  "compiledHttp": {
+    "checkedAt": "2026-11-04T06:18:01.186Z",
+    "results": [
+      {
+        "base": "http://localhost:55173",
+        "status": 200,
+        "matchesArtifact": true,
+        "setsCookie": false,
+        "noStore": true,
+        "privateConfigAbsent": true,
+        "sha256": "557aaa9cb2cb2c58039f8ee9d6a86e1492530d7ef8714d954387d77a286969b3"
+      },
+      {
+        "base": "http://127.0.0.1:53000",
+        "status": 200,
+        "matchesArtifact": true,
+        "setsCookie": false,
+        "noStore": true,
+        "privateConfigAbsent": true,
+        "sha256": "557aaa9cb2cb2c58039f8ee9d6a86e1492530d7ef8714d954387d77a286969b3"
+      }
+    ],
+    "hostHeaderDoesNotChangeDocument": true,
+    "operations": 45,
+    "paths": 40,
+    "schemas": 57
+  },
+  "runtime": {
+    "apiHealthy": true,
+    "uiHealthy": true,
+    "postgresHealthy": true,
+    "redisHealthy": true,
+    "workerRunning": true,
+    "migrationExitCode": 0,
+    "bootstrapExitCode": 0,
+    "uiImageReusedBecauseNoUiChanges": true
+  },
+  "nativeMcp": {
+    "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+    "externalRef": "repo:dashboard:BOOT-006",
+    "status": "IN_PROGRESS",
+    "version": 7,
+    "workRevision": 3,
+    "summaryReadVerified": true,
+    "sessionId": "2dc8873d-6e72-4cdf-bf4e-04aab578ec10",
+    "sessionEnded": true,
+    "claimReleased": true,
+    "context": {
+      "pages": 1,
+      "complete": true,
+      "projectSeq": "140"
+    },
+    "delta": {
+      "complete": true,
+      "eventsAfterSnapshot": 0
+    }
+  },
+  "limitations": [
+    "JSON Schema no reproduce por completo normalización y refinamientos Zod: se describen como validaciones adicionales autoritativas del servidor.",
+    "Mutation publica campos comunes y admite extensiones específicas de cada comando; los recursos principales tienen modelos propios.",
+    "La primera suite global detectó contaminación del fixture BACKLOG nuevo; la prueba cancela su tarea por API y la repetición global pasó 92/92 conservando la aserción anterior.",
+    "El build conjunto falló por timeout TLS consultando Docker Hub. Reintentos API completaron revisión de políticas y build; la versión final con manifiestos intactos reutilizó la capa de dependencias verificada.",
+    "La primera invocación nativa de build necesitó añadir el pnpm local al PATH; la repetición compiló cinco paquetes.",
+    "No se añadieron entidades del MVP pendientes ni se ejecutó una auditoría externa de cumplimiento OpenAPI."
+  ],
+  "publication": {
+    "newCommit": false,
+    "pushed": false,
+    "formalEvidencePending": true,
+    "reason": "Resultado local sin URL HTTPS publicada; BOOT-006 conserva IN_PROGRESS."
+  }
+}

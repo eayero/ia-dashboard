@@ -34,11 +34,46 @@ export class AccountsController {
   @Get('agents') async agents(@Req() req: ApiRequest) {
     return success(req, await this.runtime.accounts.agents(req.identity!));
   }
+  @Get('agent-identities') async identities(@Req() req: ApiRequest) {
+    return success(req, await this.runtime.accounts.agentIdentities(req.identity!, true));
+  }
   @Post('agents') async agent(@Req() req: ApiRequest) {
     return success(req, await this.runtime.accounts.createAgent(req.identity!, req.body));
   }
   @Post('agents/:id/revoke') async revoke(@Req() req: ApiRequest, @Param('id') id: string) {
     emptyCommandSchema.parse(req.body);
     return success(req, await this.runtime.accounts.revokeCredential(req.identity!, id));
+  }
+}
+
+@Controller('api/v1/agents')
+@UseGuards(AuthenticationGuard)
+export class UserAgentsController {
+  constructor(@Inject(API_RUNTIME) private runtime: ApiRuntime) {}
+  @Get() async list(@Req() req: ApiRequest) {
+    return success(req, await this.runtime.accounts.agentIdentities(req.identity!));
+  }
+  @Post() async create(@Req() req: ApiRequest) {
+    return success(req, await this.runtime.accounts.createAgent(req.identity!, req.body, true));
+  }
+  @Post(':id/credentials') async issue(@Req() req: ApiRequest, @Param('id') id: string) {
+    return success(
+      req,
+      await this.runtime.accounts.issueAgentCredential(req.identity!, id, req.body),
+    );
+  }
+  @Post(':id/projects/:projectId') async membership(
+    @Req() req: ApiRequest,
+    @Param('id') id: string,
+    @Param('projectId') projectId: string,
+  ) {
+    return success(
+      req,
+      await this.runtime.accounts.agentMembership(req.identity!, id, projectId, req.body),
+    );
+  }
+  @Post('credentials/:id/revoke') async revoke(@Req() req: ApiRequest, @Param('id') id: string) {
+    emptyCommandSchema.parse(req.body);
+    return success(req, await this.runtime.accounts.revokeCredential(req.identity!, id, true));
   }
 }

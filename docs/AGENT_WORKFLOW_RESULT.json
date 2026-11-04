@@ -1,0 +1,77 @@
+{
+  "checkedAt": "2026-11-04T04:02:52.959Z",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "decision": "Agents may use all valid task transitions; human post-DONE validation is a separate audit acknowledgement.",
+  "migration": "006_task_validation.sql",
+  "migrationAppliedLocally": true,
+  "verification": {
+    "unitTests": {
+      "passed": 50,
+      "failed": 0
+    },
+    "integrationTests": {
+      "passed": 77,
+      "failed": 0
+    },
+    "globalTypecheck": true,
+    "foundationAndIntegrationTypecheck": true,
+    "lint": true,
+    "build": true,
+    "dockerBuild": true
+  },
+  "coverage": [
+    "Agent plans READY, claims, attaches declared evidence, reviews, QA and DONE without human approvals.",
+    "Agent cancellation, reopening and return to implementation permitted; technical gates, scopes, versions and claims preserved.",
+    "Human-only post-DONE validation increments technical version and audit/outbox without changing state or work revision.",
+    "Validation idempotency, concurrency, audit rollback, append-only history, viewer/agent denial and work revision conflicts.",
+    "Reopening and new completion preserve prior validation as historical and permit a new validation.",
+    "Validation appears in REST/MCP task detail and consistent project context."
+  ],
+  "nativeMcp": {
+    "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+    "externalRef": "repo:dashboard:ACC-LOCAL-017",
+    "status": "IN_PROGRESS",
+    "version": 7,
+    "summaryReadVerified": true,
+    "sessionId": "f89dd5be-8c57-4711-9e9f-e8ebc00520bc",
+    "sessionEnded": true,
+    "claimReleased": true,
+    "context": {
+      "pages": 1,
+      "complete": true,
+      "projectSeq": "60"
+    },
+    "deltaComplete": true,
+    "deltaEvents": 0
+  },
+  "syntheticUiCheck": {
+    "taskId": "f05033ba-19ab-4790-97ee-25fa90d147ff",
+    "statusBeforeValidation": "DONE",
+    "versionBeforeValidation": 7,
+    "statusAfterValidation": "DONE",
+    "versionAfterValidation": 8,
+    "workRevisionBeforeAndAfter": 1,
+    "validationId": "c81df9ab-304a-448d-888f-e647558d7fc7",
+    "validationIsSynthetic": true,
+    "desktop": {
+      "width": 1440,
+      "height": 900,
+      "pendingValidationVisible": true
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "validatedVisible": true,
+      "horizontalOverflow": false
+    },
+    "artifacts": [
+      "output/playwright/agent-validation-desktop.png",
+      "output/playwright/agent-validation-mobile.png"
+    ]
+  },
+  "limitations": [
+    "No commit or push of this change; formal evidence URL for ACC-LOCAL-017 remains pending publication, so its workflow state is IN_PROGRESS.",
+    "Synthetic UI acknowledgement is not human acceptance of this implementation.",
+    "One full integration run under load failed the exact rejection count in the existing 100-claim race; its isolated repeat and the final full 77-test run passed without weakening assertions."
+  ]
+}

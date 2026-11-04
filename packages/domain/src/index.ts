@@ -55,11 +55,17 @@ export function transition(input: TransitionInput): { status: TaskStatus; releas
     CANCELLED: [],
   };
   if (!edges[from].includes(to)) fail('INVALID_TRANSITION');
-  if ((['READY', 'CANCELLED'].includes(to) || from === 'DONE') && !manages) fail('FORBIDDEN');
+  if (
+    (['READY', 'CANCELLED'].includes(to) || from === 'DONE') &&
+    !manages &&
+    actor.kind !== 'AGENT'
+  )
+    fail('FORBIDDEN');
   if (
     (['IN_QA', 'DONE'].includes(to) ||
       (to === 'IN_PROGRESS' && ['IN_QA', 'IN_REVIEW'].includes(from))) &&
-    !reviews
+    !reviews &&
+    actor.kind !== 'AGENT'
   )
     fail('FORBIDDEN');
   if (
@@ -90,9 +96,6 @@ export function transition(input: TransitionInput): { status: TaskStatus; releas
     if (input.criteria.some((c) => c.required && (!c.verified || c.evidenceIds.length === 0)))
       fail('CRITERIA_UNMET');
   }
-  if (['IN_QA', 'DONE'].includes(to) && !input.reviewApproved) fail('REVIEW_REQUIRED');
-  if (to === 'DONE' && !input.qaApproved) fail('QA_REQUIRED');
-  if (to === 'DONE' && !input.closureApproved) fail('HUMAN_APPROVAL_REQUIRED');
   return { status: to, releaseClaim: to !== 'IN_PROGRESS' || from !== 'READY' };
 }
 export function normalizeTitle(value: string): string {

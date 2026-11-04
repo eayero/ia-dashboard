@@ -1,28 +1,39 @@
 ﻿# Agent Control Center (ACC)
 
-Control de proyectos con agentes, coordinación transaccional y aprobación humana.
+Control de proyectos con agentes, coordinación transaccional y validación humana posterior a DONE.
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
 **Desarrollo reanudado por petición del usuario.** La autenticación propia de ACC y
-el Compose completo están en migración local, sin publicar. Antes de continuar,
+el Compose completo se publicaron en la rama de trabajo mediante el commit
+`c273f4d`. Administración web/móvil, flujo autónomo, agentes por usuario,
+WebSocket y OpenAPI están comprobados. El usuario autorizó publicar estos cambios
+en `feat/acc-foundation`; la publicación y su conciliación MCP están en curso. Antes de continuar,
 leer el [estado actual](docs/IMPLEMENTATION_STATUS.md). Las guías operativas ya
 describen autenticación propia; las [notas de pausa](docs/RESUME_LOCAL_AUTH.md)
 conservan el contexto histórico anterior.
 
 - [Especificación v1.1 estructurada](docs/SPECIFICATION.md)
 - [Decisiones aprobadas Q1–Q40](docs/DECISIONS.md)
+- [Flujo autónomo y validación humana posterior](docs/AGENT_WORKFLOW_DESIGN.md)
+- [Agentes de usuarios y acceso a varios proyectos](docs/AGENT_OWNERSHIP_DESIGN.md)
+- [Verificación de propiedad, permisos y múltiples proyectos](docs/AGENT_OWNERSHIP_RESULT.json)
 - [Estado y punto de continuación](docs/IMPLEMENTATION_STATUS.md)
 - [Continuación inmediata: MCP directo en Codex](docs/CONTINUE_CODEX_MCP.md)
 - [Resultado de la comprobación nativa de MCP en Codex](docs/CODEX_MCP_RESULT.json)
 - [Seguimiento duplicado en archivos y ACC](docs/ACC_MIRROR.md)
+- [Conciliación de todo el trabajo mediante MCP](docs/ACC_WORK_SYNC.json)
 - [Arquitectura](docs/adr/0001-foundation.md)
 - [Entorno local](docs/runbooks/local.md)
 - [Comprobación de reinicio y persistencia de Compose](docs/COMPOSE_VERIFICATION.json)
 - [API local: autenticación, rutas y comprobaciones](docs/runbooks/api.md)
+- [Contrato OpenAPI REST](docs/openapi.json)
+- [Verificación del contrato OpenAPI](docs/OPENAPI_RESULT.json)
 - [Contexto, delta y publicador de eventos](docs/runbooks/events.md)
+- [Verificación de WebSocket y recuperación tras desconexión](docs/WEBSOCKET_RESULT.json)
 - [Gateway MCP: herramientas, autenticación y comprobaciones](docs/runbooks/mcp.md)
 - [Dashboard: ejecución, acciones y revisión visual](docs/runbooks/web.md)
+- [Revisión de administración en escritorio y móvil](docs/ADMIN_BROWSER_RESULT.json)
 - [Dirección visual aprobada](docs/design/README.md)
 - [Cómo trabajamos](COMO-TRABAJAMOS.md)
 

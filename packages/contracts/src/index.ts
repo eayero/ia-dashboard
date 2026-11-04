@@ -174,6 +174,7 @@ export const eventEnvelopeSchema = z.strictObject({
   occurredAt: z.iso.datetime({ offset: true }),
   entity: z.strictObject({ id: z.uuid(), type: z.enum(['TASK', 'SESSION', 'PRINCIPAL']) }),
   actorId: z.uuid(),
+  actorUserId: z.uuid().nullable().optional(),
   sessionId: z.uuid().nullable(),
   traceId: z.uuid(),
   payload: z.record(z.string(), z.unknown()),
@@ -195,6 +196,11 @@ export const changePasswordSchema = z.strictObject({
   currentPassword: z.string().min(1).max(128),
   newPassword: passwordSchema,
 });
+export const validateTaskSchema = z.strictObject({
+  expectedVersion: version,
+  workRevision: version,
+  note: description.optional(),
+});
 export const createUserSchema = z.strictObject({
   username: usernameSchema,
   displayName: z.string().trim().min(1).max(120),
@@ -212,18 +218,50 @@ export const membershipSchema = z.strictObject({
     .max(5)
     .refine((roles) => new Set(roles).size === roles.length),
 });
-export const agentCredentialSchema = z.strictObject({
+const agentScopesSchema = z
+  .array(z.enum(['task:read', 'task:write']))
+  .min(1)
+  .max(2)
+  .refine((scopes) => scopes.includes('task:read') && new Set(scopes).size === scopes.length);
+export const agentCredentialSchema = z
+  .strictObject({
+    label: z.string().trim().min(1).max(120),
+    ownerUserId: z.uuid().optional(),
+    projectId: z.uuid().optional(),
+    projectIds: z
+      .array(z.uuid())
+      .min(1)
+      .max(100)
+      .refine((ids) => new Set(ids).size === ids.length)
+      .optional(),
+    scopes: z
+      .array(z.enum(['task:read', 'task:write']))
+      .min(1)
+      .max(2)
+      .refine((scopes) => scopes.includes('task:read') && new Set(scopes).size === scopes.length),
+    audiences: z
+      .array(z.enum(['api', 'mcp']))
+      .min(1)
+      .max(2)
+      .refine((items) => new Set(items).size === items.length),
+    expiresInDays: z.number().int().min(1).max(30).default(1),
+  })
+  .refine(
+    (input) => Boolean(input.projectId) !== Boolean(input.projectIds),
+    'Choose projectId or projectIds',
+  );
+export const existingAgentCredentialSchema = z.strictObject({
   label: z.string().trim().min(1).max(120),
-  projectId: z.uuid(),
-  scopes: z
-    .array(z.enum(['task:read', 'task:write']))
-    .min(1)
-    .max(2)
-    .refine((scopes) => scopes.includes('task:read') && new Set(scopes).size === scopes.length),
+  scopes: agentScopesSchema,
   audiences: z
     .array(z.enum(['api', 'mcp']))
     .min(1)
     .max(2)
-    .refine((items) => new Set(items).size === items.length),
+    .refine((values) => new Set(values).size === values.length),
   expiresInDays: z.number().int().min(1).max(30).default(1),
+});
+export const agentMembershipSchema = z.strictObject({
+  active: z.boolean(),
+  scopes: agentScopesSchema,
+  expectedVersion: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
 });

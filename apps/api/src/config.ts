@@ -6,6 +6,7 @@ export function loadConfiguration(env: Record<string, string | undefined>) {
       .object({
         NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
         DATABASE_URL: z.string().min(1),
+        REDIS_URL: z.url().optional(),
         SESSION_SECRET: z.string().min(32),
         PUBLIC_ORIGIN: z.url(),
         API_PORT: z.coerce.number().int().min(1).max(65535).default(53000),
@@ -31,6 +32,7 @@ export function loadConfiguration(env: Record<string, string | undefined>) {
     return {
       nodeEnv: values.NODE_ENV,
       databaseUrl: values.DATABASE_URL,
+      redisUrl: values.REDIS_URL,
       sessionSecret: values.SESSION_SECRET,
       publicOrigin: origin.origin,
       port: values.API_PORT,

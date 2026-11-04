@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { CoordinationStore, Pool } from '../../packages/db/src/index.ts';
+import { seedAgentOwner } from '../../apps/api/test/agent-owner-fixture.ts';
 
 const schema = `acc_test_${randomUUID().replaceAll('-', '')}`;
 const admin = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -41,6 +42,7 @@ before(async () => {
     principalId,
   ]);
   await pool.query("INSERT INTO principals(id,kind) VALUES ($1,'HUMAN')", [ownerId]);
+  await seedAgentOwner(pool, principalId, ownerId);
   await pool.query('INSERT INTO project_members(project_id,principal_id,roles) VALUES ($1,$2,$3)', [
     projectId,
     ownerId,
@@ -57,7 +59,7 @@ test('migraciones repetidas no cambian ni pierden datos', async () => {
   await migrate(pool);
   assert.equal(
     (await pool.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0].count,
-    5,
+    7,
   );
   assert.equal(
     (await pool.query('SELECT name FROM projects WHERE id=$1', [projectId])).rows[0].name,
@@ -300,6 +302,10 @@ test('membresía y claves compuestas impiden referencias cross-project', async (
   await pool.query(
     'INSERT INTO project_members(project_id,principal_id,scopes) VALUES ($1,$2,$3)',
     [foreignProject, principalId, ['task:write']],
+  );
+  await pool.query(
+    "INSERT INTO project_members(project_id,principal_id,roles) VALUES ($1,$2,ARRAY['OWNER'])",
+    [foreignProject, ownerId],
   );
   await assert.rejects(
     store.claimTask({ ...context, projectId: foreignProject }, randomUUID(), task.id, {

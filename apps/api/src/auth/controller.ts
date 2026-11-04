@@ -26,7 +26,13 @@ export class AuthController {
   @UseGuards(AuthenticationGuard)
   me(@Req() req: ApiRequest) {
     return success(req, {
-      principal: { id: req.identity!.id, kind: req.identity!.kind },
+      principal: {
+        id: req.identity!.id,
+        kind: req.identity!.kind,
+        ownerUserId: req.identity!.ownerUserId,
+        ownerUsername: req.identity!.ownerUsername,
+        agentName: req.identity!.agentName,
+      },
       user: req.identity!.user
         ? {
             username: req.identity!.user.username,

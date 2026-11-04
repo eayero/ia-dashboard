@@ -70,6 +70,38 @@ Compose debe incluir backend y UI, además de PostgreSQL, Redis, migraciones,
 bootstrap y worker. Estas decisiones se aplican en la especificación y runbooks;
 la tabla Q1–Q40 conserva el texto original para trazabilidad.
 
+### Sustitución del control humano de estados
+
+Por instrucción expresa posterior, el agente con permisos puede cambiar a todos
+los estados válidos, incluidos READY, IN_QA, DONE, CANCELLED y reapertura. Se
+mantienen versiones, claims, dependencias, motivos y evidencia técnica elegible;
+la evidencia declarada ya no requiere aceptación humana previa para avanzar.
+Se sustituyen los gates humanos de Q4/Q10/Q31/Q40 y las referencias relacionadas
+de Q11/Q39: revisión, QA y cierre no requieren aprobación humana. Los registros
+anteriores permanecen para trazabilidad, sin bloquear el nuevo flujo.
+
+El humano con permisos de escritura puede validar una tarea DONE: guarda autor,
+fecha, nota y finalización en auditoría, sin cambiar estado ni revisión de trabajo.
+La versión técnica y secuencia sí avanzan. Reabrir conserva ese OK como histórico;
+la siguiente finalización no queda validada automáticamente. Los agentes no pueden
+atribuirse ese OK humano. Ver [diseño vigente](AGENT_WORKFLOW_DESIGN.md).
+
+### Agentes de usuarios y varios proyectos
+
+Cada agente pertenece a un usuario humano y conserva identidad propia. Los usuarios
+gestionan sus agentes y los asignan a proyectos donde tienen permisos; el
+administrador puede gestionar todos. La identidad del agente se separa de sus
+credenciales: varias credenciales API/MCP pueden autenticar al mismo agente y una
+configuración MCP sirve para uno o varios proyectos explícitamente asignados.
+
+La capacidad efectiva depende del token, la membresía del agente y el acceso
+vigente de su propietario al proyecto; no supera su permiso de escritura ni
+hereda privilegios humanos de validación. Deshabilitar al usuario o retirar acceso
+invalida las sesiones/claims de sus agentes afectados. La auditoría nueva guarda
+actor agente y actorUserId propietario, resueltos en servidor; el historial anterior
+no se reescribe. Migración 007 preserva IDs/tokens y rechaza asociaciones legadas
+ambiguas. [Diseño](AGENT_OWNERSHIP_DESIGN.md).
+
 ## Decisiones aplazadas por alcance
 
 Hosting, dominio y operación de producción se concretarán antes de publicar.

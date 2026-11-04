@@ -6,6 +6,8 @@ import {
   membershipSchema,
   resetPasswordSchema,
   userStatusSchema,
+  existingAgentCredentialSchema,
+  agentMembershipSchema,
 } from '@acc/contracts';
 import { z } from 'zod';
 import { ApiError } from '../common/errors.ts';
@@ -18,10 +20,12 @@ export class AccountAdministration {
   private async run<T>(
     actor: AuthenticatedIdentity,
     operation: (db: pg.PoolClient) => Promise<T>,
+    allowUser = false,
   ): Promise<T> {
     if (
       actor.mode !== 'COOKIE' ||
-      actor.user?.systemRole !== 'ADMIN' ||
+      !actor.user ||
+      (!allowUser && actor.user.systemRole !== 'ADMIN') ||
       actor.user.mustChangePassword
     )
       throw new ApiError(403, 'FORBIDDEN');
@@ -31,8 +35,8 @@ export class AccountAdministration {
       await db.query("SET LOCAL lock_timeout='5s'");
       await db.query("SELECT pg_advisory_xact_lock(hashtextextended('acc:account-admin',0))");
       const access = await db.query(
-        "SELECT u.principal_id FROM local_users u JOIN principals p ON p.id=u.principal_id WHERE u.principal_id=$1 AND u.system_role='ADMIN' AND NOT p.disabled AND u.credential_version=$2 FOR SHARE OF u,p",
-        [actor.id, actor.user.credentialVersion],
+        "SELECT u.principal_id FROM local_users u JOIN principals p ON p.id=u.principal_id WHERE u.principal_id=$1 AND ($3::boolean OR u.system_role='ADMIN') AND NOT p.disabled AND u.credential_version=$2 FOR SHARE OF u,p",
+        [actor.id, actor.user.credentialVersion, allowUser],
       );
       if (!access.rowCount) throw new ApiError(403, 'FORBIDDEN');
       const result = await operation(db);
@@ -108,7 +112,8 @@ export class AccountAdministration {
     return this.run(actor, async (db) => {
       const users =
         await db.query(`SELECT p.id,u.username,u.display_name AS "displayName",u.system_role AS "systemRole",u.must_change_password AS "mustChangePassword",p.disabled,
-        COALESCE((SELECT jsonb_agg(jsonb_build_object('id',j.id,'name',j.name,'roles',m.roles,'active',m.active,'version',m.version) ORDER BY j.name) FROM project_members m JOIN projects j ON j.id=m.project_id WHERE m.principal_id=p.id),'[]') AS projects
+        COALESCE((SELECT jsonb_agg(jsonb_build_object('id',j.id,'name',j.name,'roles',m.roles,'active',m.active,'version',m.version) ORDER BY j.name) FROM project_members m JOIN projects j ON j.id=m.project_id WHERE m.principal_id=p.id),'[]') AS projects,
+        COALESCE((SELECT jsonb_agg(jsonb_build_object('id',a.principal_id,'name',a.name) ORDER BY a.name,a.principal_id) FROM agent_profiles a WHERE a.owner_user_id=p.id),'[]') AS agents
         FROM local_users u JOIN principals p ON p.id=u.principal_id ORDER BY u.username`);
       const projects = await db.query('SELECT id,name,archived FROM projects ORDER BY name,id');
       return { users: users.rows, projects: projects.rows };
@@ -158,7 +163,7 @@ export class AccountAdministration {
     return this.run(actor, async (db) => {
       const projects = (
         await db.query<{ project_id: string }>(
-          'SELECT project_id FROM project_members WHERE principal_id=$1 ORDER BY project_id',
+          'SELECT DISTINCT project_id FROM project_members WHERE principal_id=$1 OR principal_id IN (SELECT principal_id FROM agent_profiles WHERE owner_user_id=$1) ORDER BY project_id',
           [userId],
         )
       ).rows;
@@ -191,6 +196,14 @@ export class AccountAdministration {
         [userId],
       );
       if (input.disabled) await this.invalidateClaims(db, userId, undefined, true);
+      if (input.disabled) {
+        const owned = await db.query<{ principal_id: string }>(
+          'SELECT principal_id FROM agent_profiles WHERE owner_user_id=$1 ORDER BY principal_id',
+          [userId],
+        );
+        for (const agent of owned.rows)
+          await this.invalidateClaims(db, agent.principal_id, undefined, true);
+      }
       for (const project of projects)
         await this.event(
           db,
@@ -240,6 +253,12 @@ export class AccountAdministration {
         )
       ).rows[0]!;
       await this.invalidateClaims(db, userId, projectId, !input.active);
+      const owned = await db.query<{ principal_id: string }>(
+        'SELECT principal_id FROM agent_profiles WHERE owner_user_id=$1 ORDER BY principal_id',
+        [userId],
+      );
+      for (const agent of owned.rows)
+        await this.invalidateClaims(db, agent.principal_id, projectId, true);
       await this.event(db, projectId, actor.id, userId, 'member.changed', {
         roles: input.roles,
         active: input.active,
@@ -253,69 +272,221 @@ export class AccountAdministration {
       actor,
       async (db) =>
         (
-          await db.query(`SELECT c.id,c.principal_id AS "principalId",c.label,c.scopes,c.audiences,c.expires_at AS "expiresAt",c.revoked_at AS "revokedAt",p.disabled,
+          await db.query(`SELECT c.id,c.principal_id AS "principalId",a.owner_user_id AS "ownerUserId",u.username AS "ownerUsername",a.name AS "agentName",c.label,c.scopes,c.audiences,c.expires_at AS "expiresAt",c.revoked_at AS "revokedAt",p.disabled,
       COALESCE((SELECT jsonb_agg(jsonb_build_object('id',j.id,'name',j.name,'active',m.active)) FROM project_members m JOIN projects j ON j.id=m.project_id WHERE m.principal_id=c.principal_id),'[]') AS projects
-      FROM agent_credentials c JOIN principals p ON p.id=c.principal_id ORDER BY c.created_at DESC,c.id`)
+      FROM agent_credentials c JOIN principals p ON p.id=c.principal_id JOIN agent_profiles a ON a.principal_id=p.id JOIN local_users u ON u.principal_id=a.owner_user_id ORDER BY c.created_at DESC,c.id`)
         ).rows,
     );
   }
-  async createAgent(actor: AuthenticatedIdentity, body: unknown) {
-    const input = agentCredentialSchema.parse(body);
-    return this.run(actor, async (db) => {
-      await this.graph(db, input.projectId);
-      if (
-        !(await db.query('SELECT 1 FROM projects WHERE id=$1 AND NOT archived', [input.projectId]))
-          .rowCount
-      )
-        throw new ApiError(404, 'PROJECT_NOT_FOUND');
-      const id = randomUUID();
-      await db.query("INSERT INTO principals(id,kind) VALUES ($1,'AGENT')", [id]);
-      await db.query(
-        'INSERT INTO project_members(project_id,principal_id,scopes) VALUES ($1,$2,$3)',
-        [input.projectId, id, input.scopes],
-      );
-      const credential = await issueCredential(
-        db,
-        id,
-        input.label,
-        input.scopes,
-        input.audiences,
-        input.expiresInDays,
-      );
-      await this.event(db, input.projectId, actor.id, id, 'credential.created', {
-        credentialId: credential.id,
-        label: input.label,
-      });
-      return credential;
-    });
-  }
-  async revokeCredential(actor: AuthenticatedIdentity, id: string) {
+  private async ownedAgent(db: pg.PoolClient, actor: AuthenticatedIdentity, id: string) {
     z.uuid().parse(id);
-    return this.run(actor, async (db) => {
-      const row = (
-        await db.query<{ principal_id: string }>(
-          'SELECT principal_id FROM agent_credentials WHERE id=$1',
-          [id],
-        )
-      ).rows[0];
-      if (!row) throw new ApiError(404, 'CREDENTIAL_NOT_FOUND');
-      const projects = (
-        await db.query<{ project_id: string }>(
-          'SELECT project_id FROM project_members WHERE principal_id=$1 ORDER BY project_id',
-          [row.principal_id],
-        )
-      ).rows;
-      for (const project of projects) await this.graph(db, project.project_id);
-      await db.query(
-        'UPDATE agent_credentials SET revoked_at=COALESCE(revoked_at,clock_timestamp()) WHERE id=$1',
-        [id],
-      );
-      await this.invalidateClaims(db, row.principal_id, undefined, true);
-      for (const project of projects)
-        await this.event(db, project.project_id, actor.id, row.principal_id, 'credential.revoked', {
-          credentialId: id,
+    const found = await db.query<{ principal_id: string; owner_user_id: string; name: string }>(
+      'SELECT principal_id,owner_user_id,name FROM agent_profiles WHERE principal_id=$1',
+      [id],
+    );
+    const agent = found.rows[0];
+    if (!agent) throw new ApiError(404, 'AGENT_NOT_FOUND');
+    if (agent.owner_user_id !== actor.id && actor.user?.systemRole !== 'ADMIN')
+      throw new ApiError(403, 'FORBIDDEN');
+    return agent;
+  }
+  private async ownerAccess(
+    db: pg.PoolClient,
+    ownerId: string,
+    projectId: string,
+    scopes: string[],
+  ) {
+    const access = await db.query<{ roles: string[] }>(
+      'SELECT m.roles FROM project_members m JOIN projects j ON j.id=m.project_id JOIN principals p ON p.id=m.principal_id JOIN local_users u ON u.principal_id=p.id WHERE m.principal_id=$1 AND m.project_id=$2 AND m.active AND NOT p.disabled AND NOT j.archived FOR SHARE OF m,p,j,u',
+      [ownerId, projectId],
+    );
+    const member = access.rows[0];
+    if (
+      !member ||
+      (scopes.includes('task:write') &&
+        !member.roles.some((r) => ['OWNER', 'ADMIN', 'MANAGER', 'REVIEWER'].includes(r)))
+    )
+      throw new ApiError(403, 'OWNER_PROJECT_ACCESS_REQUIRED');
+  }
+  async agentIdentities(actor: AuthenticatedIdentity, all = false) {
+    return this.run(
+      actor,
+      async (db) =>
+        (
+          await db.query(
+            `SELECT a.principal_id AS id,a.name,a.owner_user_id AS "ownerUserId",u.username AS "ownerUsername",p.disabled,
+      COALESCE((SELECT jsonb_agg(jsonb_build_object('id',j.id,'name',j.name,'active',m.active,'version',m.version,'scopes',m.scopes) ORDER BY j.id) FROM project_members m JOIN projects j ON j.id=m.project_id WHERE m.principal_id=a.principal_id),'[]') AS projects,
+      COALESCE((SELECT jsonb_agg(jsonb_build_object('id',c.id,'label',c.label,'scopes',c.scopes,'audiences',c.audiences,'expiresAt',c.expires_at,'revokedAt',c.revoked_at) ORDER BY c.created_at,c.id) FROM agent_credentials c WHERE c.principal_id=a.principal_id),'[]') AS credentials
+      FROM agent_profiles a JOIN local_users u ON u.principal_id=a.owner_user_id JOIN principals p ON p.id=a.principal_id WHERE ($1::boolean OR a.owner_user_id=$2) ORDER BY u.username,a.name,a.principal_id`,
+            [all, actor.id],
+          )
+        ).rows,
+      !all,
+    );
+  }
+  async createAgent(actor: AuthenticatedIdentity, body: unknown, allowUser = false) {
+    const input = agentCredentialSchema.parse(body);
+    return this.run(
+      actor,
+      async (db) => {
+        const ownerId = input.ownerUserId ?? actor.id;
+        if (ownerId !== actor.id && actor.user?.systemRole !== 'ADMIN')
+          throw new ApiError(403, 'FORBIDDEN');
+        const projectIds = [...(input.projectIds ?? [input.projectId!])].sort();
+        for (const projectId of projectIds) {
+          await this.graph(db, projectId);
+          await this.ownerAccess(db, ownerId, projectId, input.scopes);
+        }
+        const id = randomUUID();
+        await db.query("INSERT INTO principals(id,kind) VALUES ($1,'AGENT')", [id]);
+        await db.query(
+          'INSERT INTO agent_profiles(principal_id,owner_user_id,name) VALUES ($1,$2,$3)',
+          [id, ownerId, input.label],
+        );
+        for (const projectId of projectIds)
+          await db.query(
+            'INSERT INTO project_members(project_id,principal_id,scopes) VALUES ($1,$2,$3)',
+            [projectId, id, input.scopes],
+          );
+        const credential = await issueCredential(
+          db,
+          id,
+          input.label,
+          input.scopes,
+          input.audiences,
+          input.expiresInDays,
+        );
+        for (const projectId of projectIds)
+          await this.event(db, projectId, actor.id, id, 'credential.created', {
+            credentialId: credential.id,
+            label: input.label,
+            ownerUserId: ownerId,
+          });
+        return { ...credential, ownerUserId: ownerId, projectIds };
+      },
+      allowUser,
+    );
+  }
+  async issueAgentCredential(actor: AuthenticatedIdentity, id: string, body: unknown) {
+    const input = existingAgentCredentialSchema.parse(body);
+    return this.run(
+      actor,
+      async (db) => {
+        const agent = await this.ownedAgent(db, actor, id);
+        const projects = (
+          await db.query<{ project_id: string; scopes: string[] }>(
+            'SELECT project_id,scopes FROM project_members WHERE principal_id=$1 AND active ORDER BY project_id',
+            [id],
+          )
+        ).rows;
+        if (!projects.length) throw new ApiError(403, 'OWNER_PROJECT_ACCESS_REQUIRED');
+        for (const project of projects) {
+          await this.graph(db, project.project_id);
+          await this.ownerAccess(
+            db,
+            agent.owner_user_id,
+            project.project_id,
+            input.scopes.filter((scope) => project.scopes.includes(scope)),
+          );
+        }
+        const credential = await issueCredential(
+          db,
+          id,
+          input.label,
+          input.scopes,
+          input.audiences,
+          input.expiresInDays,
+        );
+        for (const project of projects)
+          await this.event(db, project.project_id, actor.id, id, 'credential.created', {
+            credentialId: credential.id,
+            label: input.label,
+            ownerUserId: agent.owner_user_id,
+          });
+        return { ...credential, ownerUserId: agent.owner_user_id };
+      },
+      true,
+    );
+  }
+  async agentMembership(
+    actor: AuthenticatedIdentity,
+    id: string,
+    projectId: string,
+    body: unknown,
+  ) {
+    z.uuid().parse(projectId);
+    const input = agentMembershipSchema.parse(body);
+    return this.run(
+      actor,
+      async (db) => {
+        const agent = await this.ownedAgent(db, actor, id);
+        await this.graph(db, projectId);
+        if (input.active) await this.ownerAccess(db, agent.owner_user_id, projectId, input.scopes);
+        const previous = (
+          await db.query<{ version: number }>(
+            'SELECT version FROM project_members WHERE project_id=$1 AND principal_id=$2 FOR UPDATE',
+            [projectId, id],
+          )
+        ).rows[0];
+        if (!previous && !input.active) throw new ApiError(404, 'MEMBERSHIP_NOT_FOUND');
+        if ((previous?.version ?? 0) !== input.expectedVersion)
+          throw new ApiError(409, 'VERSION_CONFLICT');
+        const changed = (
+          await db.query<{ version: number }>(
+            'INSERT INTO project_members(project_id,principal_id,scopes,active) VALUES ($1,$2,$3,$4) ON CONFLICT(project_id,principal_id) DO UPDATE SET scopes=$3,active=$4,version=project_members.version+1 RETURNING version',
+            [projectId, id, input.scopes, input.active],
+          )
+        ).rows[0]!;
+        await this.invalidateClaims(db, id, projectId, !input.active);
+        await this.event(db, projectId, actor.id, id, 'member.changed', {
+          ...input,
+          version: changed.version,
+          ownerUserId: agent.owner_user_id,
         });
-      return { revoked: true };
-    });
+        return { projectId, principalId: id, ...input, version: changed.version };
+      },
+      true,
+    );
+  }
+  async revokeCredential(actor: AuthenticatedIdentity, id: string, allowUser = false) {
+    z.uuid().parse(id);
+    return this.run(
+      actor,
+      async (db) => {
+        const row = (
+          await db.query<{ principal_id: string }>(
+            'SELECT principal_id FROM agent_credentials WHERE id=$1',
+            [id],
+          )
+        ).rows[0];
+        if (!row) throw new ApiError(404, 'CREDENTIAL_NOT_FOUND');
+        await this.ownedAgent(db, actor, row.principal_id);
+        const projects = (
+          await db.query<{ project_id: string }>(
+            'SELECT project_id FROM project_members WHERE principal_id=$1 ORDER BY project_id',
+            [row.principal_id],
+          )
+        ).rows;
+        for (const project of projects) await this.graph(db, project.project_id);
+        await db.query(
+          'UPDATE agent_credentials SET revoked_at=COALESCE(revoked_at,clock_timestamp()) WHERE id=$1',
+          [id],
+        );
+        await this.invalidateClaims(db, row.principal_id, undefined, true);
+        for (const project of projects)
+          await this.event(
+            db,
+            project.project_id,
+            actor.id,
+            row.principal_id,
+            'credential.revoked',
+            {
+              credentialId: id,
+            },
+          );
+        return { revoked: true };
+      },
+      allowUser,
+    );
   }
 }

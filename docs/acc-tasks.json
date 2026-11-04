@@ -120,5 +120,39 @@
       "Importar el catálogo con referencias estables y verificar reintentos sin duplicados.",
       "Verificar tareas por ID, contexto y delta mediante MCP; registrar límites reales."
     ]
+  },
+  {
+    "id": "ACC-LOCAL-016",
+    "title": "Aplicar duplicación obligatoria de todo el trabajo mediante MCP",
+    "source": "docs/ACC_MIRROR.md",
+    "context": "Petición del usuario: duplicar todo el trabajo por MCP, incluidas decisiones, pruebas, documentación y publicación. Conciliación del commit publicado https://github.com/eayero/ia-dashboard/commit/c273f4d4c592501bcf626cdc5a5ea63d27ee9634. Resultados: https://github.com/eayero/ia-dashboard/blob/c273f4d4c592501bcf626cdc5a5ea63d27ee9634/docs/COMPOSE_VERIFICATION.json y https://github.com/eayero/ia-dashboard/blob/c273f4d4c592501bcf626cdc5a5ea63d27ee9634/docs/CODEX_MCP_RESULT.json. BOOT-001: Q8/Q36 reconciliadas en DECISIONS.md, SPECIFICATION.md y ADR. BOOT-002: Tipos y build de cinco paquetes, lint y formato comprobados. BOOT-003: Compose completo y reinicio comprobados conservando datos y credenciales. BOOT-004: 52 pruebas unitarias pasaron. BOOT-005: 76 integraciones reales pasaron, incluidas 3 nuevas de bootstrap. BOOT-006: Autenticación propia y administración implementadas; OpenAPI pendiente. BOOT-007: 15 herramientas MCP; seis invocadas nativamente por Codex, con reintentos/contexto/delta. BOOT-008: Login local de escritorio revisado; administración y móvil pendientes. BOOT-009: Suite de workflow comprobada; recorrido completo desde clientes reales y WS pendiente. Estado remoto IN_PROGRESS preservado. ACC-LOCAL-010: Guías local/API/MCP/web/eventos y decisiones/especificación/ADR actualizadas. ACC-LOCAL-011: Administración y acceso temporal cubiertos por API; revisión de navegador pendiente. ACC-LOCAL-012: Bootstrap repetido, reinicio, datos/credenciales, healthchecks, proxy, CSP y 404 comprobados. ACC-LOCAL-013: Servidor WebSocket pendiente. ACC-LOCAL-014: Entidades de requisitos, decisiones, preguntas e impacto pendientes. ACC-LOCAL-015: 15 referencias previas verificadas; política ampliada a todo el trabajo por MCP. Las 15 tareas existentes conservan sus IDs y estados. Este contexto registra avance consolidado; no sustituye las evidencias formales por tarea ni aceptación humana. BACKLOG requiere habilitación humana antes de claim/evidencia; el MCP no permite editar libremente resúmenes o documentos. El cambio de política está local, sin nuevo commit/push.",
+    "criteria": [
+      "Exigir en la guía compartida que cada bloque de trabajo se registre y se verifique por MCP, conservando referencia estable.",
+      "Conciliar trabajo realizado, resultados, publicación y pendientes sin alterar estados o criterios humanos existentes.",
+      "Registrar limitaciones de sincronización y respetar claims, aceptación de evidencias y gates humanos."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-017",
+    "title": "Permitir todos los estados al agente y validación humana posterior a DONE",
+    "source": "docs/DECISIONS.md",
+    "context": "Petición expresa: el agente puede cambiar a todos los estados; el humano valida una tarea DONE mediante un OK de auditoría sin cambiar estado. Se conservan transiciones válidas, permisos de proyecto, claims, versiones, dependencias y evidencia técnica. La validación queda ligada a una finalización y se conserva históricamente al reabrir.",
+    "criteria": [
+      "Recorrer por MCP desde BACKLOG hasta DONE sin aprobaciones humanas previas, incluyendo cancelar y reabrir con permisos de agente.",
+      "Registrar validación exclusivamente humana en DONE sin alterar estado ni revisión de trabajo, con auditoría y protección de concurrencia.",
+      "Exponer la validación en detalle/contexto/UI, conservar historial y actualizar reglas/documentación y pruebas."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-018",
+    "title": "Asociar agentes a usuarios y permitir varios proyectos por agente",
+    "source": "docs/DECISIONS.md",
+    "context": "Petición del usuario: cada agente pertenece a un usuario; usuarios muestran su lista de agentes; cada interacción identifica al agente y al usuario propietario. Un agente configurado en MCP puede pertenecer a uno o más proyectos. Separar identidad del agente de sus credenciales; conservar IDs, tokens e historial existentes.",
+    "criteria": [
+      "Persistir propietario humano de cada agente y listar agentes por usuario sin filtrar secretos.",
+      "Asignar uno o más proyectos por agente, con autorización y revocación por proyecto, y reutilizar la misma identidad/credencial MCP.",
+      "Identificar agente y propietario en autenticación, contexto y auditoría; probar aislamiento y conservar credenciales existentes durante la migración.",
+      "Actualizar API/UI/documentación y verificar recorridos reales con usuarios y proyectos múltiples."
+    ]
   }
 ]

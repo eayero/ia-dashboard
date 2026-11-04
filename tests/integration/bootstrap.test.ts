@@ -33,6 +33,7 @@ async function fingerprint() {
     'local_users',
     'project_members',
     'agent_credentials',
+    'agent_profiles',
   ]) {
     const rows = await pool.query(
       `SELECT to_jsonb(t) AS row FROM ${table} t ORDER BY to_jsonb(t)::text`,
