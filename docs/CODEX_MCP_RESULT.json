@@ -1,0 +1,189 @@
+{
+  "checkedAt": "2026-11-04T03:22:30.616Z",
+  "method": "native Codex MCP tools (mcp__acc__acc_*)",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "endpoint": "http://localhost:55173/mcp",
+  "availableTools": 15,
+  "invokedTools": [
+    "acc_list_projects",
+    "acc_list_tasks",
+    "acc_get_task",
+    "acc_find_or_create_task",
+    "acc_get_context",
+    "acc_get_changes"
+  ],
+  "projectAccessible": true,
+  "listedTasksBefore": 16,
+  "listedTasksAfter": 16,
+  "listPagesComplete": true,
+  "catalogTasks": 15,
+  "allIdsMatchPreviousReport": true,
+  "exactExternalRefsVerified": 15,
+  "titleAndCriteriaVerifiedVia": "acc_get_context",
+  "detailRead": {
+    "fileId": "BOOT-001",
+    "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f",
+    "requestId": "70b81854-edb7-48f1-8e65-1440de1ef63a"
+  },
+  "idempotency": {
+    "fileId": "BOOT-001",
+    "key": "codex-native-check:BOOT-001:v1",
+    "sameTaskId": true,
+    "version": 1,
+    "noDuplicateTasks": true
+  },
+  "context": {
+    "complete": true,
+    "pages": 1,
+    "records": 30,
+    "projectSeq": "35",
+    "requestId": "713e3e39-31dd-4038-bfd0-fd7d06ca7dab"
+  },
+  "delta": {
+    "complete": true,
+    "events": 0,
+    "projectSeq": "35",
+    "requestId": "695e8e98-b724-407a-b88b-d9fa2caf9be7"
+  },
+  "tasks": [
+    {
+      "fileId": "BOOT-001",
+      "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-001",
+      "referenceLookupRequestId": "7605a0b7-8743-4def-af4a-f1a81f7c13e0"
+    },
+    {
+      "fileId": "BOOT-002",
+      "taskId": "47c996f0-bc53-410c-bf6c-8167a74633e4",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-002",
+      "referenceLookupRequestId": "3c42eca7-154c-46df-a695-7491bb68e434"
+    },
+    {
+      "fileId": "BOOT-003",
+      "taskId": "598cbaba-8398-43ad-9837-f8f7d52e85e8",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-003",
+      "referenceLookupRequestId": "ea2f7399-de2f-4054-a0c7-94c088e6306f"
+    },
+    {
+      "fileId": "BOOT-004",
+      "taskId": "d8c5a3fe-46e8-4569-82f4-38aacd581bf1",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-004",
+      "referenceLookupRequestId": "9e875a4e-e492-4a85-9406-d404de03781d"
+    },
+    {
+      "fileId": "BOOT-005",
+      "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-005",
+      "referenceLookupRequestId": "4e55931e-cce5-4c21-b4be-6d3f76ce2dad"
+    },
+    {
+      "fileId": "BOOT-006",
+      "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-006",
+      "referenceLookupRequestId": "e612790f-0c16-4f55-aad3-ae36adc5dd2e"
+    },
+    {
+      "fileId": "BOOT-007",
+      "taskId": "c20557e7-a5d5-4229-9269-c6cc9f8afcd2",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-007",
+      "referenceLookupRequestId": "94b0be9d-8073-4eec-b533-2ceb3c191f42"
+    },
+    {
+      "fileId": "BOOT-008",
+      "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-008",
+      "referenceLookupRequestId": "d5b22c43-a941-46e9-9c0c-1a7a37ab8dad"
+    },
+    {
+      "fileId": "BOOT-009",
+      "taskId": "453586b8-da53-476d-befa-68e70e37b4a0",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:BOOT-009",
+      "referenceLookupRequestId": "c1815be2-5c0d-423c-a1b0-c75ac21e603a"
+    },
+    {
+      "fileId": "ACC-LOCAL-010",
+      "taskId": "fba5128e-f9a6-41de-8b42-d2fc87c2a4f8",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:ACC-LOCAL-010",
+      "referenceLookupRequestId": "775a2ac2-a3e6-4851-ad37-4d7870ba299c"
+    },
+    {
+      "fileId": "ACC-LOCAL-011",
+      "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:ACC-LOCAL-011",
+      "referenceLookupRequestId": "1f90dfb8-4787-46e6-be97-027c8ec27e5d"
+    },
+    {
+      "fileId": "ACC-LOCAL-012",
+      "taskId": "f1ec8ba2-0708-41f2-9325-f467885993ac",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:ACC-LOCAL-012",
+      "referenceLookupRequestId": "dad46838-42aa-457c-893e-bccb2540dad0"
+    },
+    {
+      "fileId": "ACC-LOCAL-013",
+      "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:ACC-LOCAL-013",
+      "referenceLookupRequestId": "147e2b6c-ba24-48a7-a599-1b9c1ff8195c"
+    },
+    {
+      "fileId": "ACC-LOCAL-014",
+      "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:ACC-LOCAL-014",
+      "referenceLookupRequestId": "21b92bbd-3a6b-4d23-8df0-750d571bba5c"
+    },
+    {
+      "fileId": "ACC-LOCAL-015",
+      "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+      "titleVerified": true,
+      "criteriaVerified": true,
+      "status": "BACKLOG",
+      "externalRef": "repo:dashboard:ACC-LOCAL-015",
+      "referenceLookupRequestId": "6fdda68e-3180-4b39-8dd8-1d816a12bb80"
+    }
+  ],
+  "limitations": [
+    "No task state transitions, human approvals or evidence acceptance performed.",
+    "Administration/mobile browser flows, Compose restart/bootstrap idempotency and authentication documentation remain pending."
+  ]
+}

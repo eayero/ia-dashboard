@@ -13,7 +13,7 @@ import { CoordinationStore } from '@acc/db';
 import type { ApiConfiguration } from './config.ts';
 import { API_RUNTIME, type ApiRuntime } from './context.ts';
 import { ApiExceptionFilter, sendError } from './common/errors.ts';
-import { OidcService } from './auth/oidc.ts';
+import { AuthService } from './auth/service.ts';
 import { AuthenticationGuard } from './auth/guard.ts';
 import { AuthController } from './auth/controller.ts';
 import { ProjectsController } from './projects/controller.ts';
@@ -22,23 +22,26 @@ import { ProjectContext } from './projects/context.ts';
 import { HealthController } from './health/controller.ts';
 import type { ApiRequest } from './auth/types.ts';
 import { mountMcp } from './mcp/gateway.ts';
+import { AccountAdministration } from './auth/admin.ts';
+import { AccountsController } from './auth/admin-controller.ts';
 
 export async function createApplication(config: ApiConfiguration, pool: pg.Pool) {
   await pool.query('SELECT 1');
   await pool.query(
-    'SELECT i.issuer,h.sid,m.active,s.version,c.seq FROM oidc_identities i CROSS JOIN http_sessions h CROSS JOIN project_members m CROSS JOIN agent_sessions s CROSS JOIN context_snapshots c LIMIT 0',
+    'SELECT u.credential_version,t.token_hash,h.sid,m.active,s.version,c.seq FROM local_users u CROSS JOIN agent_credentials t CROSS JOIN http_sessions h CROSS JOIN project_members m CROSS JOIN agent_sessions s CROSS JOIN context_snapshots c LIMIT 0',
   );
   const queries = new ProjectQueries(pool, config.sessionSecret);
   const runtime: ApiRuntime = {
     config,
     pool,
     store: new CoordinationStore(pool),
-    auth: await OidcService.create(config, pool),
+    auth: new AuthService(config, pool),
     queries,
     context: new ProjectContext(queries, config.sessionSecret),
+    accounts: new AccountAdministration(pool),
   };
   @Module({
-    controllers: [AuthController, ProjectsController, HealthController],
+    controllers: [AuthController, ProjectsController, HealthController, AccountsController],
     providers: [{ provide: API_RUNTIME, useValue: runtime }, AuthenticationGuard],
   })
   class ApiModule {}

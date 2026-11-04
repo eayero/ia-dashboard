@@ -1,9 +1,23 @@
 name: acc-local
+
+x-api-build: &api-build
+  context: ..
+  dockerfile: infra/Dockerfile
+  target: api
+
+x-api-environment: &api-env
+  DATABASE_URL: postgresql://${POSTGRES_USER:-acc}:${POSTGRES_PASSWORD:?Run local:configure}@postgres:5432/${POSTGRES_DB:-acc}
+  SESSION_SECRET: ${SESSION_SECRET:?Run local:configure}
+  PUBLIC_ORIGIN: ${PUBLIC_ORIGIN:-http://localhost:55173}
+  API_PORT: '53000'
+  API_HOST: 0.0.0.0
+  NODE_ENV: development
+
 services:
   postgres:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:?Run local:configure}
+      POSTGRES_USER: ${POSTGRES_USER:-acc}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run local:configure}
       POSTGRES_DB: ${POSTGRES_DB:-acc}
     ports: ['127.0.0.1:55432:5432']
@@ -25,27 +39,72 @@ services:
       interval: 3s
       timeout: 3s
       retries: 20
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.4.7
-    command: ['start-dev', '--import-realm']
+  migrate:
+    image: acc-api:local
+    build: *api-build
+    environment: *api-env
+    command: ['node', 'packages/db/dist/migrate.js']
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: 'no'
+  bootstrap:
+    image: acc-api:local
+    build: *api-build
     environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-acc-admin}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Run local:configure}
-      KC_HEALTH_ENABLED: 'true'
-      KC_HOSTNAME: http://localhost:58080
-    ports: ['127.0.0.1:58080:8080']
-    volumes:
-      - ../.cache/keycloak/realm.json:/opt/keycloak/data/import/realm.json:ro
+      <<: *api-env
+      ACC_LOCAL_DOCKER_BOOTSTRAP: '1'
+    command: ['node', 'apps/api/dist/local-bootstrap.js']
+    volumes: ['../.cache:/app/.cache']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    restart: 'no'
+  api:
+    image: acc-api:local
+    build: *api-build
+    environment: *api-env
+    ports: ['127.0.0.1:53000:53000']
+    depends_on:
+      bootstrap: { condition: service_completed_successfully }
     healthcheck:
       test:
         [
-          'CMD-SHELL',
-          "bash -c 'exec 3<>/dev/tcp/localhost/9000; printf \"GET /health/ready HTTP/1.0\\r\\n\\r\\n\" >&3; grep -q UP <&3'",
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:53000/api/v1/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
         ]
-      interval: 10s
-      timeout: 5s
-      start_period: 40s
-      retries: 30
+      interval: 5s
+      timeout: 3s
+      start_period: 10s
+      retries: 20
+    restart: unless-stopped
+  worker:
+    image: acc-api:local
+    build: *api-build
+    environment:
+      <<: *api-env
+      REDIS_URL: redis://:${REDIS_PASSWORD:?Run local:configure}@redis:6379
+      OUTBOX_POLL_MS: ${OUTBOX_POLL_MS:-250}
+    command: ['node', 'apps/api/dist/outbox/main.js']
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      redis: { condition: service_healthy }
+    restart: unless-stopped
+  ui:
+    image: acc-ui:local
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+      target: ui
+    ports: ['127.0.0.1:55173:8080']
+    depends_on:
+      api: { condition: service_healthy }
+    healthcheck:
+      test: ['CMD', 'wget', '-q', '-O', '/dev/null', 'http://127.0.0.1:8080/']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
 volumes:
   postgres-data:
   redis-data:

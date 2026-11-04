@@ -12,9 +12,8 @@ export function mountMcp(app: express.Express, runtime: ApiRuntime) {
   app.get('/.well-known/oauth-protected-resource/mcp', (_req, res) => {
     res.json({
       resource,
-      authorization_servers: [runtime.config.issuer],
       bearer_methods_supported: ['header'],
-      scopes_supported: ['task:read', 'task:write', 'acc:mcp'],
+      scopes_supported: ['task:read', 'task:write'],
     });
   });
   app.all('/mcp', async (request, res) => {

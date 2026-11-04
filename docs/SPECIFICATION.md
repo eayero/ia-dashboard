@@ -122,7 +122,7 @@ reconexión consulta delta y cursor inválido recarga snapshot consistente.
 ## MCP e integración de agentes
 
 SDK oficial estable y compatibilidad probada; Streamable HTTP autenticado con
-Origin/audiencia y OAuth adecuados. No confundir sesión MCP con sesión ACC.
+Origin, audiencia, scopes y credenciales opacas propias de ACC. No confundir sesión MCP con sesión ACC.
 Sin lógica de negocio duplicada. Herramientas propuestas:
 
 `acc_get_context`, `acc_list_tasks`, `acc_find_or_create_task`, `acc_claim_task`,
@@ -140,9 +140,12 @@ locales; no modificar ECC ni configuraciones globales del usuario.
 
 ## Seguridad y operación
 
-OIDC Authorization Code + PKCE en BFF NestJS, cookie HttpOnly/Secure/SameSite y
-CSRF; no tokens browser en storage. Agentes con identidad, scopes, audiencia,
-TTL y revocación por proyecto. RBAC y autorización por objeto en REST/MCP/WS.
+Autenticación propia de ACC, sin registro público: usuario/contraseña, sesión
+PostgreSQL con cookie HttpOnly/Secure/SameSite y CSRF; no tokens browser en storage.
+ADMIN gestiona usuarios y membresías; recuperar acceso emite contraseña temporal
+con cambio obligatorio. Agentes con identidad, tokens opacos, scopes, audiencias
+API/MCP, TTL y revocación. El rol global no sustituye la membresía de proyecto.
+Esta decisión posterior sustituye OIDC/Keycloak de Q8/Q36; se conserva el historial. RBAC y autorización por objeto en REST/MCP/WS.
 Validación estricta, SQL parametrizado, límites/rate limiting, Markdown sanitizado,
 HTTPS, CORS exacto, CSP, logs redactados y prevención de SSRF/prompt injection.
 
@@ -169,15 +172,15 @@ agentes. No confundir la primera entrega con cumplimiento de todo el MVP.
 
 ## Plan por dependencias
 
-| Fase | Historias de origen | Alcance                                                              |
-| ---- | ------------------- | -------------------------------------------------------------------- |
-| 0    | ACC-001…004         | Monorepo, Compose, ADR, skeleton Nest/Vite/contratos                 |
-| 1    | ACC-101…105         | Schema, OIDC/RBAC, proyectos, contadores/outbox, iteraciones         |
-| 2    | ACC-201…205         | Tareas/dependencias, claims/fencing, idempotencia, estados, carreras |
-| 3    | ACC-301…305         | Requisitos, decisiones, preguntas, evidencias, contexto/delta        |
-| 4    | ACC-401…405         | MCP, tools, skill, adaptador ECC y smoke real                        |
-| 5    | ACC-501…507         | SPA, resumen, tareas/inbox/agentes, WS, pruebas UI                   |
-| 6    | ACC-601…605         | Git, métricas, OTEL, seguridad/restore/carga, export/retención       |
+| Fase | Historias de origen | Alcance                                                                      |
+| ---- | ------------------- | ---------------------------------------------------------------------------- |
+| 0    | ACC-001…004         | Monorepo, Compose, ADR, skeleton Nest/Vite/contratos                         |
+| 1    | ACC-101…105         | Schema, autenticación propia/RBAC, proyectos, contadores/outbox, iteraciones |
+| 2    | ACC-201…205         | Tareas/dependencias, claims/fencing, idempotencia, estados, carreras         |
+| 3    | ACC-301…305         | Requisitos, decisiones, preguntas, evidencias, contexto/delta                |
+| 4    | ACC-401…405         | MCP, tools, skill, adaptador ECC y smoke real                                |
+| 5    | ACC-501…507         | SPA, resumen, tareas/inbox/agentes, WS, pruebas UI                           |
+| 6    | ACC-601…605         | Git, métricas, OTEL, seguridad/restore/carga, export/retención               |
 
 Implementar slices verticales, no capas desconectadas. `docs/IMPLEMENTATION_STATUS.md`
 usa IDs BOOT hasta disponer de ACC; importador idempotente preservará esas refs.

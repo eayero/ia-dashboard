@@ -1,0 +1,15 @@
+.git
+.env
+.env.*
+.cache
+.tools
+.turbo
+.playwright-cli
+output
+**/node_modules
+**/dist
+**/.turbo
+coverage
+test-results
+playwright-report
+*.log

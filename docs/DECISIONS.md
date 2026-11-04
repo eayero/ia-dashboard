@@ -57,8 +57,21 @@ push, merge ni despliegue. Este documento complementa la especificación v1.1.
 - Cambios sustanciales sobre tareas reclamadas deben usar operación explícita;
   no pueden pasar por un PATCH ordinario.
 
+## Sustituciones aprobadas después de Q1–Q40
+
+Por petición expresa del usuario, Q8 y Q36 quedan sustituidas en su parte de
+OIDC/Keycloak por autenticación propia de ACC. Los usuarios pertenecen solo a ACC,
+sin registro público. ADMIN gestiona cuentas y asignaciones; recuperación mediante
+contraseña temporal con cambio obligatorio. Humanos usan sesión HttpOnly y CSRF;
+agentes, credenciales opacas revocables, con caducidad, scopes y audiencias API/MCP.
+Se conservan IDs, permisos e historial. No se implementa un servidor OAuth propio.
+
+Compose debe incluir backend y UI, además de PostgreSQL, Redis, migraciones,
+bootstrap y worker. Estas decisiones se aplican en la especificación y runbooks;
+la tabla Q1–Q40 conserva el texto original para trazabilidad.
+
 ## Decisiones aplazadas por alcance
 
-Proveedor OIDC de producción, hosting y dominio se concretarán antes de publicar.
+Hosting, dominio y operación de producción se concretarán antes de publicar.
 Diseño visual se presenta para revisión antes de implementar UI. Métricas avanzadas,
 integraciones Git, adjuntos, organizaciones y facturación no pertenecen al primer slice.

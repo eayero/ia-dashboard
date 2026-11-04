@@ -1,13 +1,11 @@
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
 import { createApplication } from '../../apps/api/src/app.ts';
 import { loadConfiguration } from '../../apps/api/src/config.ts';
 import { bootstrapLocal } from '../../apps/api/src/local-bootstrap.ts';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { Pool } from '../../packages/db/src/index.ts';
-import { tokenWithInvalidSignature } from '../../apps/api/test/token-fixtures.ts';
 
 const schema = `acc_test_${randomUUID().replaceAll('-', '')}`;
 const admin = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -22,26 +20,24 @@ let app: Awaited<ReturnType<typeof createApplication>>;
 let projectId: string;
 let cookie = '';
 let csrf = '';
+let ownerLogin: { username: string; password: string };
 let agents: Awaited<ReturnType<typeof bootstrapLocal>>['agents'];
 before(async () => {
   assert.equal(
     origin,
     'http://localhost:55173',
-    'OIDC integration requires the configured local origin',
+    'Local integration requires the configured origin',
   );
   await admin.query(`CREATE SCHEMA "${schema}"`);
   await migrate(pool);
   const seeded = await bootstrapLocal(process.env, pool);
   projectId = seeded.projectId;
+  ownerLogin = { username: seeded.username, password: seeded.password };
   agents = seeded.agents;
   app = await createApplication(config, pool);
   await app.listen(55173, '127.0.0.1');
-  const initial = await loginCode();
-  const signedIn = await fetch(initial.callback, {
-    headers: { cookie: initial.pendingCookie },
-    redirect: 'manual',
-  });
-  assert.equal(signedIn.status, 302);
+  const { response: signedIn } = await login();
+  assert.equal(signedIn.status, 201);
   cookie = sessionCookie(signedIn);
   csrf = (await (await get('/auth/me')).json()).data.csrfToken;
 });
@@ -80,40 +76,22 @@ async function post(path: string, body: unknown, extra: Record<string, string> =
     redirect: 'manual',
   });
 }
-async function loginCode() {
-  const start = await get('/auth/login', '');
-  assert.equal(start.status, 302);
+async function login(input = ownerLogin) {
+  const start = await get('/auth/session', '');
+  assert.equal(start.status, 200);
   const pendingCookie = sessionCookie(start);
-  const location = start.headers.get('location')!;
-  const params = new URL(location).searchParams;
-  assert.equal(params.get('code_challenge_method'), 'S256');
-  assert.ok(params.get('state') && params.get('nonce') && params.get('code_challenge'));
-  const page = await fetch(location, { redirect: 'manual' });
-  assert.equal(page.status, 200);
-  const html = await page.text();
-  const action = /action="([^"]+)"/u.exec(html)?.[1]?.replaceAll('&amp;', '&');
-  assert.ok(action, 'Keycloak login form must be present');
-  const realm = JSON.parse(
-    await readFile(new URL('../../.cache/keycloak/realm.json', import.meta.url), 'utf8'),
-  );
-  const password = realm.users.find((user: { username: string }) => user.username === 'owner')
-    .credentials[0].value;
-  const authorized = await fetch(action, {
+  const csrfToken = (await start.json()).data.csrfToken;
+  const response = await fetch(`${origin}/api/v1/auth/login`, {
     method: 'POST',
     headers: {
-      'content-type': 'application/x-www-form-urlencoded',
-      cookie: page.headers
-        .getSetCookie()
-        .map((value) => value.split(';')[0])
-        .join('; '),
+      cookie: pendingCookie,
+      origin,
+      'content-type': 'application/json',
+      'x-csrf-token': csrfToken,
     },
-    body: new URLSearchParams({ username: 'owner', password, credentialId: '' }),
-    redirect: 'manual',
+    body: JSON.stringify(input),
   });
-  assert.equal(authorized.status, 302, 'Keycloak must authenticate the synthetic user');
-  const callback = new URL(authorized.headers.get('location')!);
-  assert.equal(callback.origin, origin);
-  return { callback, pendingCookie };
+  return { response, pendingCookie };
 }
 
 test('HTTP exige autenticación y mantiene health y errores con envelope sin filtrar detalles', async () => {
@@ -147,19 +125,14 @@ test('API no arranca ni anuncia readiness con esquema de autenticación sin migr
     await admin.query(`DROP SCHEMA "${emptySchema}" CASCADE`);
   }
 });
-test('callback rechaza state ajeno sin autenticar ni crear principal', async () => {
-  const start = await get('/auth/login', '');
-  const response = await get('/auth/callback?state=wrong&code=invalid', sessionCookie(start));
-  assert.equal(response.status, 401);
-  assert.equal((await response.json()).error.code, 'OIDC_LOGIN_FAILED');
+test('rutas OIDC retiradas no autentican ni crean cuentas', async () => {
+  assert.equal((await get('/auth/callback?state=wrong&code=invalid', '')).status, 404);
+  assert.equal((await get('/auth/login', '')).status, 404);
 });
-test('Code + PKCE real rota sesión, no persiste tokens y limita proyectos por membresía', async () => {
-  const { callback, pendingCookie } = await loginCode();
-  const response = await fetch(callback, {
-    headers: { cookie: pendingCookie },
-    redirect: 'manual',
-  });
-  assert.equal(response.status, 302, 'OIDC callback must succeed');
+
+test('login ACC rota sesión, no persiste contraseñas y limita proyectos por membresía', async () => {
+  const { response, pendingCookie } = await login();
+  assert.equal(response.status, 201);
   cookie = sessionCookie(response);
   assert.ok(cookie && cookie !== pendingCookie, 'Session ID must rotate on login');
   const setCookie = response.headers.getSetCookie().join(';');
@@ -194,8 +167,10 @@ test('Code + PKCE real rota sesión, no persiste tokens y limita proyectos por m
     assert.ok(
       !serialized.includes('access_token') &&
         !serialized.includes('refresh_token') &&
-        !serialized.includes('id_token'),
-      'HTTP sessions must not persist OIDC tokens',
+        !serialized.includes('id_token') &&
+        !serialized.includes(ownerLogin.password) &&
+        !serialized.includes('password_hash'),
+      'HTTP sessions must not persist credentials',
     );
   }
 });
@@ -290,54 +265,21 @@ test('sesión ACC explícita y comandos REST recorren hasta DONE sin atajos de g
   const detail = await get(`${base}/tasks/${task.id}`);
   assert.equal((await detail.json()).data.status, 'DONE');
 });
-test('nonce distinto y usuario OIDC no preaprovisionado nunca crean una sesión autenticada', async () => {
-  const nonceFlow = await loginCode();
-  await pool.query(
-    "UPDATE http_sessions SET sess=jsonb_set(sess::jsonb,'{login,nonce}',to_jsonb('mismatch'::text)) WHERE sess->'login'->>'state'=$1",
-    [nonceFlow.callback.searchParams.get('state')],
-  );
-  const denied = await fetch(nonceFlow.callback, {
-    headers: { cookie: nonceFlow.pendingCookie },
-    redirect: 'manual',
-  });
-  assert.equal(denied.status, 401);
-  assert.equal((await denied.json()).error.code, 'OIDC_LOGIN_FAILED');
-  const mapping = (await pool.query("SELECT * FROM oidc_identities WHERE kind='HUMAN'")).rows[0];
-  await pool.query('DELETE FROM oidc_identities WHERE issuer=$1 AND subject=$2', [
-    mapping.issuer,
-    mapping.subject,
-  ]);
-  try {
-    const unknown = await loginCode();
-    const response = await fetch(unknown.callback, {
-      headers: { cookie: unknown.pendingCookie },
-      redirect: 'manual',
-    });
-    assert.equal(response.status, 403);
-    assert.equal((await response.json()).error.code, 'IDENTITY_NOT_PROVISIONED');
-    assert.equal((await get('/auth/me', sessionCookie(response))).status, 401);
-  } finally {
-    await pool.query(
-      'INSERT INTO oidc_identities(issuer,subject,principal_id,kind) VALUES ($1,$2,$3,$4)',
-      [mapping.issuer, mapping.subject, mapping.principal_id, mapping.kind],
-    );
+test('usuario desconocido y contraseña incorrecta devuelven el mismo error sin crear identidades', async () => {
+  const count = (await pool.query('SELECT count(*) FROM principals')).rows[0].count;
+  for (const input of [
+    { username: 'unknown-user', password: ownerLogin.password },
+    { ...ownerLogin, password: 'wrong password' },
+  ]) {
+    const { response } = await login(input);
+    assert.equal(response.status, 401);
+    assert.equal((await response.json()).error.code, 'LOGIN_FAILED');
   }
+  assert.equal((await pool.query('SELECT count(*) FROM principals')).rows[0].count, count);
 });
-test('dos agentes con JWT OIDC real compiten por claim y revocación del proyecto corta el acceso del token vigente', async () => {
-  const tokens = await Promise.all(
-    agents.map(async (agent) => {
-      const response = await fetch(`${config.issuer}/protocol/openid-connect/token`, {
-        method: 'POST',
-        body: new URLSearchParams({
-          grant_type: 'client_credentials',
-          client_id: agent.clientId,
-          client_secret: agent.clientSecret,
-        }),
-      });
-      assert.equal(response.status, 200, 'Synthetic service account must authenticate');
-      return (await response.json()).access_token as string;
-    }),
-  );
+
+test('dos agentes con credenciales ACC compiten por claim y revocación del proyecto corta el acceso del token vigente', async () => {
+  const tokens = agents.map((agent) => agent.apiToken);
   const agentPost = (index: number, path: string, body: unknown) =>
     fetch(`${origin}/api/v1${path}`, {
       method: 'POST',
@@ -440,7 +382,7 @@ test('bootstrap repetido usa una conexión y no reactiva accesos revocados', asy
     connectionTimeoutMillis: 500,
   });
   try {
-    await bootstrapLocal(process.env, one);
+    await bootstrapLocal(process.env, one, { ...ownerLogin, cachedAgents: agents });
     assert.equal(
       (
         await pool.query(
@@ -506,13 +448,8 @@ test('paginación firmada no repite tareas y rechaza cursor manipulado, JSON inv
   assert.equal(large.status, 413);
   assert.equal((await large.json()).error.code, 'PAYLOAD_TOO_LARGE');
 });
-test('JWT con claims válidos y firma ajena se rechaza; VIEWER lee sin poder mutar', async () => {
-  const subject = (
-    await pool.query('SELECT subject FROM oidc_identities WHERE principal_id=$1', [
-      agents[0]!.principalId,
-    ])
-  ).rows[0].subject;
-  const token = await tokenWithInvalidSignature(config.issuer, subject);
+test('credencial alterada se rechaza; VIEWER lee sin poder mutar', async () => {
+  const token = `acc_${randomUUID()}.${'x'.repeat(43)}`;
   const forged = await fetch(`${origin}/api/v1/projects`, {
     headers: { authorization: `Bearer ${token}` },
   });
@@ -540,30 +477,19 @@ test('JWT con claims válidos y firma ajena se rechaza; VIEWER lee sin poder mut
     );
   }
 });
-test('sesión de otro issuer se invalida aunque conserve una identidad preaprovisionada', async () => {
+test('cambiar versión de credenciales invalida la cookie anterior', async () => {
   const me = (await (await get('/auth/me')).json()).data;
-  const previous = 'https://previous-provider.example.test/realm';
-  await pool.query('UPDATE oidc_identities SET issuer=$1 WHERE principal_id=$2', [
-    previous,
-    me.principal.id,
-  ]);
   await pool.query(
-    "UPDATE http_sessions SET sess=jsonb_set(sess::jsonb,'{identity,issuer}',to_jsonb($1::text)) WHERE sess->'identity'->>'principalId'=$2",
-    [previous, me.principal.id],
+    'UPDATE local_users SET credential_version=credential_version+1 WHERE principal_id=$1',
+    [me.principal.id],
   );
-  try {
-    assert.equal((await get('/auth/me')).status, 401);
-  } finally {
-    await pool.query('UPDATE oidc_identities SET issuer=$1 WHERE principal_id=$2', [
-      config.issuer,
-      me.principal.id,
-    ]);
-    await pool.query(
-      "UPDATE http_sessions SET sess=jsonb_set(sess::jsonb,'{identity,issuer}',to_jsonb($1::text)) WHERE sess->'identity'->>'principalId'=$2",
-      [config.issuer, me.principal.id],
-    );
-  }
+  assert.equal((await get('/projects')).status, 401);
+  const { response } = await login();
+  assert.equal(response.status, 201);
+  cookie = sessionCookie(response);
+  csrf = (await (await get('/auth/me')).json()).data.csrfToken;
 });
+
 test('HTTP entrega contexto paginado y delta; expirar snapshot pide recarga explícita', async () => {
   const base = `/projects/${projectId}`;
   for (let i = 0; i < 2; i++)

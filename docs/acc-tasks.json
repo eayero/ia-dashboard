@@ -1,0 +1,124 @@
+[
+  {
+    "id": "BOOT-001",
+    "title": "Especificación y acuerdos Q1–Q40",
+    "source": "docs/DECISIONS.md",
+    "context": "Base documentada; falta reconciliar la decisión posterior de autenticación propia.",
+    "criteria": ["Conservar las decisiones aprobadas y documentar sus sustituciones explícitas."]
+  },
+  {
+    "id": "BOOT-002",
+    "title": "Monorepo y herramientas verificables",
+    "source": "docs/IMPLEMENTATION_STATUS.md",
+    "context": "Tipos y build de cinco paquetes comprobados; pnpm y lockfile locales.",
+    "criteria": ["Instalación reproducible y verificaciones documentadas con resultados reales."]
+  },
+  {
+    "id": "BOOT-003",
+    "title": "Entorno Docker completo de ACC",
+    "source": "infra/docker-compose.yml",
+    "context": "API, UI, PG y Redis saludables; worker activo; migrate y bootstrap con salida 0. Keycloak sustituido.",
+    "criteria": ["Comprobar arranque y reinicio conservando datos, identidad y revocaciones."]
+  },
+  {
+    "id": "BOOT-004",
+    "title": "Dominio y contratos con pruebas",
+    "source": "docs/IMPLEMENTATION_STATUS.md",
+    "context": "52 unitarias comprobadas en la reanudación; resto del MVP pendiente.",
+    "criteria": ["Mantener contratos estrictos y pruebas de gates y permisos."]
+  },
+  {
+    "id": "BOOT-005",
+    "title": "Persistencia y concurrencia real",
+    "source": "docs/IMPLEMENTATION_STATUS.md",
+    "context": "73 integraciones comprobadas; incluye HTTP, MCP, coordinación y outbox.",
+    "criteria": [
+      "Conservar auditoría, idempotencia, aislamiento y fencing en operaciones concurrentes."
+    ]
+  },
+  {
+    "id": "BOOT-006",
+    "title": "REST y autenticación propia",
+    "source": "docs/RESUME_LOCAL_AUTH.md",
+    "context": "Login, administración y tokens opacos implementados localmente; OpenAPI pendiente.",
+    "criteria": ["Validar permisos, revocación, cambio obligatorio y documentar rutas actuales."]
+  },
+  {
+    "id": "BOOT-007",
+    "title": "MCP usable con clientes reales",
+    "source": "apps/api/src/mcp/tools.ts",
+    "context": "15 herramientas y smoke oficial comprobados; integración directa con clientes pendiente.",
+    "criteria": ["Gestionar tareas reales por MCP con lectura consistente, reintentos e historial."]
+  },
+  {
+    "id": "BOOT-008",
+    "title": "Dashboard y administración web",
+    "source": "docs/runbooks/web.md",
+    "context": "Dashboard previo revisado; login nuevo comprobado en escritorio; administración y móvil pendientes.",
+    "criteria": [
+      "Revisar login, usuarios, acceso por proyecto, reset y credenciales en escritorio y móvil."
+    ]
+  },
+  {
+    "id": "BOOT-009",
+    "title": "Recorrido completo hasta DONE",
+    "source": "tests/integration/workflow.test.ts",
+    "context": "Recorridos automatizados existentes; falta recorrido completo desde clientes reales y WS.",
+    "criteria": ["Adjuntar evidencias y obtener aprobaciones humanas separadas sin saltar gates."]
+  },
+  {
+    "id": "ACC-LOCAL-010",
+    "title": "Actualizar documentación de autenticación",
+    "source": "docs/RESUME_LOCAL_AUTH.md",
+    "context": "ADR, especificación, decisiones y runbooks conservan referencias obsoletas a OIDC y Keycloak.",
+    "criteria": [
+      "Alinear las guías con sesiones HttpOnly, CSRF, usuarios locales y tokens API/MCP."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-011",
+    "title": "Validar administración web y acceso temporal",
+    "source": "docs/RESUME_LOCAL_AUTH.md",
+    "context": "Pendiente de revisión real del navegador después de la migración de autenticación.",
+    "criteria": [
+      "Comprobar cambio obligatorio, permisos, reset, deshabilitación, logout y expiración.",
+      "Comprobar secreto de agente mostrado una sola vez y revocación sin divulgarlo."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-012",
+    "title": "Comprobar reinicio e idempotencia de Compose",
+    "source": "infra/docker-compose.yml",
+    "context": "Arranque inicial real comprobado; falta verificar reinicio y preservación de permisos y revocaciones.",
+    "criteria": [
+      "Repetir bootstrap sin cambiar identidades, secretos ni permisos existentes.",
+      "Verificar healthchecks, proxy, CSP y 404 de assets sin borrar volúmenes."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-013",
+    "title": "Completar transporte WebSocket",
+    "source": "docs/runbooks/events.md",
+    "context": "Outbox, Redis y delta disponibles; servidor WebSocket pendiente.",
+    "criteria": ["Definir y comprobar reconexión, autorización y recuperación por delta."]
+  },
+  {
+    "id": "ACC-LOCAL-014",
+    "title": "Completar entidades pendientes del MVP",
+    "source": "docs/SPECIFICATION.md",
+    "context": "Preguntas, requisitos, decisiones e impacto aún no están implementados como entidades de producto.",
+    "criteria": [
+      "Desglosar el alcance conforme a la especificación antes de implementar las entidades pendientes."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-015",
+    "title": "Mantener copia del seguimiento del repositorio en ACC",
+    "source": "docs/ACC_MIRROR.md",
+    "context": "Petición del usuario: mantener todo en archivos y duplicarlo en ACC para probar funcionalidad.",
+    "criteria": [
+      "Importar el catálogo con referencias estables y verificar reintentos sin duplicados.",
+      "Verificar tareas por ID, contexto y delta mediante MCP; registrar límites reales."
+    ]
+  }
+]

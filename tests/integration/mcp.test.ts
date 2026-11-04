@@ -28,22 +28,7 @@ before(async () => {
   app = await createApplication(config, pool);
   await app.listen(0, '127.0.0.1');
   base = `http://127.0.0.1:${(app.getHttpServer().address() as AddressInfo).port}`;
-  tokens = await Promise.all(
-    seeded.agents.map(async (agent) => {
-      const response = await fetch(`${config.issuer}/protocol/openid-connect/token`, {
-        method: 'POST',
-        body: new URLSearchParams({
-          grant_type: 'client_credentials',
-          client_id: agent.clientId,
-          client_secret: agent.clientSecret,
-          scope: 'acc:mcp',
-          resource: `${config.publicOrigin}/mcp`,
-        }),
-      });
-      assert.equal(response.status, 200);
-      return (await response.json()).access_token as string;
-    }),
-  );
+  tokens = seeded.agents.map((agent) => agent.mcpToken);
 });
 after(async () => {
   if (app) await app.close();
@@ -86,9 +71,8 @@ test('MCP exige Bearer y publica discovery del recurso sin confiar en Host', asy
   assert.equal(discovery.status, 200);
   assert.deepEqual(await discovery.json(), {
     resource: `${config.publicOrigin}/mcp`,
-    authorization_servers: [config.issuer],
     bearer_methods_supported: ['header'],
-    scopes_supported: ['task:read', 'task:write', 'acc:mcp'],
+    scopes_supported: ['task:read', 'task:write'],
   });
 });
 
@@ -229,33 +213,19 @@ test('MCP devuelve errores estructurados y no permite identidad inyectada ni obj
   }
 });
 
-test('MCP rechaza audiencia REST y limita herramientas según scopes OAuth aun con membresía de escritura', async () => {
+test('MCP rechaza audiencia REST y limita herramientas según scopes de credencial aun con membresía de escritura', async () => {
   const agent = seeded.agents[0]!;
-  const rest = await fetch(`${config.issuer}/protocol/openid-connect/token`, {
-    method: 'POST',
-    body: new URLSearchParams({
-      grant_type: 'client_credentials',
-      client_id: agent.clientId,
-      client_secret: agent.clientSecret,
-    }),
-  });
-  assert.equal(rest.status, 200);
-  const restToken = (await rest.json()).access_token;
+  const restToken = agent.apiToken;
   assert.equal((await rpc(initialize, { authorization: `Bearer ${restToken}` })).status, 401);
   assert.equal(
     (await fetch(`${base}/api/v1/projects`, { headers: { authorization: `Bearer ${restToken}` } }))
       .status,
     200,
   );
-  const fixture = await mcpTokenFixture(config.issuer, `${config.publicOrigin}/mcp`, 'task:read');
-  const principalId = randomUUID();
+  const fixture = await mcpTokenFixture(pool, ['mcp'], ['task:read']);
+  const principalId = fixture.principalId;
   let connection: Client | undefined;
   try {
-    await pool.query("INSERT INTO principals(id,kind) VALUES ($1,'AGENT')", [principalId]);
-    await pool.query(
-      "INSERT INTO oidc_identities(issuer,subject,principal_id,kind) VALUES ($1,$2,$3,'AGENT')",
-      [config.issuer, fixture.subject, principalId],
-    );
     await pool.query(
       "INSERT INTO project_members(project_id,principal_id,scopes) VALUES ($1,$2,ARRAY['task:read','task:write'])",
       [seeded.projectId, principalId],
@@ -291,7 +261,6 @@ test('MCP rechaza audiencia REST y limita herramientas según scopes OAuth aun c
     assert.equal((await pool.query('SELECT count(*) FROM agent_sessions')).rows[0].count, before);
   } finally {
     await connection?.close();
-    await fixture.cleanup();
   }
 });
 

@@ -1,3 +1,54 @@
+.login-form {
+  max-width: 420px;
+  margin-top: 28px;
+}
+.login-form small {
+  margin-top: 20px;
+}
+.accounts-page {
+  grid-column: 1 / -1;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.accounts-page .panel {
+  margin-bottom: 24px;
+}
+.accounts-page table {
+  min-width: 800px;
+}
+.accounts-page td:first-child {
+  width: 21%;
+}
+.accounts-page td {
+  vertical-align: top;
+}
+.accounts-page .actions {
+  margin-bottom: 0;
+}
+.accounts-page .actions button {
+  font-size: 11px;
+  padding: 7px 10px;
+}
+.admin-form {
+  margin-top: 24px;
+}
+.admin-form form {
+  max-width: 620px;
+  margin-top: 18px;
+}
+.admin-form summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 12px 0;
+}
+.admin-form fieldset {
+  margin-top: 14px;
+}
+.check-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 :root {
   font-family:
     Inter,

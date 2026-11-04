@@ -81,7 +81,7 @@ sus credenciales no se entregan al navegador.
 
 ## Verificación
 
-`pnpm test:integration` requiere PG, Keycloak y Redis locales. Usa esquemas
+`pnpm test:integration` requiere PG y Redis locales, con autenticación propia de ACC. Usa esquemas
 temporales y elimina solo streams con UUID sintéticos de las pruebas. Comprueba
 snapshots, permisos, cursores/BIGINT, cien adquisiciones concurrentes, dos workers,
 reintento, pérdida de ACK y recuperación por delta tras perder el stream.

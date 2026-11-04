@@ -28,12 +28,13 @@ import {
   type Session,
   type Claim,
 } from './data.ts';
-import { Notice, Status, date, useCommand } from './components.tsx';
+import { Notice, Status, date, useCommand, Modal } from './components.tsx';
 import { CreateTask } from './create-task.tsx';
 import { TaskPanel } from './task-detail.tsx';
+import { LoginForm, PasswordForm, type Me } from './auth-forms.tsx';
+import { Accounts } from './accounts.tsx';
 
-type Me = { principal: { id: string; kind: string }; csrfToken: string };
-type Search = { projectId?: string; taskId?: string };
+type Search = { projectId?: string; taskId?: string; view?: 'accounts' };
 function App() {
   const client = useQueryClient();
   const search = rootRoute.useSearch();
@@ -53,10 +54,11 @@ function App() {
   const projects = useQuery({
     queryKey: ['projects', me.data?.principal.id],
     queryFn: ({ signal }) => api<Project[]>('/projects', { signal }),
-    enabled: Boolean(me.data),
+    enabled: Boolean(me.data && !me.data.user.mustChangePassword),
   });
   const [logoutError, setLogoutError] = useState<unknown>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
   useEffect(() => {
     const expired = () => {
       void clearAuthenticatedState(client);
@@ -105,10 +107,18 @@ function App() {
         <p>
           Supervisa la ejecución, revisa evidencias y aprueba cada entrega desde un mismo lugar.
         </p>
-        <a className="primary button" href="/api/v1/auth/login">
-          Entrar con tu cuenta <ArrowUpRight size={17} aria-hidden="true" />
-        </a>
-        <small>Tu organización gestiona el acceso mediante Keycloak.</small>
+        <LoginForm />
+      </main>
+    );
+  if (me.data.user.mustChangePassword)
+    return (
+      <main className="welcome">
+        <Brand />
+        <h1>Cambia tu contraseña temporal</h1>
+        <PasswordForm saved={() => undefined} />
+        <button onClick={() => void logout()} disabled={loggingOut}>
+          Salir
+        </button>
       </main>
     );
   const project =
@@ -138,12 +148,27 @@ function App() {
             ))}
           </select>
         </div>
+        {me.data.user.systemRole === 'ADMIN' && (
+          <button
+            onClick={() =>
+              void navigate({
+                search:
+                  search.view === 'accounts' ? { projectId: project?.id } : { view: 'accounts' },
+              })
+            }
+          >
+            {search.view === 'accounts' ? 'Volver al proyecto' : 'Usuarios y accesos'}
+          </button>
+        )}
+        <button onClick={() => setChangingPassword(true)}>Mi contraseña</button>
         <button onClick={() => void logout()} disabled={loggingOut}>
           {loggingOut ? 'Saliendo…' : 'Salir'}
         </button>
       </header>
       {Boolean(logoutError) && <Notice error={logoutError} />}
-      {projects.isPending ? (
+      {search.view === 'accounts' && me.data.user.systemRole === 'ADMIN' ? (
+        <Accounts me={me.data} />
+      ) : projects.isPending ? (
         <main id="main" className="page">
           <p role="status">Cargando proyectos…</p>
         </main>
@@ -168,6 +193,11 @@ function App() {
             void navigate({ search: { projectId: project.id, ...(id ? { taskId: id } : {}) } })
           }
         />
+      )}
+      {changingPassword && (
+        <Modal title="Cambiar tu contraseña" close={() => setChangingPassword(false)}>
+          <PasswordForm saved={() => setChangingPassword(false)} />
+        </Modal>
       )}
     </div>
   );
@@ -638,6 +668,7 @@ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-
 const rootRoute = createRootRoute({
   component: Outlet,
   validateSearch: (value: Record<string, unknown>): Search => ({
+    ...(value.view === 'accounts' ? { view: 'accounts' as const } : {}),
     ...(typeof value.projectId === 'string' && uuid.test(value.projectId)
       ? { projectId: value.projectId }
       : {}),

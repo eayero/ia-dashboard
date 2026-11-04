@@ -14,6 +14,12 @@ PostgreSQL real es obligatorio para acreditar carreras; SQLite y mocks no bastan
 Versión optimista separada de revisión de trabajo. Aprobaciones humanas se
 vinculan a esta última y al contenido evaluado. El heartbeat no cambia esa revisión.
 
-Una organización inicial; membresías y roles acumulables por proyecto. Keycloak
-local OIDC; BFF con PKCE/cookie/CSRF. Agentes no pueden aprobar gates humanos.
+Una organización inicial; membresías y roles acumulables por proyecto. La decisión
+posterior del usuario sustituye Keycloak/OIDC por usuarios propios de ACC, sesiones
+HttpOnly con CSRF y credenciales opacas de agentes con scopes/audiencias/caducidad.
+Usuarios sin registro público; administración global por humanos ADMIN, sin acceso
+implícito al contenido de proyectos. Recuperación mediante contraseña temporal y
+cambio obligatorio. Se conservan IDs, historial y referencias OIDC anteriores;
+la migración 005 añade autenticación local sin eliminar esas referencias.
+Agentes no pueden aprobar gates humanos.
 Infraestructura local no constituye configuración segura para producción.

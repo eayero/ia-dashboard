@@ -1,15 +1,15 @@
 # API local autenticada
 
-Estado: NestJS ejecutable con OIDC, tareas, sesiones y contexto/delta.
-El [gateway MCP](mcp.md) comparte autenticación y servicios; el [dashboard](web.md)
-usa el BFF mediante proxy del mismo origen. WS y administración general de
-identidades/proyectos siguen pendientes.
-El [worker de outbox](events.md) publica eventos de forma independiente.
-Entorno y PATH de pnpm: [local.md](local.md).
+NestJS ejecuta autenticación propia, administración de identidades, tareas,
+sesiones ACC y contexto/delta. El [gateway MCP](mcp.md) comparte servicios y
+autorización; el [dashboard](web.md) usa cookies mediante proxy del mismo origen.
+El [worker outbox](events.md) publica eventos por separado. Creación general de
+proyectos, OpenAPI y servidor WS siguen pendientes.
 
 ## Preparar y ejecutar
 
-Desde la raíz, con PostgreSQL y Keycloak locales saludables:
+El [entorno local](local.md) describe Compose completo y desarrollo nativo.
+Con PostgreSQL activo y API/UI de Compose detenidas cuando ocupen los puertos:
 
 ```powershell
 pnpm db:migrate
@@ -17,120 +17,103 @@ pnpm local:bootstrap
 pnpm --filter @acc/api dev
 ```
 
-El bootstrap está restringido a desarrollo y hosts loopback. Preaprovisiona el
-usuario sintético `owner`, el proyecto de demostración y dos service accounts
-`acc-local-agent-a/b`. Resuelve subjects mediante la administración de Keycloak;
-el login de la API solo busca la identidad exacta issuer/sub, sin registro público.
-Repetirlo conserva permisos existentes y accesos revocados. Solo administra clientes
-y scopes marcados como propios del bootstrap; rechaza colisiones con otros recursos.
+Bootstrap preaprovisiona el usuario `owner`, el proyecto de demostración y dos
+agentes locales. Conserva identidades, permisos y credenciales existentes.
+Credenciales iniciales humanas en `.cache/local-login.txt`; tokens API/MCP de
+agentes en `.cache/local-agents.json`. No imprimir ni versionar estos archivos.
+Las contraseñas cambiadas no se restauran al repetir bootstrap.
 
-Credenciales humanas en `.cache/local-login.txt`; credenciales de service accounts
-en `.cache/local-agents.json`. Son archivos locales ignorados. No imprimirlos,
-versionarlos ni copiarlos a auditoría. Los client secrets solo los utiliza el
-cliente para obtener su token en Keycloak; ACC no los guarda en PostgreSQL.
-
-Alternativa compilada:
-
-```powershell
-pnpm build:foundation
-pnpm build:api
-node --env-file=.env apps/api/dist/main.js
-```
-
-Escucha exclusivamente en loopback, puerto `API_PORT` (53000 local). Probe:
-`http://localhost:53000/api/v1/health/ready`. Comprobar si ya hay una instancia
-antes de arrancar otra. La sesión de implementación arrancó esta versión compilada.
-
-La URL OIDC registrada es `http://localhost:55173/api/v1/auth/callback`, prevista
-para el mismo origen de la futura SPA. Mientras falta ese proxy, la suite HTTP
-levanta la API en 55173 y ejecuta el flujo completo sin sustitutos de autenticación.
-El puerto 55173 debe estar libre durante las integraciones; la API en 53000 puede
-seguir funcionando. El dashboard aún no está disponible en ninguno de esos puertos.
+Alternativa compilada: `pnpm build:foundation`, `pnpm build:api` y
+`node --env-file=.env apps/api/dist/main.js`. API_HOST es 127.0.0.1 por defecto;
+Compose usa 0.0.0.0 internamente con publicación host loopback.
+Puerto API_PORT: 53000. Readiness: `/api/v1/health/ready`.
 
 ## Autenticación y permisos
 
-- Humanos: `GET /api/v1/auth/login`, Code + PKCE S256, state y nonce; callback
-  validado por openid-client, rotación del ID de sesión y cookie HttpOnly/SameSite=Lax.
-  Secure se activa en HTTPS y producción. HTTP solo se permite en loopback de desarrollo.
-- Sesión BFF en PostgreSQL, con expiración absoluta limitada por el ID token y
-  un máximo de quince minutos. Access, ID y refresh tokens no se persisten.
-  El estado PKCE temporal expira a los cinco minutos.
-- `GET /api/v1/auth/me` entrega el principal y el token CSRF de una sesión humana.
-  Sus mutaciones requieren `Origin` igual a PUBLIC_ORIGIN y `X-CSRF-Token` válido.
-  `POST /api/v1/auth/logout` destruye esa sesión HTTP; no es un logout del proveedor SSO.
-- Agentes: Bearer JWT verificado con JWKS, RS256, issuer, audiencia `acc-api`,
-  expiración y antigüedad máxima de diez minutos. Cada petición exige `task:read`
-  o `task:write` según la operación, y autorización de proyecto en PostgreSQL.
-  Los service accounts locales emiten tokens de cinco minutos y scopes reales de Keycloak.
-- Un Bearer presente nunca hereda la identidad o permisos de la cookie. Solo una
-  sesión humana puede cerrar su sesión HTTP mediante el endpoint logout.
-- `OWNER/ADMIN` puede revocar acceso de agente por proyecto: termina sesiones ACC,
-  incrementa fencing, revoca claims y registra auditoría/outbox en una transacción.
-  La membresía inactiva impide acceso del JWT vigente al proyecto. El bootstrap
-  no la reactiva. El aprovisionamiento general y rotación de credenciales por API
-  siguen pendientes; el bootstrap es exclusivamente local.
+- Humanos sin registro público. Primero `GET /api/v1/auth/session` establece
+  cookie y devuelve CSRF; después `POST /api/v1/auth/login` recibe
+  `{username,password}`, Origin exacto, cookie y `X-CSRF-Token`.
+- Login rota el ID de sesión y CSRF. Cookie `acc.sid` HttpOnly, SameSite=Lax,
+  Secure con HTTPS o producción. Sesión PostgreSQL de duración absoluta de una
+  hora. Cada petición comprueba cuenta habilitada y versión de credenciales.
+- `GET /api/v1/auth/me` devuelve principal, usuario y CSRF de la sesión humana.
+  Mutaciones humanas requieren JSON, Origin igual a PUBLIC_ORIGIN y CSRF vigente.
+  `POST /auth/logout` con `{}` destruye la sesión y retira la cookie.
+- `POST /auth/password` recibe `{currentPassword,newPassword}`, rota sesión e
+  invalida cookies anteriores. La nueva debe ser distinta y tener 15–128
+  caracteres. Una contraseña temporal obliga a cambiarla antes de usar proyectos
+  o administración. No se puede completar el cambio reutilizando la temporal.
+- Contraseñas derivadas con scrypt y sal aleatoria. Login fallido no revela si la
+  cuenta existe o está deshabilitada. Límites PostgreSQL: 10 intentos por cuenta
+  y 50 por IP en quince minutos; exceso devuelve 429.
+- Agentes usan Bearer opaco `acc_<uuid>.<secreto>`. Solo se guarda SHA-256;
+  el secreto se devuelve al emitir. Caducidad de 1–30 días, scopes
+  `task:read`/`task:write` y audiencias `api`/`mcp`.
+- Cada petición valida vigencia, revocación, cuenta habilitada y audiencia.
+  La membresía activa del proyecto y los scopes se comprueban aparte. Un Bearer
+  presente nunca hereda la identidad ni permisos de una cookie.
+- OIDC/JWT y cookies anteriores no autentican. Las tablas OIDC históricas se
+  conservan para no perder referencias. No hay servidor OAuth propio.
 
-## Rutas disponibles
+## Administración
 
-Todas bajo `/api/v1`, excepto las URLs del propio proveedor OIDC.
+Solo un humano con sesión y rol global ADMIN vigente, sin cambio de contraseña
+pendiente, puede administrar usuarios, membresías y credenciales. El rol global
+no da acceso al contenido de proyectos sin membresía.
 
-| Método   | Ruta                                                       | Operación                                                      |
-| -------- | ---------------------------------------------------------- | -------------------------------------------------------------- |
-| GET      | `/health/live`, `/health/ready`                            | Probes sin autenticación                                       |
-| GET      | `/auth/login`, `/auth/callback`, `/auth/me`                | Login y sesión BFF                                             |
-| POST     | `/auth/logout`                                             | Logout BFF con CSRF                                            |
-| GET      | `/projects`                                                | Proyectos con membresía activa                                 |
-| GET/POST | `/projects/:projectId/tasks`                               | Consultar o crear tareas                                       |
-| GET      | `/projects/:projectId/tasks/:taskId`                       | Detalle consistente con evidencia, aprobaciones y dependencias |
-| POST     | `/projects/:projectId/tasks/:taskId/:command`              | Comando transaccional de tarea                                 |
-| GET/POST | `/projects/:projectId/agent-sessions`                      | Consultar o registrar sesiones ACC explícitas                  |
-| POST     | `/projects/:projectId/agent-sessions/:sessionId/heartbeat` | Renovar presencia de sesión; no renueva claims                 |
-| POST     | `/projects/:projectId/agent-sessions/:sessionId/end`       | Terminar sesión y revocar sus claims                           |
-| POST     | `/projects/:projectId/agents/:principalId/revoke`          | OWNER/ADMIN revoca acceso de agente al proyecto                |
+| Método   | Ruta bajo /api/v1                      | Operación                       |
+| -------- | -------------------------------------- | ------------------------------- |
+| GET/POST | `/admin/users`                         | Listar o crear usuarios         |
+| POST     | `/admin/users/:id/password`            | Restablecer contraseña temporal |
+| POST     | `/admin/users/:id/status`              | Habilitar o deshabilitar cuenta |
+| POST     | `/admin/users/:id/projects/:projectId` | Asignar roles y acceso          |
+| GET/POST | `/admin/agents`                        | Listar o emitir credenciales    |
+| POST     | `/admin/agents/:id/revoke`             | Revocar credencial              |
 
-También disponibles: `GET /projects/:projectId/context` y `GET /projects/:projectId/events`.
-Sus contratos y recuperación se describen en [contexto y eventos](events.md).
+La asignación usa `{active,roles,expectedVersion?}`: versión 0 para alta y versión
+actual para una membresía existente. No se puede deshabilitar la propia cuenta
+ni retirar al último propietario activo. Reset invalida las cookies anteriores.
+Deshabilitar cuentas, retirar acceso o revocar credenciales invalida sesiones ACC
+y claims afectados. Las acciones de identidad tienen auditoría transaccional.
+Las listas no devuelven hashes ni secretos; una credencial perdida debe sustituirse.
+
+## Coordinación y consultas
+
+| Método   | Ruta bajo /api/v1                                             | Operación                             |
+| -------- | ------------------------------------------------------------- | ------------------------------------- |
+| GET      | `/health/live`, `/health/ready`                               | Probes sin autenticación              |
+| GET      | `/projects`                                                   | Proyectos con membresía activa        |
+| GET/POST | `/projects/:projectId/tasks`                                  | Consultar o crear tareas              |
+| GET      | `/projects/:projectId/tasks/:taskId`                          | Detalle consistente                   |
+| POST     | `/projects/:projectId/tasks/:taskId/:command`                 | Comando de tarea                      |
+| GET/POST | `/projects/:projectId/agent-sessions`                         | Consultar o registrar sesión ACC      |
+| POST     | `/projects/:projectId/agent-sessions/:sessionId/heartbeat`    | Renovar presencia, sin renovar claims |
+| POST     | `/projects/:projectId/agent-sessions/:sessionId/end`          | Terminar sesión y sus claims          |
+| POST     | `/projects/:projectId/agents/:principalId/revoke`             | OWNER/ADMIN retira acceso del agente  |
+| GET      | `/projects/:projectId/context`, `/projects/:projectId/events` | Snapshot/delta                        |
 
 Comandos de tarea: `claim`, `heartbeat`, `release`, `revoke`, `work`, `revise`,
-`transition`, `evidence`, `accept-evidence`, `approve` y `dependency`. Sus entradas
-se validan con los contratos Zod compartidos; los controllers delegan al store.
+`transition`, `evidence`, `accept-evidence`, `approve` y `dependency`.
+Las mutaciones de coordinación requieren Idempotency-Key; modificaciones existentes,
+expectedVersion. Aprobaciones incluyen workRevision; implementación usa sessionId
+y fencingToken decimal. El cliente no declara identidad ni gates verificados.
 
-Las mutaciones de coordinación requieren `Idempotency-Key`. Las que modifican
-entidades existentes exigen `expectedVersion` en JSON; las aprobaciones también
-`workRevision`. Los claims/escrituras de implementación incluyen `sessionId` y
-`fencingToken` decimal, ligado al principal autenticado. Los cuerpos rechazan campos
-desconocidos, incluidos booleanos de gates o identidades suministradas por el cliente.
+Consulta: limit inicial 20/máximo 100, status opcional y cursor firmado vinculado
+al proyecto/filtro. Respuesta `{data:{items,nextCursor},meta}`, orden por UUID.
+El detalle usa REPEATABLE READ. Ver [contexto y eventos](events.md).
 
-Consulta de tareas: `limit` inicial 20/máximo 100, `status` opcional y `cursor` firmado
-vinculado al proyecto/filtro. La respuesta es `{data:{items,nextCursor},meta}`.
-Orden estable por UUID. El detalle se lee con snapshot REPEATABLE READ.
-El snapshot/delta cubre los recursos implementados del proyecto, con secuencia fija
-entre páginas. El resto de entidades de producto sigue pendiente.
-
-Éxitos `{data,meta:{requestId,version?,projectSeq?}}`. Errores
-`{error:{code,message,details?,requestId}}`: validación 400, autenticación 401,
-permisos/CSRF 403, recurso ausente 404, versión/propiedad/idempotencia 409 y gates 422.
-Respuestas `no-store`, request ID propio, Helmet, JSON hasta 32 KiB y límite local
-por proceso de 600 solicitudes/minuto por IP. No se devuelve SQL, stack ni tokens
-en errores. El rate limiting distribuido y configuración de publicación quedan pendientes.
+Éxitos `{data,meta:{requestId,version?,projectSeq?}}`; errores
+`{error:{code,message,details?,requestId}}`. Códigos: validación 400, autenticación
+401, permisos/CSRF 403, ausente 404, conflicto 409, gates 422 y límites 429.
+Respuestas no-store, Helmet, JSON hasta 32 KiB y límite por proceso de 600
+solicitudes/minuto por IP. No se devuelven SQL, stacks ni tokens en errores.
 
 ## Comprobar
 
-```powershell
-pnpm test
-pnpm test:integration
-pnpm lint
-pnpm format:check
-pnpm typecheck:foundation
-pnpm typecheck:api
-pnpm build:foundation
-pnpm build:api
-```
-
-La suite usa PostgreSQL y Keycloak reales. BD: esquemas aleatorios eliminados al
-finalizar. Keycloak: reutiliza los dos clientes sintéticos y sus scopes locales,
-que permanecen en el realm. No utiliza usuarios/credenciales de producción.
-Incluye PKCE/rotación, state/nonce, falta de preaprovisionamiento, issuer antiguo,
-firma JWT ajena, CSRF malformado, permisos VIEWER, separación cookie/Bearer,
-dos agentes concurrentes, revocación y flujo HTTP hasta DONE con gates negativos.
-No acredita aún interoperabilidad MCP ni revisión visual/E2E de la SPA.
+Ver los comandos de [verificación local](local.md). Las integraciones usan
+PostgreSQL/Redis locales y esquemas aislados; Keycloak no es necesario.
+`local-auth.test.ts` cubre login/CSRF, cambio obligatorio, reset, administración,
+roles, revocación y límites. `bootstrap.test.ts` comprueba conservación de estado,
+concurrencia y rollback cuando faltan secretos. Las suites REST/MCP comprueban
+claims, fencing y gates humanos. La revisión web/móvil de la administración nueva
+sigue pendiente y no queda acreditada por estas pruebas.

@@ -9,6 +9,11 @@ export class AuthenticationGuard implements CanActivate {
   async canActivate(context: ExecutionContext) {
     const req = context.switchToHttp().getRequest<ApiRequest>();
     req.identity = await this.runtime.auth.authenticate(req);
+    if (
+      req.identity.user?.mustChangePassword &&
+      !['/api/v1/auth/me', '/api/v1/auth/password', '/api/v1/auth/logout'].includes(req.path)
+    )
+      throw new ApiError(403, 'PASSWORD_CHANGE_REQUIRED');
     const mutates = !['GET', 'HEAD', 'OPTIONS'].includes(req.method);
     if (req.identity.mode === 'COOKIE' && mutates) this.runtime.auth.verifyCsrf(req);
     if (req.identity.mode === 'BEARER') {

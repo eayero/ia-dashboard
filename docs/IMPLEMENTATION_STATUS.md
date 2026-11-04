@@ -1,5 +1,65 @@
 # Estado de implementación — bootstrap
 
+MCP directo de Codex comprobado con seis herramientas nativas: proyecto accesible,
+15 referencias del catálogo conservadas, títulos/criterios e IDs coincidentes,
+reintentos sin duplicados y contexto/delta completos en secuencia 35. Evidencia:
+[CODEX_MCP_RESULT.json](CODEX_MCP_RESULT.json). Las 15 tareas siguen en BACKLOG.
+Reinicio/idempotencia de Compose comprobados; guías operativas, ADR y sustituciones
+de Q8/Q36 actualizadas para autenticación propia. Siguiente acción: validar
+administración web/móvil. Sin commit ni push.
+
+## Verificación posterior — Compose y bootstrap
+
+Bootstrap repetido y reinicio de PostgreSQL/Redis/API/worker/UI conservaron los
+datos comparados y los archivos de credenciales. API/UI/PG/Redis saludables,
+worker activo y migrate/bootstrap con salida 0. Proxy, CSP, 404 de assets y smoke
+MCP de 15 herramientas comprobados. [Evidencia](COMPOSE_VERIFICATION.json).
+
+Tres integraciones nuevas prueban bootstrap concurrente, conservación de
+contraseñas cambiadas, permisos retirados, cuentas deshabilitadas y credenciales
+revocadas/expiradas; rollback sin secretos guardados y rechazo fuera de local.
+Pasan 52 unitarias, 76 integraciones, tipos de foundation/integraciones y lint.
+No se modificaron migraciones aplicadas ni se borraron volúmenes.
+
+Documentación de autenticación actualizada en decisiones, especificación, ADR y
+runbooks local/API/MCP/web/eventos. El recorrido visual anterior queda identificado
+como histórico; administración/móvil nuevos siguen pendientes. Las tareas espejo
+siguen en BACKLOG: no se atribuyen aprobaciones ni cierre a estas comprobaciones.
+La evidencia local todavía no tiene URL HTTPS publicada para adjuntarla en ACC;
+queda pendiente su asociación a ACC-LOCAL-012 y ACC-LOCAL-010 tras publicarla.
+
+## Seguimiento duplicado en ACC
+
+Por petición del usuario, los archivos siguen como referencia principal y se
+duplica el seguimiento en el proyecto local de ACC. Catálogo de 15 tareas:
+[acc-tasks.json](acc-tasks.json). Correspondencias y comprobaciones reales:
+[ACC_MIRROR_RESULT.json](ACC_MIRROR_RESULT.json). Procedimiento y límites:
+[ACC_MIRROR.md](ACC_MIRROR.md). La copia no acredita cierre ni aprobación humana.
+
+## Reanudación — autenticación propia y Compose completo
+
+Trabajo reanudado por petición del usuario. Compose compilado y arrancado: API,
+UI, PostgreSQL y Redis saludables, worker activo, migrate/bootstrap con salida 0.
+Smoke MCP oficial correcto (15 herramientas, contexto y delta). Pasan 52 unitarias,
+73 integraciones, tipos/build de cinco paquetes, lint, formato y diff check.
+Corregida reutilización de contraseña temporal (API y formulario), con regresión
+que conserva el cambio obligatorio. Nginx devuelve 404 en assets inexistentes.
+Login de escritorio revisado en navegador. Administración y móvil siguen
+pendientes; el reinicio/bootstrap y las guías de autenticación se comprobaron y
+actualizaron después, según el registro anterior. Sin commit ni push.
+
+### Registro de la pausa anterior
+
+Desarrollo detenido por petición expresa del usuario el 2026-11-03. Cambios de
+autenticación y contenedores guardados localmente, sin commit/push de este hito.
+Detalle, verificación y siguientes pasos: [RESUME_LOCAL_AUTH.md](RESUME_LOCAL_AUTH.md).
+
+La decisión aprobada sustituye Keycloak por acceso propio de ACC e incorpora API/UI
+a Compose. Migración 005 aplicada localmente; pasaron 52 unitarias, 73 integraciones
+y build/tipos. Login/administración web pendientes de revisión visual. Los builds y
+descargas Docker activos se interrumpieron al pausar; arranque completo sin validar.
+Las secciones siguientes registran hitos anteriores y no sustituyen estas notas.
+
 Este archivo registra trabajo comprobable hasta que ACC pueda almacenar su propio
 estado. IDs BOOT preservables por importación idempotente. No son IDs emitidos por ACC.
 

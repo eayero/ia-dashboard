@@ -7,8 +7,8 @@ try {
   const config = loadConfiguration(process.env);
   pool = new Pool({ connectionString: config.databaseUrl });
   const app = await createApplication(config, pool);
-  await app.listen(config.port, '127.0.0.1');
-  console.log(`ACC API listening on loopback port ${config.port}`);
+  await app.listen(config.port, config.host);
+  console.log(`ACC API listening on ${config.host}:${config.port}`);
   let stopping: Promise<void> | undefined;
   const stop = () =>
     (stopping ??= (async () => {
@@ -22,9 +22,7 @@ try {
     void stop();
   });
 } catch {
-  console.error(
-    'API startup failed. Check configuration, database migrations and OIDC availability.',
-  );
+  console.error('API startup failed. Check configuration and database migrations.');
   await pool?.end();
   process.exitCode = 1;
 }

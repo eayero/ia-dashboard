@@ -72,6 +72,11 @@ de otro proyecto. Adaptar los comandos al entorno de la sesión.
 
 ## 6. Documentación y comunicación
 
+Mantener el seguimiento en archivos y duplicarlo en ACC para comprobar el producto.
+Los archivos son la referencia principal. Aplicar [el procedimiento de copia](docs/ACC_MIRROR.md)
+y conservar referencias estables; registrar conflictos o sincronizaciones pendientes.
+La importación no constituye aceptación de evidencia ni aprobación humana.
+
 Mantener la documentación proporcional al proyecto y actualizarla cuando cambien
 el comportamiento, la configuración o las decisiones relevantes. Enlazar desde
 el README los nuevos documentos que deban servir de referencia.

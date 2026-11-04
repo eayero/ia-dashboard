@@ -14,15 +14,15 @@ y [autorización](https://modelcontextprotocol.io/specification/2025-11-25/basic
 
 ## Autenticación y transporte
 
-- Bearer RS256 de Keycloak, identidad AGENT preaprovisionada, issuer y expiración
-  validados en cada petición. Una cookie BFF humana no autentica MCP.
-- Audiencia requerida: `${PUBLIC_ORIGIN}/mcp`. Un token solo para `acc-api` se
-  rechaza, aunque funcione en REST. El gateway nunca lo reenvía a otro servicio.
+- Bearer opaco de ACC, identidad AGENT, vigencia y revocación validadas en cada
+  petición. Una cookie humana no autentica MCP. Solo se guarda el hash del token.
+- La credencial debe incluir audiencia `mcp`; una con solo `api` se rechaza.
+  El recurso público es `${PUBLIC_ORIGIN}/mcp`. El gateway no reenvía tokens.
 - `task:read` es necesario para conectar y leer; las mutaciones también exigen
-  `task:write`. Los scopes OAuth y los permisos activos en PostgreSQL se comprueban
+  `task:write`. Los scopes de la credencial y los permisos activos en PostgreSQL se comprueban
   por separado. La revocación impide la siguiente llamada, incluidos reintentos.
-- Discovery: `/.well-known/oauth-protected-resource/mcp`, con recurso, issuer y
-  scopes. El challenge 401 lo referencia. Scopes insuficientes devuelven HTTP 403
+- Discovery: `/.well-known/oauth-protected-resource/mcp`, con recurso, método
+  Bearer por header y scopes; no anuncia issuer ni authorization_servers. El challenge 401 lo referencia. Scopes insuficientes devuelven HTTP 403
   y `WWW-Authenticate: Bearer error="insufficient_scope"` con scopes requeridos.
 - Origin ausente se admite para clientes nativos; si está presente debe coincidir
   exactamente con `PUBLIC_ORIGIN`. Host no determina audiencia ni metadata.
@@ -32,18 +32,17 @@ y [autorización](https://modelcontextprotocol.io/specification/2025-11-25/basic
 - Comparte límite JSON de 32 KiB, rate limit, no-store y errores seguros de la API.
   Datos, errores de validación, conflictos y gates de las herramientas usan
   `structuredContent` y contenido textual JSON equivalente; errores tienen
-  `isError:true`, código estable y requestId. Los errores OAuth son HTTP.
+  `isError:true`, código estable y requestId. Los errores de autenticación y scopes son HTTP.
 
-El bootstrap local añade el client scope opcional `acc:mcp` a los dos service
-accounts marcados, con mapper de audiencia del recurso. Solicitarlo mediante
-`scope=acc:mcp` y enviar `resource=${PUBLIC_ORIGIN}/mcp` al obtener el token.
-Los tokens REST ordinarios conservan solo su audiencia REST. En producción,
-aprovisionar clientes/scopes/audiencias explícitamente con HTTPS; el bootstrap
-está restringido a desarrollo local.
+El bootstrap local genera credenciales separadas API/MCP para dos agentes y las
+conserva en `.cache/local-agents.json`. El campo `mcpToken` se envía como
+`Authorization: Bearer <token>` por un cliente configurado manualmente. La UI de
+administración permite emitir credenciales con scopes, audiencias y caducidad.
+El secreto se muestra una sola vez; las revocadas no se renuevan por bootstrap.
 
-Este hito usa `client_credentials` preaprovisionado. No implementa registro
-dinámico de clientes ni login OAuth interactivo de clientes MCP de escritorio.
-El login humano BFF existente es un flujo separado.
+No hay servidor OAuth propio, grant client_credentials, registro dinámico ni
+login OAuth interactivo MCP. La metadata del recurso no acredita un flujo OAuth
+completo. El login humano por usuario/contraseña es independiente.
 
 ## Herramientas disponibles
 
@@ -71,6 +70,12 @@ reciben `idempotencyKey` e `input`; comandos de tarea añaden `taskId`, y comand
 de sesión `sessionId`. La identidad proviene del token, nunca de argumentos.
 Consultar los JSON Schema mediante `tools/list`, sin inventar campos.
 
+No hay proyecto activo global ni selección automática por carpeta. Primero
+`acc_list_projects({})` devuelve los proyectos accesibles; el cliente elige el ID
+y lo incluye en cada llamada. En este repositorio el espejo usa
+`3268b4d2-cd9d-4afc-bc76-ea631997cd73`, «ACC · Demostración local». El token
+identifica al agente; no sustituye la membresía del proyecto.
+
 Buscar antes de crear. `externalRef` encuentra una identidad exacta; un título
 similar no fusiona tareas automáticamente. Repetir un comando con la misma clave
 y contenido conserva el resultado; cambiar el contenido produce conflicto.
@@ -97,8 +102,8 @@ Arrancar la API con `pnpm --filter @acc/api dev`, o compilar y ejecutar
 pnpm mcp:smoke
 ```
 
-El smoke lee las credenciales ignoradas de `.cache/local-agents.json`, obtiene
-un token en memoria y comprueba herramientas/contexto/delta con el cliente oficial.
+El smoke lee `mcpToken` de las credenciales ignoradas de `.cache/local-agents.json`
+y comprueba herramientas/contexto/delta con el cliente oficial.
 No imprime tokens ni crea tareas/sesiones ACC. Se puede probar el artefacto compilado:
 `node --env-file=.env apps/api/dist/mcp/smoke.js` tras `pnpm build:api`.
 
@@ -108,15 +113,18 @@ al origen público configurado (localmente 55173). El [dashboard](web.md) expone
 Se probaron discovery, inicialización, quince herramientas y contexto del cliente
 oficial a través de ese origen público en preview compilado.
 
-`tests/integration/mcp.test.ts` usa el cliente oficial, PostgreSQL y Keycloak reales:
+`tests/integration/mcp.test.ts` usa el cliente oficial, PostgreSQL real y autenticación propia:
 contratos, contexto/delta, reintentos, dos agentes/claims, fencing, evidencia,
 permisos humanos hasta DONE y revocación. Las acciones humanas del recorrido MCP
 se ejecutan por el servicio transaccional, no mediante una identidad agente.
-Las pruebas REST acreditan por separado el flujo humano OIDC/CSRF.
+Las pruebas REST acreditan por separado login local, cookies y CSRF.
 
 Comprobación adicional: Claude Code **2.1.317**, `mcp list`, confirmó **Connected**
 contra la API compilada. Se usó `CLAUDE_CONFIG_DIR` dentro de `.cache` y un header
 que expande una variable de entorno; no se cambiaron ajustes globales del usuario.
 Eso acredita conexión/health, no ejecución de tareas ni login interactivo de Claude.
-Codex CLI no se encontró en PATH: su smoke y los recorridos completos de ambos
-clientes siguen pendientes. No declarar interoperabilidad total por el smoke del SDK.
+La conexión de Claude corresponde al hito anterior con autenticación OIDC; debe
+revalidarse tras la migración de autenticación. Codex ya ejecutó seis herramientas
+nativas con tokens propios de ACC: verificó 15 referencias, reintentos sin
+duplicados, contexto y delta. Ver [evidencia de Codex](../CODEX_MCP_RESULT.json).
+Los recorridos completos de clientes y gates humanos siguen pendientes.

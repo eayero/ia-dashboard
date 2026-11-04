@@ -180,3 +180,50 @@ export const eventEnvelopeSchema = z.strictObject({
 });
 export type EventEnvelope = z.infer<typeof eventEnvelopeSchema>;
 export type ContextRecord = { entityType: string; data: Record<string, unknown> };
+
+export const usernameSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .regex(/^[a-z0-9][a-z0-9_.-]{2,63}$/u);
+export const passwordSchema = z.string().min(15).max(128);
+export const loginSchema = z.strictObject({
+  username: usernameSchema,
+  password: z.string().min(1).max(128),
+});
+export const changePasswordSchema = z.strictObject({
+  currentPassword: z.string().min(1).max(128),
+  newPassword: passwordSchema,
+});
+export const createUserSchema = z.strictObject({
+  username: usernameSchema,
+  displayName: z.string().trim().min(1).max(120),
+  password: passwordSchema,
+  systemRole: z.enum(['ADMIN', 'USER']).default('USER'),
+});
+export const resetPasswordSchema = z.strictObject({ password: passwordSchema });
+export const userStatusSchema = z.strictObject({ disabled: z.boolean() });
+export const membershipSchema = z.strictObject({
+  active: z.boolean(),
+  expectedVersion: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER).default(0),
+  roles: z
+    .array(z.enum(['OWNER', 'ADMIN', 'MANAGER', 'REVIEWER', 'VIEWER']))
+    .min(1)
+    .max(5)
+    .refine((roles) => new Set(roles).size === roles.length),
+});
+export const agentCredentialSchema = z.strictObject({
+  label: z.string().trim().min(1).max(120),
+  projectId: z.uuid(),
+  scopes: z
+    .array(z.enum(['task:read', 'task:write']))
+    .min(1)
+    .max(2)
+    .refine((scopes) => scopes.includes('task:read') && new Set(scopes).size === scopes.length),
+  audiences: z
+    .array(z.enum(['api', 'mcp']))
+    .min(1)
+    .max(2)
+    .refine((items) => new Set(items).size === items.length),
+  expiresInDays: z.number().int().min(1).max(30).default(1),
+});

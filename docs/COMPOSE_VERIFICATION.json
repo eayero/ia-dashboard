@@ -1,0 +1,79 @@
+{
+  "checkedAt": "2026-11-04T03:32:51.362Z",
+  "environment": "local development",
+  "commands": [
+    "docker compose --env-file .env -f infra/docker-compose.yml config --quiet",
+    "docker compose --env-file .env -f infra/docker-compose.yml run --rm --no-deps bootstrap",
+    "docker compose --env-file .env -f infra/docker-compose.yml restart postgres redis api worker ui",
+    "docker compose --env-file .env -f infra/docker-compose.yml ps --all",
+    "pnpm mcp:smoke"
+  ],
+  "bootstrapRepeated": true,
+  "restartCompleted": true,
+  "persistentState": {
+    "method": "Compare SHA-256 of ordered private row snapshots before and after; do not publish row content or hashes.",
+    "unchanged": true,
+    "tables": {
+      "schema_migrations": 5,
+      "projects": 1,
+      "principals": 3,
+      "local_users": 1,
+      "project_members": 3,
+      "agent_credentials": 4,
+      "work_items": 16,
+      "audit_events": 39,
+      "security_events": 1,
+      "project_counters": 2
+    }
+  },
+  "credentialFilesUnchanged": true,
+  "services": {
+    "postgres": "healthy",
+    "redis": "healthy",
+    "api": "healthy",
+    "ui": "healthy",
+    "worker": "running",
+    "migrate": "exited 0",
+    "bootstrap": "exited 0"
+  },
+  "http": {
+    "uiStatus": 200,
+    "apiReadinessViaProxy": 200,
+    "anonymousMeStatus": 401,
+    "missingAssetStatus": 404,
+    "cspVerified": true,
+    "nosniffVerified": true,
+    "mcpResourceMetadataVerified": true
+  },
+  "mcpSmoke": {
+    "client": "official-typescript-sdk",
+    "tools": 15,
+    "context": true,
+    "delta": true
+  },
+  "regression": {
+    "file": "tests/integration/bootstrap.test.ts",
+    "tests": 3,
+    "passed": 3,
+    "covers": [
+      "Concurrent bootstrap preserves IDs and agent secrets.",
+      "Changed password, credential version, required password change and reduced global role remain unchanged.",
+      "Disabled owner, inactive memberships and reduced project roles/scopes remain unchanged.",
+      "Revoked and expired credentials are not renewed or reactivated.",
+      "Missing cached credentials fail without emitting new secrets or changing rows.",
+      "Production and remote origins are rejected."
+    ]
+  },
+  "verification": {
+    "unitTests": 52,
+    "integrationTests": 76,
+    "foundationAndIntegrationTypes": true,
+    "lint": true
+  },
+  "limitations": [
+    "Existing local data preservation and synthetic revoked/expired states were verified separately.",
+    "New administration/mobile browser flows are pending.",
+    "No volume deletion, applied migration edits, commit, push or external deployment.",
+    "Evidence is local and has not been accepted or approved in ACC."
+  ]
+}

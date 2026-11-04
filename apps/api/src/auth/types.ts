@@ -6,6 +6,13 @@ export type AuthenticatedIdentity = {
   kind: 'HUMAN' | 'AGENT';
   mode: 'COOKIE' | 'BEARER';
   scopes: string[];
+  user?: {
+    username: string;
+    displayName: string;
+    systemRole: 'ADMIN' | 'USER';
+    mustChangePassword: boolean;
+    credentialVersion: number;
+  };
 };
 export interface ApiRequest extends Request {
   requestId: string;
@@ -13,8 +20,7 @@ export interface ApiRequest extends Request {
 }
 declare module 'express-session' {
   interface SessionData {
-    login?: { state: string; nonce: string; verifier: string; startedAt: number };
-    identity?: { principalId: string; issuer: string; subject: string; expiresAt: number };
+    identity?: { principalId: string; credentialVersion: number; expiresAt: number };
     csrfToken?: string;
   }
 }

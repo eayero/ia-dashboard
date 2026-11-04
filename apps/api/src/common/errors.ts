@@ -38,6 +38,9 @@ export function errorResponse(error: unknown, request: ApiRequest) {
     status = 400;
     code = 'VALIDATION_ERROR';
     details = error.issues.map((issue) => ({ path: issue.path, code: issue.code }));
+  } else if (error && typeof error === 'object' && 'code' in error && error.code === 'AUTH_BUSY') {
+    status = 429;
+    code = 'AUTH_BUSY';
   } else if (error instanceof DomainError) {
     code = error.code;
     status =

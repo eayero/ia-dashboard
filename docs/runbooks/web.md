@@ -12,8 +12,10 @@ Con el [entorno local](local.md) preparado y la API en 53000:
 pnpm dev:web
 ```
 
-Abrir **http://localhost:55173**, exactamente el origen de `.env`. El botón de
-acceso inicia OIDC; la cookie HttpOnly/SameSite y CSRF se gestionan por el BFF.
+Abrir **http://localhost:55173**, exactamente el origen de `.env`. El formulario
+recibe usuario/contraseña locales; cookie HttpOnly/SameSite y CSRF se gestionan
+por la API. Compose ya sirve esta UI con Nginx; no iniciar dev/preview sobre su
+puerto ocupado. Ver [entorno local](local.md) para cambiar a desarrollo nativo.
 La SPA no persiste tokens ni credenciales en localStorage/sessionStorage.
 
 Para revisar el artefacto compilado localmente, detener primero `dev:web`:
@@ -33,6 +35,12 @@ Preview es una comprobación local del build, no un despliegue de producción.
 sigue separado mediante `pnpm outbox:dev`.
 
 ## Comportamiento disponible
+
+- Login local, cambio de contraseña y cambio obligatorio de contraseña temporal.
+- «Usuarios y accesos» para ADMIN del sistema: usuarios, acceso/roles por proyecto,
+  reset temporal, habilitación y credenciales de agentes con revocación. El rol
+  global no concede lectura de proyectos sin membresía. Secretos emitidos solo en
+  memoria, mostrados una vez; no incluirlos en capturas ni artefactos compartidos.
 
 - Selección de proyectos autorizados, resumen con denominadores, búsqueda por
   título/ID, filtro de estado y bandeja de tareas bloqueadas/en revisión/en QA.
@@ -75,7 +83,11 @@ No hay WS en este hito. La actualización periódica no acredita SLO de latencia
 carga objetivo. Faltan preguntas/decisiones/requisitos, métricas específicas,
 administración, edición de alcance/dependencias y gestión completa de alertas.
 
-## Verificación realizada
+## Verificación histórica anterior a la migración de autenticación
+
+El recorrido siguiente corresponde al dashboard con OIDC. Tras la migración se
+comprobó el login local de escritorio; los flujos de administración y móvil nuevos
+siguen pendientes. Los resultados anteriores no acreditan estos formularios.
 
 - Build y tipos globales, lint/formato, **50 unitarias** y **67 integraciones**.
   Tres unitarias web comprueban paginación consistente y limpieza observable de

@@ -37,7 +37,7 @@ export async function api<T>(
   }
   const body = await response.json().catch(() => null);
   if (!response.ok) {
-    if (response.status === 401 && path !== '/auth/me')
+    if (response.status === 401 && !['/auth/me', '/auth/login'].includes(path))
       window.dispatchEvent(new Event('acc:auth-expired'));
     throw new ApiError(body?.error?.code ?? 'HTTP_ERROR', response.status, body?.error?.requestId);
   }
@@ -45,6 +45,17 @@ export async function api<T>(
   return body.data as T;
 }
 const messages: Record<string, string> = {
+  PASSWORD_UNCHANGED: 'La nueva contraseña debe ser diferente de la actual.',
+  LOGIN_FAILED: 'Usuario o contraseña incorrectos.',
+  LOGIN_THROTTLED: 'Demasiados intentos de acceso. Espera quince minutos antes de reintentar.',
+  AUTH_BUSY: 'Hay varios accesos en curso. Vuelve a intentarlo en unos segundos.',
+  PASSWORD_INCORRECT: 'La contraseña actual no es correcta.',
+  PASSWORD_CHANGE_REQUIRED: 'Debes cambiar tu contraseña temporal antes de continuar.',
+  USERNAME_TAKEN: 'Ese nombre de usuario ya está registrado.',
+  LAST_PROJECT_OWNER: 'Asigna otro propietario activo al proyecto antes de retirar este acceso.',
+  CANNOT_DISABLE_SELF: 'No puedes deshabilitar tu propia cuenta.',
+  LAST_SYSTEM_ADMIN: 'Debe quedar al menos un administrador del sistema activo.',
+  USE_PASSWORD_CHANGE: 'Para tu propia cuenta, utiliza Cambiar contraseña.',
   NETWORK_ERROR: 'No pudimos confirmar la operación. Comprueba la conexión y reintenta.',
   FORBIDDEN: 'No tienes permiso para esta operación.',
   AUTH_REQUIRED: 'Tu sesión ha terminado. Vuelve a entrar.',
