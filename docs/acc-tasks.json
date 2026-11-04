@@ -178,5 +178,25 @@
       "Validar autorización, claim/sesión/fencing, idempotencia y cierres por expiración/revocación mediante API/MCP y PostgreSQL real.",
       "Mostrar total y desglose en la tarea, documentar contratos y verificar escritorio/móvil sin inventar tiempos históricos."
     ]
+  },
+  {
+    "id": "ACC-LOCAL-021",
+    "title": "Integrar webhooks GitHub/GitLab verificados",
+    "source": "docs/SPECIFICATION.md",
+    "context": "Trabajo pendiente de FR-018; creado durante sincronización solicitada de requisitos/tareas, no implementado.",
+    "criteria": [
+      "Recibir webhooks opcionales GitHub/GitLab con verificación de firma y prevención de replay.",
+      "Conservar aislamiento, idempotencia y auditoría de eventos sin exponer secretos."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-022",
+    "title": "Exportar Markdown/JSON y programar backups",
+    "source": "docs/SPECIFICATION.md",
+    "context": "Trabajo pendiente de FR-020; creado durante sincronización solicitada de requisitos/tareas, no implementado.",
+    "criteria": [
+      "Exportar información del proyecto en Markdown y JSON con autorización por proyecto.",
+      "Programar backups cifrados y comprobar restauración conforme a decisiones Q28."
+    ]
   }
 ]

@@ -152,7 +152,7 @@ export function createMcpServer(runtime: ApiRuntime, req: ApiRequest) {
     ),
     tool(
       'acc_find_or_create_task',
-      'Find by exact externalRef or create BACKLOG work. Search first; title similarity is not identity. Reuse idempotencyKey for retries.',
+      'List requirements first, then create BACKLOG work with nonempty requirementIds. Task and initial links commit atomically. Draft scope stays impact-pending; approved revisions become the initial baseline. Find by exact externalRef; an existing task is returned without changing its links. Reuse idempotencyKey for retries. Requirement approval and later impact review remain human actions.',
       z.strictObject({ ...mutation, input: createTaskSchema }),
       false,
       (a) => runtime.store.createTask(context(a.projectId), a.idempotencyKey, a.input),

@@ -1,21 +1,21 @@
 {
-  "checkedAt": "2026-11-04T17:29:16.862Z",
+  "checkedAt": "2026-11-04T19:17:17.706Z",
   "method": "native Codex MCP tools",
   "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
   "publishedCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
-  "catalogTasks": 20,
-  "projectTasks": 26,
+  "catalogTasks": 22,
+  "projectTasks": 28,
   "previousTaskIdsPreserved": true,
   "context": {
-    "pages": 2,
+    "pages": 3,
     "complete": true,
-    "projectSeq": "257"
+    "projectSeq": "387"
   },
   "delta": {
     "events": 10,
     "complete": true,
-    "projectSeq": "257",
-    "afterSeq": "247"
+    "projectSeq": "387",
+    "afterSeq": "377"
   },
   "publishedWorkReconciled": [
     {
@@ -179,10 +179,8 @@
     }
   ],
   "session": {
-    "id": "8a02b5e5-bfba-4c9e-89dd-d6fbd8f128c1",
+    "id": "0a2fffe2-066d-4cea-879d-f28b23e90466",
     "version": 2,
-    "expiresAt": "2026-11-04T17:49:29.840Z",
-    "projectSeq": "248",
     "ended": true,
     "claimsReleased": true
   },
@@ -191,67 +189,81 @@
       "fileId": "BOOT-001",
       "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 2,
       "workRevision": 1,
       "summary": "",
       "source": "docs/DECISIONS.md",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["1954586e-6b6c-4e49-8993-f1657aa575ea"]
     },
     {
       "fileId": "BOOT-002",
       "taskId": "47c996f0-bc53-410c-bf6c-8167a74633e4",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 2,
       "workRevision": 1,
       "summary": "",
       "source": "docs/IMPLEMENTATION_STATUS.md",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["2c0996ef-bfc7-4093-9f77-dae70887a5ba"]
     },
     {
       "fileId": "BOOT-003",
       "taskId": "598cbaba-8398-43ad-9837-f8f7d52e85e8",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 2,
       "workRevision": 1,
       "summary": "",
       "source": "infra/docker-compose.yml",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["919de1a5-6068-450a-95f7-ace92bc2253c"]
     },
     {
       "fileId": "BOOT-004",
       "taskId": "d8c5a3fe-46e8-4569-82f4-38aacd581bf1",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 2,
       "workRevision": 1,
       "summary": "",
       "source": "docs/IMPLEMENTATION_STATUS.md",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["8a76335a-18cb-4d9c-b723-ba65fff10d31"]
     },
     {
       "fileId": "BOOT-005",
       "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 4,
       "workRevision": 1,
       "summary": "",
       "source": "docs/IMPLEMENTATION_STATUS.md",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": [
+        "5b5ebda6-47be-4634-a517-ac50853f35aa",
+        "ae86b2f5-659c-4792-9fe8-153b804de57c",
+        "b51b29b7-9ea7-4d27-9f31-1d59befe5c4b"
+      ]
     },
     {
       "fileId": "BOOT-006",
       "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
       "status": "DONE",
-      "version": 13,
+      "version": 17,
       "workRevision": 4,
       "summary": "Completado localmente el pendiente OpenAPI de BOOT-006. GET público /api/v1/openapi.json entrega contrato3.1.1 sin envelopeACC:45 operaciones/40paths/57esquemas, entradas desde contratosZod, respuestas/envelopes/errores, cookie/CSRF/Origin, bearerAPI/scopes, roles humanos, idempotencia real y paginación. Se contrasta inventario con controllers realmente registrados; comandosREST y documento comparten registro. JSONSchema expresa estructura; normalización/refinamientos de negocio se documentan como validaciones adicionales y Mutation ofrece campos comunes/extensibles. Artefacto docs/openapi.json reproducible con node --import tsx scripts/export-openapi.mjs y --check, sin servicios/secretos. Manifiestos/dependencias sin cambios; no se añaden entidades pendientes ni permisos. Pasan56unitarias y92integraciones,16HTTP tras ajuste final del inventario, tiposAPI/integración, lint/formato, build nativo5paquetes y DockerAPI5paquetes. Una prueba nueva contaminaba BACKLOG sintético y ahora cancela porAPI; aserción original preservada, suite global92/92. Build conjunto falló timeoutTLS DockerHub; reintentoAPI pasó revisión de políticas pnpm478entradas sin relajar controles; build final reutiliza capa idéntica verificada. Descarga compilada comprobada por proxy55173 y API53000:200, igual al artefacto, no-store, sin cookie ni configuración privada; Host no altera documento. Hash JSON canónico557aaa9cb2cb2c58039f8ee9d6a86e1492530d7ef8714d954387d77a286969b3. API/UI/worker locales restaurados, sin migraciones. Documentación/README/estado y plan docs/superpowers/plans/2026-11-04-openapi.md actualizados; informe docs/OPENAPI_RESULT.json. Trabajo sintetiza autenticación/administración ya implementadas y sus verificaciones actuales. No validación humana atribuida al agente. Publicación autorizada y confirmada: commit 0c347e0df945e8db02dea8adc2a20fd8aa9aaa26 en origin/feat/acc-foundation. Evidencia formal: https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/OPENAPI_RESULT.json. Suite acumulada:56 unitarias/92 integraciones, tipos/lint/formato/build; informe OPENAPI_RESULT.json del mismo commit. Las referencias anteriores a evidencia local pendiente describen la comprobación histórica y quedan resueltas por esta publicación. Se cierra por el agente; el OK de auditoría humana sigue separado.",
       "source": "docs/RESUME_LOCAL_AUTH.md",
@@ -262,49 +274,65 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": [
+        "26564011-7a1b-4294-8f68-4b1a1c483c08",
+        "3e917627-672a-4931-8acf-4ba245df52c3",
+        "b51b29b7-9ea7-4d27-9f31-1d59befe5c4b"
+      ]
     },
     {
       "fileId": "BOOT-007",
       "taskId": "c20557e7-a5d5-4229-9269-c6cc9f8afcd2",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 2,
       "workRevision": 1,
       "summary": "",
       "source": "apps/api/src/mcp/tools.ts",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["48250b41-18dd-4e91-856b-4df81a3de393"]
     },
     {
       "fileId": "BOOT-008",
       "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4",
       "status": "BACKLOG",
-      "version": 1,
+      "version": 4,
       "workRevision": 1,
       "summary": "",
       "source": "docs/runbooks/web.md",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": [
+        "0911fffd-c6f5-4dbd-8a88-679d1e438efe",
+        "24b32646-dbc3-4a8b-a112-bfcdedcf39f3",
+        "568593b4-9645-4883-981c-fd192762ebf1"
+      ]
     },
     {
       "fileId": "BOOT-009",
       "taskId": "453586b8-da53-476d-befa-68e70e37b4a0",
       "status": "IN_PROGRESS",
-      "version": 4,
+      "version": 5,
       "workRevision": 1,
       "summary": "",
       "source": "tests/integration/workflow.test.ts",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["558fe32c-3b96-43c9-ba51-cad07b6e5655"]
     },
     {
       "fileId": "ACC-LOCAL-010",
       "taskId": "fba5128e-f9a6-41de-8b42-d2fc87c2a4f8",
       "status": "DONE",
-      "version": 12,
+      "version": 13,
       "workRevision": 2,
       "summary": "Trabajo publicado en c273f4d: guías local/API/MCP/web/eventos, decisiones, especificación y ADR alineados con usuarios locales, sesión HttpOnly/CSRF y tokens opacos API/MCP. Se documentaron sustituciones Q8/Q36 y referencias históricas. Conciliación posterior por MCP nativo: se adjuntan URLs del commit publicado como evidencia declarada; no se atribuye validación humana. El cambio posterior de flujo autónomo permanece local y tiene tarea ACC-LOCAL-017 propia.",
       "source": "docs/RESUME_LOCAL_AUTH.md",
@@ -331,13 +359,15 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["3e917627-672a-4931-8acf-4ba245df52c3"]
     },
     {
       "fileId": "ACC-LOCAL-011",
       "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85",
       "status": "DONE",
-      "version": 14,
+      "version": 15,
       "workRevision": 4,
       "summary": "Revisión de administración completada localmente con Playwright. Pasan creación de usuario y asignación VIEWER por UI; login temporal bloquea proyecto y no admite reutilizar la contraseña; cambio obligatorio, permisos de consulta y rechazo 403 de administración; logout limpia datos; reset invalida sesión abierta y obliga a cambiar; deshabilitación invalida acceso y login genérico; reactivación permite entrar. Se simuló pérdida/caducidad de cookie en contexto aislado; no se esperó una hora. Credencial de prueba mostrada al emitir, operativa con 200, retirada al cerrar, ausente de storage/listados y no recuperable tras recarga; revocación por UI produce 401. Se corrigió un solapamiento móvil real en apps/web/src/style.css (brand flex 1 0 100%); medición pasó de un solapamiento a cero, sin overflow, 1440x900 y390x844. Lint, formato, tipos web y build Docker de cinco paquetes pasan. Recursos sintéticos: dos cuentas deshabilitadas y dos credenciales revocadas. Una inspección de navegador mostró por error un token de prueba, revocado inmediatamente; el recorrido final evitó capturas sensibles. No se registran secretos en archivos/MCP. Se atendió solicitud de acceso local del usuario sin duplicar contraseña. Resultados locales en docs/ADMIN_BROWSER_RESULT.json; pendiente publicar evidencia HTTPS para cierre formal. Publicación autorizada y confirmada: commit 0c347e0df945e8db02dea8adc2a20fd8aa9aaa26 en origin/feat/acc-foundation. Evidencia formal: https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/ADMIN_BROWSER_RESULT.json. Suite acumulada:56 unitarias/92 integraciones, tipos/lint/formato/build; informe OPENAPI_RESULT.json del mismo commit. Las referencias anteriores a evidencia local pendiente describen la comprobación histórica y quedan resueltas por esta publicación. Se cierra por el agente; el OK de auditoría humana sigue separado.",
       "source": "docs/RESUME_LOCAL_AUTH.md",
@@ -348,13 +378,15 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["24b32646-dbc3-4a8b-a112-bfcdedcf39f3"]
     },
     {
       "fileId": "ACC-LOCAL-012",
       "taskId": "f1ec8ba2-0708-41f2-9325-f467885993ac",
       "status": "DONE",
-      "version": 9,
+      "version": 10,
       "workRevision": 2,
       "summary": "Trabajo publicado en c273f4d: bootstrap repetido y reinicio real de PG/Redis/API/worker/UI conservaron datos y archivos de credenciales. Healthchecks, proxy API/MCP, CSP, nosniff y 404 de assets comprobados; smoke oficial de 15 herramientas correcto. Pruebas aisladas de bootstrap cubren contraseñas cambiadas, permisos retirados, cuentas deshabilitadas y tokens revocados/expirados. Evidencia declarada del informe versionado; no validación humana.",
       "source": "infra/docker-compose.yml",
@@ -376,13 +408,15 @@
           "workRevision": 2,
           "completionVersion": 8
         }
-      ]
+      ],
+      "impactPending": true,
+      "requirementIds": ["919de1a5-6068-450a-95f7-ace92bc2253c"]
     },
     {
       "fileId": "ACC-LOCAL-013",
       "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a",
       "status": "DONE",
-      "version": 15,
+      "version": 16,
       "workRevision": 4,
       "summary": "Implementado y comprobado localmente: Socket.IO /ws/v1 consume Redis Streams del outbox con cursores independientes por proceso; autoriza proyecto y rooms por identidad, Origin exacto, cookie humana o bearer API/task:read. Revalida sesión/credencial y acceso vigente del propietario antes de entregar tandas y cada segundo en reposo. Corta logout, reset, caducidad, cambio obligatorio, retiro de membresía, token revocado y propietario deshabilitado. Límites de conexiones/payload/tandas; cierre de sockets y Redis al apagar API. Dashboard deduplica eventId, agrupa invalidaciones y reconcilia contexto/delta/detalles por REST; conserva polling5s. Detectada en navegador falta de reconexión inmediata al simular offline: corregido cierre/alta explícitos en eventos de red; repetición pasó con 2 conexiones y 2 ready autorizados, evento visible836ms y cambio offline recuperado92ms (muestra local, no p95). Escritorio1440x900 y móvil390x844 sin overflow ni pageerrors. 53 unitarias y90 integraciones pasan, incluidas9 WS reales con outbox/Redis, recuperación tras pérdida de stream y Redis inaccesible; tipos API/web/integraciones, lint/formato y build Docker5paquetes pasan. Una ejecución bajo carga falló tiempos; repetición aislada9/9 y global90/90 pasaron sin relajar límites/aserciones. API/UI/worker locales actualizados, sin migración ni dependencia nueva. Cuatro tareas sintéticas de revisión canceladas; datos/credenciales originales conservados. Plan docs/superpowers/plans/2026-11-04-websocket.md, protocolo docs/runbooks/events.md, informe docs/WEBSOCKET_RESULT.json. No se atribuye validación humana. Publicación autorizada y confirmada: commit 0c347e0df945e8db02dea8adc2a20fd8aa9aaa26 en origin/feat/acc-foundation. Evidencia formal: https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/WEBSOCKET_RESULT.json. Suite acumulada:56 unitarias/92 integraciones, tipos/lint/formato/build; informe OPENAPI_RESULT.json del mismo commit. Las referencias anteriores a evidencia local pendiente describen la comprobación histórica y quedan resueltas por esta publicación. Se cierra por el agente; el OK de auditoría humana sigue separado.",
       "source": "docs/runbooks/events.md",
@@ -393,13 +427,15 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["48250b41-18dd-4e91-856b-4df81a3de393"]
     },
     {
       "fileId": "ACC-LOCAL-014",
       "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
       "status": "IN_PROGRESS",
-      "version": 29,
+      "version": 34,
       "workRevision": 8,
       "summary": "Publicado commit 02e232f8570139cd57bd2c6271e1d1f70efb7af0 en origin/feat/acc-foundation por orden expresa de commit/push/despliegue. UI de requisitos y tiempo explícito por tarea/agente/día implementados, 66 unitarias/112 integraciones y 16 protocolo; tipos/lint/formato/build y navegador real escritorio/móvil. Desplegado Docker local http://localhost:55173: migración 009, API/UI/PG/Redis saludables, worker activo, migrate/bootstrap salida 0, 22 herramientas MCP y OpenAPI actualizado. Verificada conservación exacta de 26 tareas, identidades, permisos, credenciales y archivos secretos; respaldo privado previo. Resultado publicado docs/requirements/REQUIREMENTS_UI_RESULT.json. Sin validación humana atribuida. Tarea amplia permanece IN_PROGRESS por decisiones/preguntas pendientes.",
       "source": "docs/SPECIFICATION.md",
@@ -426,25 +462,35 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": [
+        "0911fffd-c6f5-4dbd-8a88-679d1e438efe",
+        "31be7ee1-7657-4fc4-a272-218a595e8fc1",
+        "39648451-5d03-4f71-8bf2-439c7f8c7143",
+        "4fd9d94b-3abc-4351-8a13-0d1660f0db73",
+        "b96bb432-98b2-448e-ae90-ac52308265ec"
+      ]
     },
     {
       "fileId": "ACC-LOCAL-015",
       "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
-      "status": "BACKLOG",
-      "version": 1,
-      "workRevision": 1,
-      "summary": "",
+      "status": "IN_PROGRESS",
+      "version": 15,
+      "workRevision": 4,
+      "summary": "Por orden expresa, regla obligatoria implementada localmente en API y flujo MCP. createTask REST/acc_find_or_create_task exige requirementIds no vacío/UUID únicos del mismo proyecto; tarea, vínculos iniciales, base aprobada o impacto DRAFT, evento/outbox e idempotencia se confirman atómicamente. Q24 se complementa solo para vínculo inicial por agente; aprobar, revisar impacto posterior y modificar vínculos existentes conserva autorización humana. Último vínculo protegido con 409 TASK_REQUIREMENT_REQUIRED. Migración 010 impone constraint diferida PostgreSQL, protege retiradas concurrentes/truncate y rechaza migración si existen huérfanas. API comprueba trigger al iniciar. OpenAPI, descripción MCP, importador y formulario web actualizados. Pasan 67 unitarias, 118 integraciones (6 nuevas API/MCP/DB), 16 protocolo; tipos, lint, formato, OpenAPI y build de cinco paquetes. Navegador real 1440x900/390x844 verifica selección obligatoria, payload y vínculo ya persistido. QA aislado detenido/esquema eliminado; auditoría servicio habitual 28/28 tareas cubiertas, 23 requisitos, 0 huérfanas. docs/requirements/TASK_REQUIREMENT_API.md y TASK_REQUIREMENT_API_RESULT.json. Sin commit/push/despliegue nuevos: servicio habitual sigue en 009/contrato anterior; activar exige actualizar API/UI/clientes y migración 010. No evidencia HTTPS inventada ni aprobación humana emitida.",
       "source": "docs/ACC_MIRROR.md",
       "evidence": [],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["1954586e-6b6c-4e49-8993-f1657aa575ea"]
     },
     {
       "fileId": "ACC-LOCAL-016",
       "taskId": "f6302302-4331-4b13-a518-c8546363b60c",
       "status": "DONE",
-      "version": 9,
+      "version": 10,
       "workRevision": 2,
       "summary": "Política compartida de duplicación MCP implementada y publicada. Archivos como referencia principal; cada bloque consultó tareas, abrió sesión, reclamó, registró avances/resultados y verificó por lectura/contexto/delta. Publicado commit 0c347e0df945e8db02dea8adc2a20fd8aa9aaa26 en origin/feat/acc-foundation por instrucción «haz el push». Incluye flujo autónomo y validación humana posterior a DONE, agentes por usuario y varios proyectos, WS, OpenAPI y revisión de administración. 56 unitarias y 92 integraciones, tipos/lint/formato/build y proxy compilado comprobados en los informes publicados. Se conservan IDs/criterios e historial de tareas; solo se cierran bloques completados con evidencia HTTPS del commit. Se registra limitación: cliente Claude, entidades y proyectos generales siguen pendientes; no se atribuye validación humana ni se cierra todo el MVP. Conciliación: docs/ACC_WORK_SYNC.json; fuentes de política: COMO-TRABAJAMOS.md y docs/ACC_MIRROR.md. Sesión de publicación finalizará liberando claims; el resultado se verificará y su snapshot se publicará en commit documental posterior.",
       "source": "docs/ACC_MIRROR.md",
@@ -459,13 +505,15 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["d243450b-6b6d-498e-a138-9dc255b6b341"]
     },
     {
       "fileId": "ACC-LOCAL-017",
       "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
       "status": "DONE",
-      "version": 13,
+      "version": 17,
       "workRevision": 4,
       "summary": "Implementación y comprobación local completadas. Agente con task:write recorre todos los estados válidos, incluyendo READY, QA, DONE, cancelación y reapertura, sin aprobaciones humanas previas. Permanecen claims/versiones/dependencias/motivos y evidencia técnica declarada elegible. Migración 006 aplicada: validación humana append-only posterior a DONE sin cambiar estado/revisión, ligada a cada finalización, con historial tras reabrir. REST, detalle/contexto y UI actualizados. Pasan 50 unitarias, 77 integraciones, tipos globales y foundation/integraciones, lint y build. Playwright 1440x900 y 390x844 sin desbordamiento: tarea sintética f05033ba-19ab-4790-97ee-25fa90d147ff llegó a DONE por MCP nativo y su validación de prueba c81df9ab-304a-448d-888f-e647558d7fc7 conservó DONE y revisión 1. Una corrida bajo carga falló en 100 claims; la aislada y la completa final pasaron sin relajar pruebas. Documentación/decisiones actualizadas. json no tiene aún URL publicada y queda pendiente adjuntar evidencia formal para cerrar esta tarea. No hay validación humana real del desarrollo. Publicación autorizada y confirmada: commit 0c347e0df945e8db02dea8adc2a20fd8aa9aaa26 en origin/feat/acc-foundation. Evidencia formal: https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_WORKFLOW_RESULT.json. Suite acumulada:56 unitarias/92 integraciones, tipos/lint/formato/build; informe OPENAPI_RESULT.json del mismo commit. Las referencias anteriores a evidencia local pendiente describen la comprobación histórica y quedan resueltas por esta publicación. Se cierra por el agente; el OK de auditoría humana sigue separado.",
       "source": "docs/DECISIONS.md",
@@ -476,13 +524,20 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": [
+        "558fe32c-3b96-43c9-ba51-cad07b6e5655",
+        "8a76335a-18cb-4d9c-b723-ba65fff10d31",
+        "ae86b2f5-659c-4792-9fe8-153b804de57c",
+        "f25d69dd-b990-4895-b307-6a29d77f4c5a"
+      ]
     },
     {
       "fileId": "ACC-LOCAL-018",
       "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
       "status": "DONE",
-      "version": 14,
+      "version": 16,
       "workRevision": 4,
       "summary": "Implementado y comprobado localmente. Cada agente tiene propietario humano, nombre e identidad independiente de sus credenciales. Cada usuario gestiona sus agentes; ADMIN todos. UI Mis agentes y agentes por usuario en administración; creación multi-proyecto, asignación/retiro y emisión/revocación independiente de credenciales de la misma identidad. Una credencial MCP sirve para varios proyectos; acceso efectivo limitado por scopes y permisos activos del propietario. Auth/contexto/auditoría identifican agente y usuario; servidor resuelve actorUserId. Migración 007 aplicada conservando 7 principals, 3 usuarios, 6 credenciales y 6 membresías originales; archivos de credenciales intactos. 50 unitarias y 81 integraciones pasan, incluidos MCP real en dos proyectos, aislamiento, migración ambigua/rollback, revocación, propietario deshabilitado y sesiones/claims. Tipos global/foundation/integración, lint, formato y build Docker de cinco paquetes pasan. Navegador real: usuario USER crea agente con dos proyectos, otra credencial conserva identidad, retirar proyecto afecta ambas, revocar una mantiene la otra válida, ambas revocadas dan 401. ADMIN lista agente bajo propietario. 1440x900, 1024x768, 390x844 sin overflow/solapamiento. Usuario sintético deshabilitado y dos credenciales revocadas; proyecto sintético conservado como fixture. Documentos AGENT_OWNERSHIP_DESIGN.md y AGENT_OWNERSHIP_RESULT.json, runbooks actualizados. No validación humana atribuida al agente. Publicación autorizada y confirmada: commit 0c347e0df945e8db02dea8adc2a20fd8aa9aaa26 en origin/feat/acc-foundation. Evidencia formal: https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_OWNERSHIP_RESULT.json. Suite acumulada:56 unitarias/92 integraciones, tipos/lint/formato/build; informe OPENAPI_RESULT.json del mismo commit. Las referencias anteriores a evidencia local pendiente describen la comprobación histórica y quedan resueltas por esta publicación. Se cierra por el agente; el OK de auditoría humana sigue separado.",
       "source": "docs/DECISIONS.md",
@@ -493,13 +548,18 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": [
+        "3e917627-672a-4931-8acf-4ba245df52c3",
+        "f25d69dd-b990-4895-b307-6a29d77f4c5a"
+      ]
     },
     {
       "fileId": "ACC-LOCAL-019",
       "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
       "status": "DONE",
-      "version": 15,
+      "version": 16,
       "workRevision": 4,
       "summary": "Migración deprotocoloECC local implementada y estáticamente verificada; diagnóstico/plan/informes y16pruebas publicados por nueva autorización expresa del usuario en commit ee55b37d75652bb08d9e444975071f709c431c11, origin/feat/acc-foundation. Evidencia formalHTTPS real del informe yresultado en esecommit. Se preserva auditoría histórica de adopción:29fuentes,3originales exactos,8perfiles/7adaptadores y7tecnologías; sin instalación de skills ni agentes ejecutados. Los cambios funcionales posteriores deFR-004 fueron aprobados y no invalidan la auditoría histórica del instante de adopción. Las16pruebas actuales del protocolo pasan. No se atribuye ejecución real deClaude/Codex, carga efectiva de skills ni revisión independiente. Publicación resuelve el pendiente de evidencia; se cierra la adopción estática dentro del alcance original. No validación humana emitida por el agente.",
       "source": "docs/process/migrations/2026-11-04-ecc/PLAN.md",
@@ -516,13 +576,15 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["1954586e-6b6c-4e49-8993-f1657aa575ea"]
     },
     {
       "fileId": "ACC-LOCAL-020",
       "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
       "status": "IN_PROGRESS",
-      "version": 12,
+      "version": 13,
       "workRevision": 4,
       "summary": "Publicado commit 02e232f8570139cd57bd2c6271e1d1f70efb7af0 en origin/feat/acc-foundation por orden expresa de commit/push/despliegue. UI de requisitos y tiempo explícito por tarea/agente/día implementados, 66 unitarias/112 integraciones y 16 protocolo; tipos/lint/formato/build y navegador real escritorio/móvil. Desplegado Docker local http://localhost:55173: migración 009, API/UI/PG/Redis saludables, worker activo, migrate/bootstrap salida 0, 22 herramientas MCP y OpenAPI actualizado. Verificada conservación exacta de 26 tareas, identidades, permisos, credenciales y archivos secretos; respaldo privado previo. Resultado publicado docs/requirements/TASK_WORK_TIME_RESULT.json. Sin validación humana atribuida. Implementación completa; cierre técnico de tarea CODE pendiente de catálogo de repositorios (actualmente vacío), sin eludir gates ni cambiar workType.",
       "source": "docs/requirements/TASK_WORK_TIME_DESIGN.md",
@@ -539,12 +601,40 @@
         }
       ],
       "humanValidated": false,
-      "humanValidationsObserved": []
+      "humanValidationsObserved": [],
+      "impactPending": true,
+      "requirementIds": ["e94f7129-0242-48af-883a-d7faac907653"]
+    },
+    {
+      "fileId": "ACC-LOCAL-021",
+      "taskId": "6daca0e9-e3f4-4f1d-bd95-6b55d5715fd9",
+      "status": "BACKLOG",
+      "version": 2,
+      "workRevision": 1,
+      "impactPending": true,
+      "source": "docs/SPECIFICATION.md",
+      "evidence": [],
+      "humanValidated": false,
+      "summary": "",
+      "requirementIds": ["9c31dd6d-77dc-4cd5-95a8-791d48dfb468"]
+    },
+    {
+      "fileId": "ACC-LOCAL-022",
+      "taskId": "07e2dd27-45e1-4404-8ec4-f547db6f7f95",
+      "status": "BACKLOG",
+      "version": 2,
+      "workRevision": 1,
+      "impactPending": true,
+      "source": "docs/SPECIFICATION.md",
+      "evidence": [],
+      "humanValidated": false,
+      "summary": "",
+      "requirementIds": ["d3ed8bbe-a473-4469-94d7-76b1a521ddf6"]
     }
   ],
   "previousCheck": {
-    "checkedAt": "2026-11-04T17:02:51.293Z",
-    "projectSeq": "247"
+    "checkedAt": "2026-11-04T18:19:37.887Z",
+    "projectSeq": "377"
   },
   "limitations": [
     "Source criteria in the initial catalog remain historical and were not rewritten to override human scope.",
@@ -641,5 +731,37 @@
     "pushed": true,
     "deployed": true,
     "result": "docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json"
+  },
+  "requirementsSynchronization": {
+    "result": "docs/requirements/ACC_REQUIREMENTS_SYNC.json",
+    "requirements": 20,
+    "links": 27,
+    "linkedTasks": 13,
+    "allDraft": true,
+    "sessionEnded": true,
+    "claimReleased": true,
+    "contextComplete": true,
+    "deltaComplete": true
+  },
+  "taskRequirementCoverage": {
+    "result": "docs/requirements/TASK_REQUIREMENT_COVERAGE.json",
+    "requirements": 23,
+    "tasks": 28,
+    "covered": 28,
+    "orphans": 0,
+    "links": 42,
+    "sessionEnded": true,
+    "claimsReleased": true
+  },
+  "mandatoryTaskRequirementVerification": {
+    "result": "docs/requirements/TASK_REQUIREMENT_API_RESULT.json",
+    "localImplemented": true,
+    "deployed": false,
+    "migration": "010_task_requirement_required.sql",
+    "sessionEnded": true,
+    "claimsReleased": true,
+    "summaryReadVerified": true,
+    "contextComplete": true,
+    "deltaComplete": true
   }
 }

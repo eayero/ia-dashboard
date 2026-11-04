@@ -1262,7 +1262,7 @@
       },
       "post": {
         "operationId": "createTask",
-        "summary": "Crear tarea o recuperar referencia externa exacta",
+        "summary": "Crear tarea con requisitos obligatorios y vínculos atómicos, o recuperar referencia exacta",
         "tags": ["Tareas"],
         "description": "Bearer requiere audiencia API y task:write; cookie requiere permisos vigentes. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
         "security": [
@@ -6857,6 +6857,16 @@
           "title": {
             "type": "string"
           },
+          "requirementIds": {
+            "minItems": 1,
+            "maxItems": 100,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            }
+          },
           "workType": {
             "default": "OTHER",
             "type": "string",
@@ -6891,7 +6901,7 @@
             "maxLength": 300
           }
         },
-        "required": ["title", "criteria"],
+        "required": ["title", "requirementIds", "criteria"],
         "additionalProperties": false,
         "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
       },

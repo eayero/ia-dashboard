@@ -1,0 +1,416 @@
+{
+  "checkedAt": "2026-11-04T18:17:35.045Z",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "requirements": 23,
+  "tasks": 28,
+  "links": 42,
+  "orphans": 0,
+  "createdRequirements": 3,
+  "createdLinks": 15,
+  "statesAndWorkRevisionsPreserved": true,
+  "taskDetailsVerified": 28,
+  "approvalCalls": 0,
+  "impactEvaluationCalls": 0,
+  "newRequirements": [
+    {
+      "sourceId": "NFR-001",
+      "requirementId": "2c0996ef-bfc7-4093-9f77-dae70887a5ba",
+      "externalRef": "repo:dashboard:requirement:NFR-001"
+    },
+    {
+      "sourceId": "NFR-002",
+      "requirementId": "919de1a5-6068-450a-95f7-ace92bc2253c",
+      "externalRef": "repo:dashboard:requirement:NFR-002"
+    },
+    {
+      "sourceId": "NFR-003",
+      "requirementId": "1954586e-6b6c-4e49-8993-f1657aa575ea",
+      "externalRef": "repo:dashboard:requirement:NFR-003"
+    }
+  ],
+  "associations": [
+    {
+      "sourceId": "FR-012",
+      "taskId": "1206ca45-789f-429d-8444-b69cc34b8004",
+      "reason": "Prueba sintética del recorrido de dashboard y acciones de la SPA."
+    },
+    {
+      "sourceId": "FR-011",
+      "taskId": "453586b8-da53-476d-befa-68e70e37b4a0",
+      "reason": "BOOT-009 verifica recorrido completo de estados y cierre técnico hasta DONE."
+    },
+    {
+      "sourceId": "FR-015",
+      "taskId": "35dea5c2-8bcf-40b3-a7c0-76cabe089a6e",
+      "reason": "Fixture histórico cancelado para probar entrega WS y recuperación de contexto."
+    },
+    {
+      "sourceId": "FR-015",
+      "taskId": "5e54fa67-1c26-4c18-ad0d-6162ad6432c2",
+      "reason": "Fixture histórico cancelado para probar entrega WS en vivo."
+    },
+    {
+      "sourceId": "FR-015",
+      "taskId": "5eb8e04a-fe0c-4d93-b23a-dad9805a405a",
+      "reason": "Fixture histórico cancelado para probar recuperación tras desconexión WS."
+    },
+    {
+      "sourceId": "FR-015",
+      "taskId": "8b88c000-9a7b-4a30-9a2c-2d417d4b91f2",
+      "reason": "Fixture histórico cancelado para probar recuperación tras desconexión WS."
+    },
+    {
+      "sourceId": "FR-010",
+      "taskId": "d8c5a3fe-46e8-4569-82f4-38aacd581bf1",
+      "reason": "BOOT-004 implementa y prueba dominio, contratos y máquina de estados."
+    },
+    {
+      "sourceId": "FR-011",
+      "taskId": "f05033ba-19ab-4790-97ee-25fa90d147ff",
+      "reason": "Prueba sintética de estados y validación humana posterior a DONE."
+    },
+    {
+      "sourceId": "FR-008",
+      "taskId": "fba5128e-f9a6-41de-8b42-d2fc87c2a4f8",
+      "reason": "ACC-LOCAL-010 documenta identidad, autenticación y credenciales del producto."
+    },
+    {
+      "taskId": "47c996f0-bc53-410c-bf6c-8167a74633e4",
+      "reason": "BOOT-002 prepara monorepo, herramientas y verificaciones reproducibles.",
+      "sourceId": "NFR-001"
+    },
+    {
+      "taskId": "598cbaba-8398-43ad-9837-f8f7d52e85e8",
+      "reason": "BOOT-003 construye el entorno Docker persistente y saludable.",
+      "sourceId": "NFR-002"
+    },
+    {
+      "taskId": "f1ec8ba2-0708-41f2-9325-f467885993ac",
+      "reason": "ACC-LOCAL-012 verifica reinicio, idempotencia y conservación del entorno.",
+      "sourceId": "NFR-002"
+    },
+    {
+      "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f",
+      "reason": "BOOT-001 documenta requisitos y acuerdos que orientan el desarrollo.",
+      "sourceId": "NFR-003"
+    },
+    {
+      "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
+      "reason": "ACC-LOCAL-019 integra el protocolo y conserva reglas, decisiones y trazabilidad.",
+      "sourceId": "NFR-003"
+    },
+    {
+      "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+      "reason": "ACC-LOCAL-015 sincroniza el seguimiento y garantiza cobertura tarea-requisito.",
+      "sourceId": "NFR-003"
+    }
+  ],
+  "taskCoverage": [
+    {
+      "taskId": "07e2dd27-45e1-4404-8ec4-f547db6f7f95",
+      "publicId": "TASK-28",
+      "title": "[ACC-LOCAL-022] Exportar Markdown/JSON y programar backups",
+      "status": "BACKLOG",
+      "requirements": ["d3ed8bbe-a473-4469-94d7-76b1a521ddf6"]
+    },
+    {
+      "taskId": "1206ca45-789f-429d-8444-b69cc34b8004",
+      "publicId": "TASK-1",
+      "title": "Recorrido UI · verificación local",
+      "status": "DONE",
+      "requirements": ["24b32646-dbc3-4a8b-a112-bfcdedcf39f3"]
+    },
+    {
+      "taskId": "35dea5c2-8bcf-40b3-a7c0-76cabe089a6e",
+      "publicId": "TASK-21",
+      "title": "[ACC-CHECK-WS] mw1p3znp · entrega en vivo",
+      "status": "CANCELLED",
+      "requirements": ["48250b41-18dd-4e91-856b-4df81a3de393"]
+    },
+    {
+      "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a",
+      "publicId": "TASK-14",
+      "title": "[ACC-LOCAL-013] Completar transporte WebSocket",
+      "status": "DONE",
+      "requirements": ["48250b41-18dd-4e91-856b-4df81a3de393"]
+    },
+    {
+      "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+      "publicId": "TASK-7",
+      "title": "[BOOT-006] REST y autenticación propia",
+      "status": "DONE",
+      "requirements": [
+        "26564011-7a1b-4294-8f68-4b1a1c483c08",
+        "3e917627-672a-4931-8acf-4ba245df52c3",
+        "b51b29b7-9ea7-4d27-9f31-1d59befe5c4b"
+      ]
+    },
+    {
+      "taskId": "453586b8-da53-476d-befa-68e70e37b4a0",
+      "publicId": "TASK-10",
+      "title": "[BOOT-009] Recorrido completo hasta DONE",
+      "status": "IN_PROGRESS",
+      "requirements": ["558fe32c-3b96-43c9-ba51-cad07b6e5655"]
+    },
+    {
+      "taskId": "47c996f0-bc53-410c-bf6c-8167a74633e4",
+      "publicId": "TASK-3",
+      "title": "[BOOT-002] Monorepo y herramientas verificables",
+      "status": "BACKLOG",
+      "requirements": ["2c0996ef-bfc7-4093-9f77-dae70887a5ba"]
+    },
+    {
+      "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18",
+      "publicId": "TASK-6",
+      "title": "[BOOT-005] Persistencia y concurrencia real",
+      "status": "BACKLOG",
+      "requirements": [
+        "5b5ebda6-47be-4634-a517-ac50853f35aa",
+        "ae86b2f5-659c-4792-9fe8-153b804de57c",
+        "b51b29b7-9ea7-4d27-9f31-1d59befe5c4b"
+      ]
+    },
+    {
+      "taskId": "598cbaba-8398-43ad-9837-f8f7d52e85e8",
+      "publicId": "TASK-4",
+      "title": "[BOOT-003] Entorno Docker completo de ACC",
+      "status": "BACKLOG",
+      "requirements": ["919de1a5-6068-450a-95f7-ace92bc2253c"]
+    },
+    {
+      "taskId": "5e54fa67-1c26-4c18-ad0d-6162ad6432c2",
+      "publicId": "TASK-23",
+      "title": "[ACC-CHECK-WS] mw1p5whg · entrega en vivo",
+      "status": "CANCELLED",
+      "requirements": ["48250b41-18dd-4e91-856b-4df81a3de393"]
+    },
+    {
+      "taskId": "5eb8e04a-fe0c-4d93-b23a-dad9805a405a",
+      "publicId": "TASK-24",
+      "title": "[ACC-CHECK-WS] mw1p5whg · durante desconexión",
+      "status": "CANCELLED",
+      "requirements": ["48250b41-18dd-4e91-856b-4df81a3de393"]
+    },
+    {
+      "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
+      "publicId": "TASK-20",
+      "title": "[ACC-LOCAL-018] Asociar agentes a usuarios y permitir varios proyectos por agente",
+      "status": "DONE",
+      "requirements": [
+        "3e917627-672a-4931-8acf-4ba245df52c3",
+        "f25d69dd-b990-4895-b307-6a29d77f4c5a"
+      ]
+    },
+    {
+      "taskId": "6daca0e9-e3f4-4f1d-bd95-6b55d5715fd9",
+      "publicId": "TASK-27",
+      "title": "[ACC-LOCAL-021] Integrar webhooks GitHub/GitLab verificados",
+      "status": "BACKLOG",
+      "requirements": ["9c31dd6d-77dc-4cd5-95a8-791d48dfb468"]
+    },
+    {
+      "taskId": "8b88c000-9a7b-4a30-9a2c-2d417d4b91f2",
+      "publicId": "TASK-22",
+      "title": "[ACC-CHECK-WS] mw1p3znp · durante desconexión",
+      "status": "CANCELLED",
+      "requirements": ["48250b41-18dd-4e91-856b-4df81a3de393"]
+    },
+    {
+      "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+      "publicId": "TASK-18",
+      "title": "[ACC-LOCAL-017] Permitir todos los estados al agente y validación humana posterior a DONE",
+      "status": "DONE",
+      "requirements": [
+        "558fe32c-3b96-43c9-ba51-cad07b6e5655",
+        "8a76335a-18cb-4d9c-b723-ba65fff10d31",
+        "ae86b2f5-659c-4792-9fe8-153b804de57c",
+        "f25d69dd-b990-4895-b307-6a29d77f4c5a"
+      ]
+    },
+    {
+      "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4",
+      "publicId": "TASK-9",
+      "title": "[BOOT-008] Dashboard y administración web",
+      "status": "BACKLOG",
+      "requirements": [
+        "0911fffd-c6f5-4dbd-8a88-679d1e438efe",
+        "24b32646-dbc3-4a8b-a112-bfcdedcf39f3",
+        "568593b4-9645-4883-981c-fd192762ebf1"
+      ]
+    },
+    {
+      "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
+      "publicId": "TASK-25",
+      "title": "[ACC-LOCAL-019] Integrar protocolo universal ECC conservando reglas y trazabilidad",
+      "status": "DONE",
+      "requirements": ["1954586e-6b6c-4e49-8993-f1657aa575ea"]
+    },
+    {
+      "taskId": "c20557e7-a5d5-4229-9269-c6cc9f8afcd2",
+      "publicId": "TASK-8",
+      "title": "[BOOT-007] MCP usable con clientes reales",
+      "status": "BACKLOG",
+      "requirements": ["48250b41-18dd-4e91-856b-4df81a3de393"]
+    },
+    {
+      "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+      "publicId": "TASK-15",
+      "title": "[ACC-LOCAL-014] Completar entidades pendientes del MVP",
+      "status": "IN_PROGRESS",
+      "requirements": [
+        "0911fffd-c6f5-4dbd-8a88-679d1e438efe",
+        "31be7ee1-7657-4fc4-a272-218a595e8fc1",
+        "39648451-5d03-4f71-8bf2-439c7f8c7143",
+        "4fd9d94b-3abc-4351-8a13-0d1660f0db73",
+        "b96bb432-98b2-448e-ae90-ac52308265ec"
+      ]
+    },
+    {
+      "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+      "publicId": "TASK-16",
+      "title": "[ACC-LOCAL-015] Mantener copia del seguimiento del repositorio en ACC",
+      "status": "IN_PROGRESS",
+      "requirements": ["1954586e-6b6c-4e49-8993-f1657aa575ea"]
+    },
+    {
+      "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85",
+      "publicId": "TASK-12",
+      "title": "[ACC-LOCAL-011] Validar administración web y acceso temporal",
+      "status": "DONE",
+      "requirements": ["24b32646-dbc3-4a8b-a112-bfcdedcf39f3"]
+    },
+    {
+      "taskId": "d8c5a3fe-46e8-4569-82f4-38aacd581bf1",
+      "publicId": "TASK-5",
+      "title": "[BOOT-004] Dominio y contratos con pruebas",
+      "status": "BACKLOG",
+      "requirements": ["8a76335a-18cb-4d9c-b723-ba65fff10d31"]
+    },
+    {
+      "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f",
+      "publicId": "TASK-2",
+      "title": "[BOOT-001] Especificación y acuerdos Q1–Q40",
+      "status": "BACKLOG",
+      "requirements": ["1954586e-6b6c-4e49-8993-f1657aa575ea"]
+    },
+    {
+      "taskId": "f05033ba-19ab-4790-97ee-25fa90d147ff",
+      "publicId": "TASK-19",
+      "title": "[ACC-CHECK-VALIDATION] Verificación sintética de estados y OK humano",
+      "status": "DONE",
+      "requirements": ["558fe32c-3b96-43c9-ba51-cad07b6e5655"]
+    },
+    {
+      "taskId": "f1ec8ba2-0708-41f2-9325-f467885993ac",
+      "publicId": "TASK-13",
+      "title": "[ACC-LOCAL-012] Comprobar reinicio e idempotencia de Compose",
+      "status": "DONE",
+      "requirements": ["919de1a5-6068-450a-95f7-ace92bc2253c"]
+    },
+    {
+      "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+      "publicId": "TASK-26",
+      "title": "[ACC-LOCAL-020] Registrar tiempo de trabajo por tarea, día y agente",
+      "status": "IN_PROGRESS",
+      "requirements": ["e94f7129-0242-48af-883a-d7faac907653"]
+    },
+    {
+      "taskId": "f6302302-4331-4b13-a518-c8546363b60c",
+      "publicId": "TASK-17",
+      "title": "[ACC-LOCAL-016] Aplicar duplicación obligatoria de todo el trabajo mediante MCP",
+      "status": "DONE",
+      "requirements": ["d243450b-6b6d-498e-a138-9dc255b6b341"]
+    },
+    {
+      "taskId": "fba5128e-f9a6-41de-8b42-d2fc87c2a4f8",
+      "publicId": "TASK-11",
+      "title": "[ACC-LOCAL-010] Actualizar documentación de autenticación",
+      "status": "DONE",
+      "requirements": ["3e917627-672a-4931-8acf-4ba245df52c3"]
+    }
+  ],
+  "schemaVersion": 1,
+  "policy": "Every task must have at least one justified requirement, including infrastructure, documentation, process and historical/cancelled test tasks",
+  "newRequirementDefinitions": [
+    {
+      "sourceId": "NFR-001",
+      "title": "NFR-001 · Arquitectura y construcción reproducible",
+      "description": "Fuente: docs/SPECIFICATION.md, Arquitectura vinculante y Pruebas y aceptación. Mantener monorepo pnpm/Turbo, contratos compartidos y stack acordado; conservar lockfile y comprobar tipos, lint, pruebas y build reproducibles. Las tareas de preparación de herramientas y estructura son trabajo habilitador de este requisito no funcional.",
+      "type": "NON_FUNCTIONAL",
+      "externalRef": "repo:dashboard:requirement:NFR-001",
+      "tasks": [
+        {
+          "taskId": "47c996f0-bc53-410c-bf6c-8167a74633e4",
+          "reason": "BOOT-002 prepara monorepo, herramientas y verificaciones reproducibles."
+        }
+      ]
+    },
+    {
+      "sourceId": "NFR-002",
+      "title": "NFR-002 · Operación persistente y recuperación del entorno",
+      "description": "Fuente: docs/SPECIFICATION.md, Seguridad y operación y DoD producto; docs/runbooks/local.md. Arranque y reinicio del entorno deben conservar datos, identidad, permisos y revocaciones; migraciones verifican checksums y servicios exponen salud. Las comprobaciones de Compose y persistencia son trabajo de desarrollo y verificación de este requisito no funcional.",
+      "type": "NON_FUNCTIONAL",
+      "externalRef": "repo:dashboard:requirement:NFR-002",
+      "tasks": [
+        {
+          "taskId": "598cbaba-8398-43ad-9837-f8f7d52e85e8",
+          "reason": "BOOT-003 construye el entorno Docker persistente y saludable."
+        },
+        {
+          "taskId": "f1ec8ba2-0708-41f2-9325-f467885993ac",
+          "reason": "ACC-LOCAL-012 verifica reinicio, idempotencia y conservación del entorno."
+        }
+      ]
+    },
+    {
+      "sourceId": "NFR-003",
+      "title": "NFR-003 · Trazabilidad completa y coordinación del desarrollo",
+      "description": "Fuentes: docs/SPECIFICATION.md, MCP e integración de agentes; COMO-TRABAJAMOS.md; instrucción expresa del usuario: no deben existir tareas sin requisitos asociados. Toda tarea de desarrollo, preparación, documentación, proceso o prueba debe tener al menos un requisito funcional o no funcional que justifique su trabajo, incluidas tareas sintéticas y canceladas conservadas como historial. Registrar origen, decisiones, evidencia y seguimiento por MCP sin inventar aprobaciones, capacidades o aceptación. El protocolo ECC y la especificación son trabajo habilitador de esta trazabilidad.",
+      "type": "NON_FUNCTIONAL",
+      "externalRef": "repo:dashboard:requirement:NFR-003",
+      "tasks": [
+        {
+          "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f",
+          "reason": "BOOT-001 documenta requisitos y acuerdos que orientan el desarrollo."
+        },
+        {
+          "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
+          "reason": "ACC-LOCAL-019 integra el protocolo y conserva reglas, decisiones y trazabilidad."
+        },
+        {
+          "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+          "reason": "ACC-LOCAL-015 sincroniza el seguimiento y garantiza cobertura tarea-requisito."
+        }
+      ]
+    }
+  ],
+  "recheck": {
+    "createdRequirements": 0,
+    "createdLinks": 0,
+    "orphans": 0,
+    "verifiedTaskDetails": 28
+  },
+  "session": {
+    "id": "91659e95-d0c3-4d8b-b126-530f4a8bdd21",
+    "ended": true,
+    "version": 2,
+    "claimsReleased": true
+  },
+  "snapshot": {
+    "pages": 3,
+    "complete": true,
+    "projectSeq": "377"
+  },
+  "delta": {
+    "events": 38,
+    "complete": true,
+    "projectSeq": "377"
+  },
+  "auditCommand": "pnpm requirements:check",
+  "audit": "PASS: 28 covered, 0 orphans",
+  "limitations": [
+    "Requirement drafts and pending impact are preserved; no approvals or impact evaluations performed",
+    "New-task relationship is an operational requirement audited by command; current server still accepts separate task creation/link operations",
+    "Changes to instructions and audit script are local, not committed/pushed/deployed; data associations are already in running ACC"
+  ]
+}

@@ -1,5 +1,8 @@
 # API local autenticada
 
+La continuación local de creación de tareas exige `requirementIds` y migración
+010; API/MCP y UI deben actualizarse juntos. El retiro del último vínculo devuelve 409. Ver [contrato y reglas](../requirements/TASK_REQUIREMENT_API.md).
+
 NestJS ejecuta autenticación propia, administración de identidades, tareas,
 sesiones ACC y contexto/delta. El [gateway MCP](mcp.md) comparte servicios y
 autorización; el [dashboard](web.md) usa cookies mediante proxy del mismo origen.

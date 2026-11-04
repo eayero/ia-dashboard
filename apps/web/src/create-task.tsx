@@ -1,6 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { createTaskSchema } from '@acc/contracts';
 import { Modal, Notice, useCommand } from './components.tsx';
+import { useQuery } from '@tanstack/react-query';
+import { api } from './api.ts';
 
 export function CreateTask({
   projectId,
@@ -16,6 +18,22 @@ export function CreateTask({
   created: (id: string) => void;
 }) {
   const command = useCommand(projectId, csrf);
+  const requirements = useQuery({
+    queryKey: ['project', projectId, 'task-create-requirements'],
+    queryFn: async ({ signal }) => {
+      const items: { id: string; publicId: string; title: string }[] = [];
+      let cursor: string | null = null;
+      do {
+        const page: { items: typeof items; nextCursor: string | null } = await api(
+          `/projects/${projectId}/requirements?limit=100${cursor ? '&cursor=' + encodeURIComponent(cursor) : ''}`,
+          { signal },
+        );
+        items.push(...page.items);
+        cursor = page.nextCursor;
+      } while (cursor);
+      return items;
+    },
+  });
   const [invalid, setInvalid] = useState('');
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -30,12 +48,13 @@ export function CreateTask({
     const externalRef = String(form.get('externalRef')).trim();
     const parsed = createTaskSchema.safeParse({
       title: form.get('title'),
+      requirementIds: form.getAll('requirementIds'),
       workType: form.get('workType'),
       criteria,
       ...(externalRef ? { externalRef } : {}),
     });
     if (!parsed.success) {
-      setInvalid('Indica un título y entre 1 y 100 criterios válidos, uno por línea.');
+      setInvalid('Indica un título, al menos un requisito y entre 1 y 100 criterios válidos.');
       return;
     }
     try {
@@ -54,11 +73,33 @@ export function CreateTask({
         Define qué resultado debe aceptarse. La tarea empezará por planificar.
       </p>
       <form onSubmit={submit}>
-        <fieldset disabled={blocked || command.isPending}>
+        <fieldset
+          disabled={
+            blocked ||
+            command.isPending ||
+            requirements.isPending ||
+            requirements.isError ||
+            !requirements.data?.length
+          }
+        >
           <label>
             Título
             <input name="title" required maxLength={300} autoFocus />
           </label>
+          <label>
+            Requisitos asociados
+            <select name="requirementIds" multiple required size={4}>
+              {requirements.data?.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.publicId} · {r.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <p className="muted">
+            Selecciona el alcance de esta tarea. Una propuesta pendiente conserva pendiente su
+            aprobación.
+          </p>
           <label>
             Tipo de trabajo
             <select name="workType">
@@ -84,6 +125,13 @@ export function CreateTask({
             {command.isPending ? 'Guardando…' : 'Guardar tarea'}
           </button>
         </fieldset>
+        {requirements.isPending && <p role="status">Cargando requisitos…</p>}
+        {requirements.error && (
+          <Notice error={requirements.error} retry={() => void requirements.refetch()} />
+        )}
+        {requirements.data?.length === 0 && (
+          <p role="alert">Primero registra un requisito en el catálogo del proyecto.</p>
+        )}
         {invalid && (
           <p role="alert" className="field-error">
             {invalid}

@@ -236,7 +236,8 @@ const definitions: Definition[] = [
     path: '/projects/{projectId}/tasks',
     method: 'post',
     operationId: 'createTask',
-    summary: 'Crear tarea o recuperar referencia externa exacta',
+    summary:
+      'Crear tarea con requisitos obligatorios y vínculos atómicos, o recuperar referencia exacta',
     tag: 'Tareas',
     response: 'CreatedTask',
     body: contracts.createTaskSchema,

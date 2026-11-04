@@ -27,6 +27,11 @@ const criterion = z.strictObject({
 });
 export const createTaskSchema = z.strictObject({
   title,
+  requirementIds: z
+    .array(z.uuid())
+    .min(1)
+    .max(100)
+    .refine((ids) => new Set(ids).size === ids.length, 'Duplicate requirement ID'),
   workType: z.enum(['CODE', 'OTHER']).default('OTHER'),
   criteria: z
     .array(criterion)
@@ -45,7 +50,7 @@ export const heartbeatClaimSchema = claimTaskSchema.extend({ fencingToken: token
 export const revokeClaimSchema = z.strictObject({ expectedVersion: version, reason: description });
 export const updateWorkSchema = heartbeatClaimSchema.extend({ summary: description });
 export const reviseTaskSchema = createTaskSchema
-  .omit({ externalRef: true })
+  .omit({ externalRef: true, requirementIds: true })
   .extend({ expectedVersion: version, reason: description });
 export const approvalKindSchema = z.enum(['REVIEW', 'QA', 'CLOSURE']);
 export const approveTaskSchema = z.strictObject({

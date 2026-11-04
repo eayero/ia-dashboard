@@ -1,7 +1,8 @@
 import { before, after, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
-import { Pool, CoordinationStore } from '../../packages/db/src/index.ts';
+import { Pool } from '../../packages/db/src/index.ts';
+import { FixtureCoordinationStore as CoordinationStore } from '../../apps/api/test/task-requirement-fixture.ts';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { seedAgentOwner } from '../../apps/api/test/agent-owner-fixture.ts';
 import { ProjectQueries } from '../../apps/api/src/projects/queries.ts';

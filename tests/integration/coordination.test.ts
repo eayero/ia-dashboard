@@ -2,7 +2,8 @@ import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import { migrate } from '../../packages/db/src/migrate.ts';
-import { CoordinationStore, Pool } from '../../packages/db/src/index.ts';
+import { Pool } from '../../packages/db/src/index.ts';
+import { FixtureCoordinationStore as CoordinationStore } from '../../apps/api/test/task-requirement-fixture.ts';
 import { seedAgentOwner } from '../../apps/api/test/agent-owner-fixture.ts';
 
 const schema = `acc_test_${randomUUID().replaceAll('-', '')}`;
@@ -59,7 +60,7 @@ test('migraciones repetidas no cambian ni pierden datos', async () => {
   await migrate(pool);
   assert.equal(
     (await pool.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0].count,
-    9,
+    10,
   );
   assert.equal(
     (await pool.query('SELECT name FROM projects WHERE id=$1', [projectId])).rows[0].name,

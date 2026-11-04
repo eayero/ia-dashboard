@@ -57,3 +57,28 @@ commit `02e232f` en origin/feat/acc-foundation, http://localhost:55173, migraci�
 Las referencias anteriores a cambios locales/008/19 herramientas describen el estado previo.
 ACC-LOCAL-020 conserva IN_PROGRESS hasta registrar repositorio y evidencia CODE/TEST
 pareada exigida por el servidor; implementación entregada sin eludir gates.
+
+Sincronización solicitada de requisitos/tareas completada: 20 propuestas FR, 27 vínculos
+a 13 tareas, 2 tareas faltantes creadas en BACKLOG (TASK-27 webhooks y TASK-28 export/backups).
+[Resultado y correspondencias](../requirements/ACC_REQUIREMENTS_SYNC.json). Requisitos DRAFT:
+pendientes de aprobación e impacto humano, sin modificar estados DONE ni validaciones.
+Segunda pasada sin duplicados; snapshot completo de 3 páginas y delta hasta secuencia 339.
+ACC-LOCAL-015 registra este trabajo y queda IN_PROGRESS pendiente de evidencia publicada.
+
+Regla posterior aplicada: toda tarea tiene requisito. [Cobertura completa](../requirements/TASK_REQUIREMENT_COVERAGE.json):
+28/28 tareas, 0 huérfanas, 23 requisitos y 42 vínculos, incluidas pruebas históricas
+y canceladas. Tres propuestas NFR documentan arquitectura/build, operación y
+trazabilidad; aprobación/impacto siguen pendientes. `pnpm requirements:check`
+audita todas las tareas por MCP y falla si alguna carece de requisito.
+Guía y auditor local actualizados; la creación atómica con requisito aún no es
+un gate del servidor. No hay commit/push/despliegue nuevos de estos archivos.
+
+Implementado localmente por orden posterior del usuario: la API/MCP exige
+`requirementIds` al crear tareas y confirma sus vínculos en la misma transacción.
+Retirar el último vínculo devuelve 409; PostgreSQL impone la invariante diferida
+mediante migración 010. Formulario, importador, OpenAPI y flujo MCP actualizados.
+[Resultado](../requirements/TASK_REQUIREMENT_API_RESULT.json): 67 unitarias, 118
+integraciones, 16 protocolo, tipos/lint/build y navegador escritorio/móvil.
+No publicado/desplegado: el servicio habitual sigue en 009; actualizar clientes
+y API/UI junto con 010. La limitación anterior de solo control operativo queda
+resuelta en el código local, pendiente de actualizar la instancia.

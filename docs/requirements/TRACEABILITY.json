@@ -26,7 +26,16 @@
       ],
       "evidence": ["docs/OPENAPI_RESULT.json"],
       "assessment": "PARTIAL",
-      "note": "Membresías/proyecto local presentes; creación/archivo general pendientes."
+      "note": "Membresías/proyecto local presentes; creación/archivo general pendientes.",
+      "acc": {
+        "requirementId": "26564011-7a1b-4294-8f68-4b1a1c483c08",
+        "publicId": "REQ-1",
+        "externalRef": "repo:dashboard:requirement:FR-001",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -47,7 +56,16 @@
       ],
       "evidence": [],
       "assessment": "PENDING",
-      "note": "Iteraciones todavía no implementadas como entidades."
+      "note": "Iteraciones todavía no implementadas como entidades.",
+      "acc": {
+        "requirementId": "31be7ee1-7657-4fc4-a272-218a595e8fc1",
+        "publicId": "REQ-2",
+        "externalRef": "repo:dashboard:requirement:FR-002",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -77,7 +95,16 @@
       ],
       "evidence": ["docs/OPENAPI_RESULT.json"],
       "assessment": "PARTIAL",
-      "note": "Tareas versionadas y criterios/evidencia presentes; no certificar todo el MVP."
+      "note": "Tareas versionadas y criterios/evidencia presentes; no certificar todo el MVP.",
+      "acc": {
+        "requirementId": "b51b29b7-9ea7-4d27-9f31-1d59befe5c4b",
+        "publicId": "REQ-3",
+        "externalRef": "repo:dashboard:requirement:FR-003",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 2
+      }
     },
     {
       "scope": "product",
@@ -105,8 +132,17 @@
         "docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
         "docs/requirements/REQUIREMENTS_UI_RESULT.json"
       ],
-      "assessment": "LOCAL_VERIFIED_UI_WITH_PUBLISHED_BACKEND",
-      "note": "UI alternativa A aprobada e implementada localmente con prueba de navegador; backend 008 publicado anteriormente. Nuevos cambios pendientes de publicación."
+      "assessment": "PUBLISHED_DEPLOYED_SLICE",
+      "note": "Backend y UI publicados y desplegados localmente en 02e232f; no acredita otras entidades.",
+      "acc": {
+        "requirementId": "4fd9d94b-3abc-4351-8a13-0d1660f0db73",
+        "publicId": "REQ-4",
+        "externalRef": "repo:dashboard:requirement:FR-004",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -132,7 +168,16 @@
       ],
       "evidence": [],
       "assessment": "PENDING",
-      "note": "Decisiones del producto como entidades pendientes."
+      "note": "Decisiones del producto como entidades pendientes.",
+      "acc": {
+        "requirementId": "b96bb432-98b2-448e-ae90-ac52308265ec",
+        "publicId": "REQ-5",
+        "externalRef": "repo:dashboard:requirement:FR-005",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -153,7 +198,16 @@
       ],
       "evidence": [],
       "assessment": "PENDING",
-      "note": "Preguntas/respuestas de producto pendientes."
+      "note": "Preguntas/respuestas de producto pendientes.",
+      "acc": {
+        "requirementId": "39648451-5d03-4f71-8bf2-439c7f8c7143",
+        "publicId": "REQ-6",
+        "externalRef": "repo:dashboard:requirement:FR-006",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -179,7 +233,16 @@
       ],
       "evidence": [],
       "assessment": "PARTIAL",
-      "note": "Idempotencia/external_ref comprobadas; no se infiere toda similitud semántica."
+      "note": "Idempotencia/external_ref comprobadas; no se infiere toda similitud semántica.",
+      "acc": {
+        "requirementId": "5b5ebda6-47be-4634-a517-ac50853f35aa",
+        "publicId": "REQ-7",
+        "externalRef": "repo:dashboard:requirement:FR-007",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -210,11 +273,24 @@
         {
           "fileId": "BOOT-006",
           "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c"
+        },
+        {
+          "fileId": "ACC-LOCAL-010",
+          "taskId": "fba5128e-f9a6-41de-8b42-d2fc87c2a4f8"
         }
       ],
       "evidence": ["docs/AGENT_OWNERSHIP_RESULT.json", "docs/OPENAPI_RESULT.json"],
       "assessment": "VERIFIED_SLICE",
-      "note": "Propiedad usuario/agente, varios proyectos y sesiones en informes publicados."
+      "note": "Propiedad usuario/agente, varios proyectos y sesiones en informes publicados.",
+      "acc": {
+        "requirementId": "3e917627-672a-4931-8acf-4ba245df52c3",
+        "publicId": "REQ-8",
+        "externalRef": "repo:dashboard:requirement:FR-008",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 3
+      }
     },
     {
       "scope": "product",
@@ -259,7 +335,16 @@
       ],
       "evidence": ["docs/AGENT_WORKFLOW_RESULT.json"],
       "assessment": "VERIFIED_SLICE",
-      "note": "Claims/leases/fencing de la entrega actual; no carga objetivo global."
+      "note": "Claims/leases/fencing de la entrega actual; no carga objetivo global.",
+      "acc": {
+        "requirementId": "ae86b2f5-659c-4792-9fe8-153b804de57c",
+        "publicId": "REQ-9",
+        "externalRef": "repo:dashboard:requirement:FR-009",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 2
+      }
     },
     {
       "scope": "product",
@@ -286,11 +371,24 @@
         {
           "fileId": "ACC-LOCAL-017",
           "taskId": "941cae66-75fa-49db-982e-f4a453d6203f"
+        },
+        {
+          "fileId": "BOOT-004",
+          "taskId": "d8c5a3fe-46e8-4569-82f4-38aacd581bf1"
         }
       ],
       "evidence": ["docs/AGENT_WORKFLOW_RESULT.json"],
       "assessment": "VERIFIED_SLICE",
-      "note": "Transiciones técnicas y concurrencia de la entrega."
+      "note": "Transiciones técnicas y concurrencia de la entrega.",
+      "acc": {
+        "requirementId": "8a76335a-18cb-4d9c-b723-ba65fff10d31",
+        "publicId": "REQ-10",
+        "externalRef": "repo:dashboard:requirement:FR-010",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 2
+      }
     },
     {
       "scope": "product",
@@ -322,11 +420,32 @@
         {
           "fileId": "ACC-LOCAL-017",
           "taskId": "941cae66-75fa-49db-982e-f4a453d6203f"
+        },
+        {
+          "fileId": "BOOT-009",
+          "taskId": "453586b8-da53-476d-befa-68e70e37b4a0"
         }
       ],
       "evidence": ["docs/AGENT_WORKFLOW_RESULT.json"],
       "assessment": "VERIFIED_SLICE",
-      "note": "Leer sustitución explícita: autonomía y OK humano posterior."
+      "note": "Leer sustitución explícita: autonomía y OK humano posterior.",
+      "acc": {
+        "requirementId": "558fe32c-3b96-43c9-ba51-cad07b6e5655",
+        "publicId": "REQ-11",
+        "externalRef": "repo:dashboard:requirement:FR-011",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 3
+      },
+      "historicalTestTasks": [
+        {
+          "taskId": "f05033ba-19ab-4790-97ee-25fa90d147ff",
+          "publicId": "TASK-19",
+          "title": "[ACC-CHECK-VALIDATION] Verificación sintética de estados y OK humano",
+          "status": "DONE"
+        }
+      ]
     },
     {
       "scope": "product",
@@ -351,7 +470,24 @@
       ],
       "evidence": ["docs/ADMIN_BROWSER_RESULT.json"],
       "assessment": "PARTIAL",
-      "note": "Dashboard real; decisiones/preguntas y resto de vistas pendientes."
+      "note": "Dashboard real; decisiones/preguntas y resto de vistas pendientes.",
+      "acc": {
+        "requirementId": "24b32646-dbc3-4a8b-a112-bfcdedcf39f3",
+        "publicId": "REQ-12",
+        "externalRef": "repo:dashboard:requirement:FR-012",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 3
+      },
+      "historicalTestTasks": [
+        {
+          "taskId": "1206ca45-789f-429d-8444-b69cc34b8004",
+          "publicId": "TASK-1",
+          "title": "Recorrido UI · verificación local",
+          "status": "DONE"
+        }
+      ]
     },
     {
       "scope": "product",
@@ -372,7 +508,16 @@
       ],
       "evidence": [],
       "assessment": "PARTIAL",
-      "note": "Tabla/detalle/filtros presentes; no acreditar Kanban completo."
+      "note": "Tabla/detalle/filtros presentes; no acreditar Kanban completo.",
+      "acc": {
+        "requirementId": "568593b4-9645-4883-981c-fd192762ebf1",
+        "publicId": "REQ-13",
+        "externalRef": "repo:dashboard:requirement:FR-013",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -402,7 +547,16 @@
       ],
       "evidence": [],
       "assessment": "PARTIAL",
-      "note": "Atención actual no equivale al inbox completo de preguntas."
+      "note": "Atención actual no equivale al inbox completo de preguntas.",
+      "acc": {
+        "requirementId": "0911fffd-c6f5-4dbd-8a88-679d1e438efe",
+        "publicId": "REQ-14",
+        "externalRef": "repo:dashboard:requirement:FR-014",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 2
+      }
     },
     {
       "scope": "product",
@@ -432,7 +586,42 @@
       ],
       "evidence": ["docs/WEBSOCKET_RESULT.json"],
       "assessment": "VERIFIED_SLICE",
-      "note": "Contexto/delta/reconexión existentes; Claude MCP actual aún pendiente."
+      "note": "Contexto/delta/reconexión existentes; Claude MCP actual aún pendiente.",
+      "acc": {
+        "requirementId": "48250b41-18dd-4e91-856b-4df81a3de393",
+        "publicId": "REQ-15",
+        "externalRef": "repo:dashboard:requirement:FR-015",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 6
+      },
+      "historicalTestTasks": [
+        {
+          "taskId": "35dea5c2-8bcf-40b3-a7c0-76cabe089a6e",
+          "publicId": "TASK-21",
+          "title": "[ACC-CHECK-WS] mw1p3znp · entrega en vivo",
+          "status": "CANCELLED"
+        },
+        {
+          "taskId": "5e54fa67-1c26-4c18-ad0d-6162ad6432c2",
+          "publicId": "TASK-23",
+          "title": "[ACC-CHECK-WS] mw1p5whg · entrega en vivo",
+          "status": "CANCELLED"
+        },
+        {
+          "taskId": "5eb8e04a-fe0c-4d93-b23a-dad9805a405a",
+          "publicId": "TASK-24",
+          "title": "[ACC-CHECK-WS] mw1p5whg · durante desconexión",
+          "status": "CANCELLED"
+        },
+        {
+          "taskId": "8b88c000-9a7b-4a30-9a2c-2d417d4b91f2",
+          "publicId": "TASK-22",
+          "title": "[ACC-CHECK-WS] mw1p3znp · durante desconexión",
+          "status": "CANCELLED"
+        }
+      ]
     },
     {
       "scope": "product",
@@ -463,7 +652,16 @@
       ],
       "evidence": ["docs/PUBLICATION_RESULT.json"],
       "assessment": "PARTIAL",
-      "note": "Auditoría y copia de evidencia reales, sin integrar Git completo."
+      "note": "Auditoría y copia de evidencia reales, sin integrar Git completo.",
+      "acc": {
+        "requirementId": "d243450b-6b6d-498e-a138-9dc255b6b341",
+        "publicId": "REQ-16",
+        "externalRef": "repo:dashboard:requirement:FR-016",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -493,7 +691,16 @@
       ],
       "evidence": ["docs/AGENT_WORKFLOW_RESULT.json", "docs/AGENT_OWNERSHIP_RESULT.json"],
       "assessment": "PARTIAL",
-      "note": "Permisos/gates actuales; no certificar toda política configurable."
+      "note": "Permisos/gates actuales; no certificar toda política configurable.",
+      "acc": {
+        "requirementId": "f25d69dd-b990-4895-b307-6a29d77f4c5a",
+        "publicId": "REQ-17",
+        "externalRef": "repo:dashboard:requirement:FR-017",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 2
+      }
     },
     {
       "scope": "product",
@@ -506,10 +713,24 @@
           "readSupersessions": true
         }
       ],
-      "tasks": [],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-021",
+          "taskId": "6daca0e9-e3f4-4f1d-bd95-6b55d5715fd9"
+        }
+      ],
       "evidence": [],
       "assessment": "PENDING",
-      "note": "Webhooks GitHub/GitLab no implementados."
+      "note": "Webhooks GitHub/GitLab no implementados.",
+      "acc": {
+        "requirementId": "9c31dd6d-77dc-4cd5-95a8-791d48dfb468",
+        "publicId": "REQ-18",
+        "externalRef": "repo:dashboard:requirement:FR-018",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -530,7 +751,16 @@
       ],
       "evidence": ["docs/requirements/TASK_WORK_TIME_RESULT.json"],
       "assessment": "VERIFIED_SLICE",
-      "note": "Componente de tiempo implementado localmente por inicio/pausa explícitos con desglose tarea/agente/día; otras métricas avanzadas siguen pendientes."
+      "note": "Tiempo por inicio/pausa explícitos publicado y desplegado con total tarea/agente/día; otras métricas pendientes.",
+      "acc": {
+        "requirementId": "e94f7129-0242-48af-883a-d7faac907653",
+        "publicId": "REQ-19",
+        "externalRef": "repo:dashboard:requirement:FR-019",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "product",
@@ -543,10 +773,24 @@
           "readSupersessions": true
         }
       ],
-      "tasks": [],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-022",
+          "taskId": "07e2dd27-45e1-4404-8ec4-f547db6f7f95"
+        }
+      ],
       "evidence": [],
       "assessment": "PENDING",
-      "note": "Backups programados/exportación completa no acreditados."
+      "note": "Backups programados/exportación completa no acreditados.",
+      "acc": {
+        "requirementId": "d3ed8bbe-a473-4469-94d7-76b1a521ddf6",
+        "publicId": "REQ-20",
+        "externalRef": "repo:dashboard:requirement:FR-020",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
     },
     {
       "scope": "process",
@@ -569,8 +813,92 @@
         }
       ],
       "evidence": ["docs/process/migrations/2026-11-04-ecc/RESULT.json"],
-      "assessment": "LOCAL_VERIFIED_FORMAL_EVIDENCE_PENDING",
+      "assessment": "PUBLISHED_VERIFIED_STATIC",
       "note": "Encargo de proceso, no requisito funcional nuevo ni aceptación del MVP."
+    },
+    {
+      "scope": "non_functional",
+      "id": "NFR-001",
+      "source": "docs/requirements/TASK_REQUIREMENT_COVERAGE.md",
+      "decisions": [],
+      "tasks": [
+        {
+          "fileId": "BOOT-002",
+          "taskId": "47c996f0-bc53-410c-bf6c-8167a74633e4"
+        }
+      ],
+      "evidence": [],
+      "assessment": "DRAFT_SOURCE_TRACEABILITY",
+      "note": "Derived from existing specification and explicit all-task coverage instruction; approval remains separate.",
+      "acc": {
+        "requirementId": "2c0996ef-bfc7-4093-9f77-dae70887a5ba",
+        "publicId": "REQ-21",
+        "externalRef": "repo:dashboard:requirement:NFR-001",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 1
+      }
+    },
+    {
+      "scope": "non_functional",
+      "id": "NFR-002",
+      "source": "docs/requirements/TASK_REQUIREMENT_COVERAGE.md",
+      "decisions": [],
+      "tasks": [
+        {
+          "fileId": "BOOT-003",
+          "taskId": "598cbaba-8398-43ad-9837-f8f7d52e85e8"
+        },
+        {
+          "fileId": "ACC-LOCAL-012",
+          "taskId": "f1ec8ba2-0708-41f2-9325-f467885993ac"
+        }
+      ],
+      "evidence": [],
+      "assessment": "DRAFT_SOURCE_TRACEABILITY",
+      "note": "Derived from existing specification and explicit all-task coverage instruction; approval remains separate.",
+      "acc": {
+        "requirementId": "919de1a5-6068-450a-95f7-ace92bc2253c",
+        "publicId": "REQ-22",
+        "externalRef": "repo:dashboard:requirement:NFR-002",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 2
+      }
+    },
+    {
+      "scope": "non_functional",
+      "id": "NFR-003",
+      "source": "docs/requirements/TASK_REQUIREMENT_COVERAGE.md",
+      "decisions": [],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-019",
+          "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde"
+        },
+        {
+          "fileId": "ACC-LOCAL-015",
+          "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f"
+        },
+        {
+          "fileId": "BOOT-001",
+          "taskId": "d9d428c8-642b-4765-ab3d-87f2e145439f"
+        }
+      ],
+      "evidence": ["docs/requirements/TASK_REQUIREMENT_API_RESULT.json"],
+      "assessment": "DRAFT_SOURCE_TRACEABILITY",
+      "note": "Toda tarea tiene requisito en los datos desplegados. API/MCP/DB y formulario implementados y verificados localmente con migración 010; despliegue pendiente.",
+      "acc": {
+        "requirementId": "1954586e-6b6c-4e49-8993-f1657aa575ea",
+        "publicId": "REQ-23",
+        "externalRef": "repo:dashboard:requirement:NFR-003",
+        "revision": 1,
+        "status": "DRAFT",
+        "approvedRevision": null,
+        "links": 3
+      }
     }
   ]
 }

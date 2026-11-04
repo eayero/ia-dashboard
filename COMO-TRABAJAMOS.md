@@ -43,6 +43,17 @@ encargo y consultar las sustanciales. Reproducir fallos, corregir causas y verif
 lo pertinente sin relajar pruebas. UI exige revisión visual real. Claims, versiones,
 dependencias, evidencia y permisos se validan en servidor.
 
+Toda tarea debe responder a uno o más requisitos funcionales o no funcionales,
+con vínculo real en ACC y justificación del trabajo. Esto incluye preparación,
+documentación, proceso y pruebas históricas o canceladas. Consultar el requisito
+antes de crear trabajo; crear con `requirementIds` para guardar tarea y asociación
+atómicamente mediante REST/MCP. No retirar el último vínculo de una tarea.
+Al cerrar cada bloque ejecutar `pnpm requirements:check`: ninguna tarea puede
+quedar sin requisito. Ver [regla y auditoría](docs/requirements/TASK_REQUIREMENT_COVERAGE.md).
+La implementación obligatoria y la migración 010 se describen en
+[flujo API/MCP](docs/requirements/TASK_REQUIREMENT_API.md); comprobar qué versión
+está desplegada antes de usar su contrato.
+
 El agente puede recorrer estados válidos hasta DONE, cancelar/reabrir y planificar
 READY sin aprobación humana previa. Se mantienen IN_REVIEW e IN_QA. El humano puede
 dar un OK de auditoría después de DONE, sin cambiar estado/revisión; el agente no lo emite.

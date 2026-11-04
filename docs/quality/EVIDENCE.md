@@ -25,3 +25,9 @@ de agentes. No se lanza el producto ni sus suites de infraestructura por adoptar
 instrucciones. [Comandos pertinentes](COMMANDS.md).
 
 - [Publicación y despliegue UI/tiempo](../requirements/TASK_WORK_TIME_DEPLOYMENT.json): migración 009, 22 tools, persistencia y navegador compilado.
+
+- [Sincronización real de requisitos y tareas](../requirements/ACC_REQUIREMENTS_SYNC.json): 20 requisitos, 27 vínculos, verificación bidireccional y segunda pasada sin mutaciones.
+
+- [Cobertura completa tarea-requisito](../requirements/TASK_REQUIREMENT_COVERAGE.json): 28/28 tareas y cero huérfanas, incluidas pruebas canceladas; segunda pasada sin mutaciones.
+
+- [Requisito obligatorio en API/MCP/DB](../requirements/TASK_REQUIREMENT_API_RESULT.json): 67 unitarias, 118 integraciones, transacciones/concurrencia y creación web real. Código local pendiente de desplegar con migración 010.

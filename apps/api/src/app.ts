@@ -48,6 +48,11 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     'SELECT r.current_revision,l.evaluated_revision FROM requirements r CROSS JOIN requirement_task_links l LIMIT 0',
   );
   await pool.query('SELECT valid_until FROM task_work_intervals LIMIT 0');
+  const invariant = await pool.query(
+    "SELECT 1 FROM pg_trigger WHERE tgrelid='work_items'::regclass AND tgname='task_requires_requirement' AND tgenabled<>'D'",
+  );
+  if (!invariant.rowCount)
+    throw new Error('Apply migration 010_task_requirement_required.sql before starting the API');
   const queries = new ProjectQueries(pool, config.sessionSecret);
   const runtime: ApiRuntime = {
     config,

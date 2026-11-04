@@ -1,0 +1,590 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-04T18:08:34.515Z",
+  "phase": "SYNCHRONIZED_DEPLOYED_DATA",
+  "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+  "scope": "Twenty functional requirements from docs/SPECIFICATION.md; process trace remains separate",
+  "transports": {
+    "requirements": "Official TypeScript SDK over deployed MCP",
+    "tasks": "Native ACC MCP",
+    "links": "Human REST/CSRF with explicit user synchronization authorization; no approval calls"
+  },
+  "requirements": [
+    {
+      "sourceId": "FR-001",
+      "externalRef": "repo:dashboard:requirement:FR-001",
+      "requirementId": "26564011-7a1b-4294-8f68-4b1a1c483c08",
+      "publicId": "REQ-1",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-001 · Crear/archivar proyectos; repositorios y rama por defecto",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-001. Alcance: Crear/archivar proyectos; repositorios y rama por defecto. Prioridad de origen: P0. Decisiones aplicables: Q1, Q21; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "BOOT-006",
+          "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+          "publicId": "TASK-7",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-002",
+      "externalRef": "repo:dashboard:requirement:FR-002",
+      "requirementId": "31be7ee1-7657-4fc4-a272-218a595e8fc1",
+      "publicId": "REQ-2",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-002 · Iteraciones con metas, fechas, estado y tareas",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-002. Alcance: Iteraciones con metas, fechas, estado y tareas. Prioridad de origen: P0. Decisiones aplicables: Q22; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+          "publicId": "TASK-15",
+          "taskVersion": 34,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-003",
+      "externalRef": "repo:dashboard:requirement:FR-003",
+      "requirementId": "b51b29b7-9ea7-4d27-9f31-1d59befe5c4b",
+      "publicId": "REQ-3",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-003 · Tareas versionadas, responsable, prioridad, criterios y evidencias",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-003. Alcance: Tareas versionadas, responsable, prioridad, criterios y evidencias. Prioridad de origen: P0. Decisiones aplicables: Q17, Q32; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "BOOT-005",
+          "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18",
+          "publicId": "TASK-6",
+          "taskVersion": 4,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "BOOT-006",
+          "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+          "publicId": "TASK-7",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-004",
+      "externalRef": "repo:dashboard:requirement:FR-004",
+      "requirementId": "4fd9d94b-3abc-4351-8a13-0d1660f0db73",
+      "publicId": "REQ-4",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-004 · Requisitos funcionales/no funcionales versionados y vinculados",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-004. Alcance: Requisitos funcionales/no funcionales versionados y vinculados. Prioridad de origen: P0. Decisiones aplicables: Q23, Q24; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+          "publicId": "TASK-15",
+          "taskVersion": 34,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-005",
+      "externalRef": "repo:dashboard:requirement:FR-005",
+      "requirementId": "b96bb432-98b2-448e-ae90-ac52308265ec",
+      "publicId": "REQ-5",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-005 · Decisiones con contexto, alternativas, aprobación y supersesión",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-005. Alcance: Decisiones con contexto, alternativas, aprobación y supersesión. Prioridad de origen: P0. Decisiones aplicables: Q23, Q24; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+          "publicId": "TASK-15",
+          "taskVersion": 34,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-006",
+      "externalRef": "repo:dashboard:requirement:FR-006",
+      "requirementId": "39648451-5d03-4f71-8bf2-439c7f8c7143",
+      "publicId": "REQ-6",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-006 · Preguntas, respuestas, prioridad y bloqueo de dependientes",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-006. Alcance: Preguntas, respuestas, prioridad y bloqueo de dependientes. Prioridad de origen: P0. Decisiones aplicables: Q13; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+          "publicId": "TASK-15",
+          "taskVersion": 34,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-007",
+      "externalRef": "repo:dashboard:requirement:FR-007",
+      "requirementId": "5b5ebda6-47be-4634-a517-ac50853f35aa",
+      "publicId": "REQ-7",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-007 · Idempotencia/exactos; candidatos semánticos sin fusión automática",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-007. Alcance: Idempotencia/exactos; candidatos semánticos sin fusión automática. Prioridad de origen: P0. Decisiones aplicables: Q19, Q20; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "BOOT-005",
+          "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18",
+          "publicId": "TASK-6",
+          "taskVersion": 4,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-008",
+      "externalRef": "repo:dashboard:requirement:FR-008",
+      "requirementId": "3e917627-672a-4931-8acf-4ba245df52c3",
+      "publicId": "REQ-8",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-008 · Identidades, capacidades, sesiones y heartbeat",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-008. Alcance: Identidades, capacidades, sesiones y heartbeat. Prioridad de origen: P0. Decisiones aplicables: Q1, Q9, Q37; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-018",
+          "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
+          "publicId": "TASK-20",
+          "taskVersion": 16,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "BOOT-006",
+          "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+          "publicId": "TASK-7",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-009",
+      "externalRef": "repo:dashboard:requirement:FR-009",
+      "requirementId": "ae86b2f5-659c-4792-9fe8-153b804de57c",
+      "publicId": "REQ-9",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-009 · Claim atómico con lease, renovación, liberación y expiración",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-009. Alcance: Claim atómico con lease, renovación, liberación y expiración. Prioridad de origen: P0. Decisiones aplicables: Q3, Q6, Q12, Q15, Q37; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "BOOT-005",
+          "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18",
+          "publicId": "TASK-6",
+          "taskVersion": 4,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+          "publicId": "TASK-18",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-010",
+      "externalRef": "repo:dashboard:requirement:FR-010",
+      "requirementId": "8a76335a-18cb-4d9c-b723-ba65fff10d31",
+      "publicId": "REQ-10",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-010 · Máquina de estados y concurrencia optimista",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-010. Alcance: Máquina de estados y concurrencia optimista. Prioridad de origen: P0. Decisiones aplicables: Q25, Q38, Q39; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+          "publicId": "TASK-18",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-011",
+      "externalRef": "repo:dashboard:requirement:FR-011",
+      "requirementId": "558fe32c-3b96-43c9-ba51-cad07b6e5655",
+      "publicId": "REQ-11",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-011 · DONE con criterios/evidencia técnica y validación humana posterior",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-011. Alcance: DONE con criterios/evidencia técnica y validación humana posterior. Prioridad de origen: P0. Decisiones aplicables: Q4, Q10, Q31, Q40; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+          "publicId": "TASK-18",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-012",
+      "externalRef": "repo:dashboard:requirement:FR-012",
+      "requirementId": "24b32646-dbc3-4a8b-a112-bfcdedcf39f3",
+      "publicId": "REQ-12",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-012 · Dashboard consistente de tareas, bloqueos, decisiones y sesiones",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-012. Alcance: Dashboard consistente de tareas, bloqueos, decisiones y sesiones. Prioridad de origen: P0. Decisiones aplicables: Q26; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "BOOT-008",
+          "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4",
+          "publicId": "TASK-9",
+          "taskVersion": 4,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "ACC-LOCAL-011",
+          "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85",
+          "publicId": "TASK-12",
+          "taskVersion": 15,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-013",
+      "externalRef": "repo:dashboard:requirement:FR-013",
+      "requirementId": "568593b4-9645-4883-981c-fd192762ebf1",
+      "publicId": "REQ-13",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-013 · Detalles, filtros, búsqueda, Kanban y tabla",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-013. Alcance: Detalles, filtros, búsqueda, Kanban y tabla. Prioridad de origen: P1. Decisiones aplicables: Q26; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "BOOT-008",
+          "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4",
+          "publicId": "TASK-9",
+          "taskVersion": 4,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-014",
+      "externalRef": "repo:dashboard:requirement:FR-014",
+      "requirementId": "0911fffd-c6f5-4dbd-8a88-679d1e438efe",
+      "publicId": "REQ-14",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-014 · Inbox humano y preguntas críticas",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-014. Alcance: Inbox humano y preguntas críticas. Prioridad de origen: P0. Decisiones aplicables: Q13, Q27; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+          "publicId": "TASK-15",
+          "taskVersion": 34,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "BOOT-008",
+          "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4",
+          "publicId": "TASK-9",
+          "taskVersion": 4,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-015",
+      "externalRef": "repo:dashboard:requirement:FR-015",
+      "requirementId": "48250b41-18dd-4e91-856b-4df81a3de393",
+      "publicId": "REQ-15",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-015 · Restauración de contexto mediante snapshot y delta con cursor",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-015. Alcance: Restauración de contexto mediante snapshot y delta con cursor. Prioridad de origen: P0. Decisiones aplicables: Q16, Q35; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-013",
+          "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a",
+          "publicId": "TASK-14",
+          "taskVersion": 16,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "BOOT-007",
+          "taskId": "c20557e7-a5d5-4229-9269-c6cc9f8afcd2",
+          "publicId": "TASK-8",
+          "taskVersion": 2,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-016",
+      "externalRef": "repo:dashboard:requirement:FR-016",
+      "requirementId": "d243450b-6b6d-498e-a138-9dc255b6b341",
+      "publicId": "REQ-16",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-016 · Eventos/evidencias trazables: commits, PR, pruebas, logs redactados",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-016. Alcance: Eventos/evidencias trazables: commits, PR, pruebas, logs redactados. Prioridad de origen: P0. Decisiones aplicables: Q18, Q32, Q33; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-016",
+          "taskId": "f6302302-4331-4b13-a518-c8546363b60c",
+          "publicId": "TASK-17",
+          "taskVersion": 10,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-017",
+      "externalRef": "repo:dashboard:requirement:FR-017",
+      "requirementId": "f25d69dd-b990-4895-b307-6a29d77f4c5a",
+      "publicId": "REQ-17",
+      "version": 3,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-017 · Políticas por proyecto: QA, aprobación y permisos",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-017. Alcance: Políticas por proyecto: QA, aprobación y permisos. Prioridad de origen: P1. Decisiones aplicables: Q29, Q34; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+          "publicId": "TASK-18",
+          "taskVersion": 17,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "fileId": "ACC-LOCAL-018",
+          "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
+          "publicId": "TASK-20",
+          "taskVersion": 16,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-018",
+      "externalRef": "repo:dashboard:requirement:FR-018",
+      "requirementId": "9c31dd6d-77dc-4cd5-95a8-791d48dfb468",
+      "publicId": "REQ-18",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-018 · GitHub/GitLab opcional mediante webhook verificado",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-018. Alcance: GitHub/GitLab opcional mediante webhook verificado. Prioridad de origen: P1. Decisiones aplicables: Q18; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-021",
+          "taskId": "6daca0e9-e3f4-4f1d-bd95-6b55d5715fd9",
+          "publicId": "TASK-27",
+          "taskVersion": 2,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-019",
+      "externalRef": "repo:dashboard:requirement:FR-019",
+      "requirementId": "e94f7129-0242-48af-883a-d7faac907653",
+      "publicId": "REQ-19",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-019 · Throughput, ciclo, bloqueos, reabiertas, tiempo y coste opcional",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-019. Alcance: Throughput, ciclo, bloqueos, reabiertas, tiempo y coste opcional. Prioridad de origen: P2. Decisiones aplicables: Q2; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-020",
+          "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+          "publicId": "TASK-26",
+          "taskVersion": 13,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    },
+    {
+      "sourceId": "FR-020",
+      "externalRef": "repo:dashboard:requirement:FR-020",
+      "requirementId": "d3ed8bbe-a473-4469-94d7-76b1a521ddf6",
+      "publicId": "REQ-20",
+      "version": 2,
+      "revision": 1,
+      "status": "DRAFT",
+      "approvedRevision": null,
+      "title": "FR-020 · Export Markdown/JSON y backups programados",
+      "description": "Fuente: docs/SPECIFICATION.md, FR-020. Alcance: Export Markdown/JSON y backups programados. Prioridad de origen: P1. Decisiones aplicables: Q28; consultar sus sustituciones en docs/DECISIONS.md. Importación para trazabilidad; la aprobación del requisito y la evaluación de impacto permanecen separadas.",
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-022",
+          "taskId": "07e2dd27-45e1-4404-8ec4-f547db6f7f95",
+          "publicId": "TASK-28",
+          "taskVersion": 2,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "requirements": 20,
+    "links": 27,
+    "distinctLinkedTasks": 13,
+    "projectTasks": 28,
+    "newTasks": 2
+  },
+  "newTasks": [
+    {
+      "fileId": "ACC-LOCAL-021",
+      "fr": "FR-018",
+      "task": {
+        "id": "6daca0e9-e3f4-4f1d-bd95-6b55d5715fd9",
+        "publicId": "TASK-27",
+        "status": "BACKLOG",
+        "version": 1,
+        "projectSeq": "261"
+      },
+      "status": "BACKLOG"
+    },
+    {
+      "fileId": "ACC-LOCAL-022",
+      "fr": "FR-020",
+      "task": {
+        "id": "07e2dd27-45e1-4404-8ec4-f547db6f7f95",
+        "publicId": "TASK-28",
+        "status": "BACKLOG",
+        "version": 1,
+        "projectSeq": "262"
+      },
+      "status": "BACKLOG"
+    }
+  ],
+  "verification": {
+    "bidirectionalReadback": true,
+    "creationReplay": true,
+    "secondPass": {
+      "createdRequirements": 0,
+      "createdLinks": 0,
+      "skippedLinks": 27
+    },
+    "initialRequirements": 0,
+    "recovery": "Initial first-requirement readback used an incorrect assertion field; corrected id assertion and resumed by externalRef. One existing requirement/link reused; final second pass has zero mutations.",
+    "taskStatesAndWorkRevisionsPreserved": true,
+    "humanValidationRecordsPreserved": 3,
+    "context": {
+      "pages": 3,
+      "complete": true,
+      "projectSeq": "339"
+    },
+    "delta": {
+      "events": 82,
+      "complete": true,
+      "projectSeq": "339"
+    }
+  },
+  "approvals": {
+    "calls": 0,
+    "impactEvaluationCalls": 0,
+    "allRequirements": "DRAFT",
+    "linkedTaskImpact": "Pending until human approval and evaluation; existing DONE state/validation retained"
+  },
+  "session": {
+    "id": "5419d02e-3fb6-449a-8cfc-6982d3703620",
+    "version": 2,
+    "ended": true,
+    "claimReleased": true
+  },
+  "publication": {
+    "newSourceCommit": false,
+    "newDeploymentRequired": false,
+    "dataAlreadyInRunningService": true
+  },
+  "limitations": [
+    "Native Codex tool discovery still exposes the old inventory; deployed MCP has requirement tools used through official SDK",
+    "Human linking is intentionally REST-only under Q24; explicit user request authorized these associations, without approving requirements",
+    "FR-001…FR-020 are original source identifiers; REQ-n is assigned by ACC",
+    "Some broad tasks cover multiple requirements; link is traceability, not a claim of complete implementation",
+    "No product code changed or full regression rerun for this data synchronization"
+  ]
+}

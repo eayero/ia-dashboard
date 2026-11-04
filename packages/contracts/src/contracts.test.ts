@@ -10,6 +10,7 @@ import {
 
 const id = '7f5481cc-9ab3-4e07-a481-cfb8a38f429d';
 const task = {
+  requirementIds: [id],
   title: '  Cafe\u0301  central ',
   criteria: [{ id: 'AC-1', description: ' Funciona ', required: true }],
 };
@@ -28,6 +29,13 @@ test('criterios no pueden estar vacíos ni repetir identificadores', () => {
   ]) {
     assert.equal(createTaskSchema.safeParse({ ...task, criteria }).success, false);
   }
+});
+test('crear exige uno o más requisitos UUID únicos', () => {
+  const { requirementIds, ...missing } = task;
+  assert.equal(createTaskSchema.safeParse(missing).success, false);
+  for (const ids of [[], ['invalid'], [id, id]])
+    assert.equal(createTaskSchema.safeParse({ ...task, requirementIds: ids }).success, false);
+  assert.equal(requirementIds.length, 1);
 });
 test('claim requiere sesión y versión entera positiva, sin suplantar principal', () => {
   assert.equal(claimTaskSchema.safeParse({ sessionId: id, expectedVersion: 1 }).success, true);

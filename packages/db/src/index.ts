@@ -296,57 +296,89 @@ export class CoordinationStore {
 
   async createTask(context: CommandContext, key: string, payload: unknown): Promise<Task> {
     const input = createTaskSchema.parse(payload);
-    return this.command(context, 'task.create', key, input, async (client) => {
-      if (input.externalRef) {
-        // Serialize exact external identity even when callers use different idempotency keys.
-        await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
-          canonicalJson([context.projectId, 'externalRef', input.externalRef]),
-        ]);
-        const existing = await client.query<{
-          id: string;
-          public_id: string;
-          status: string;
-          version: number;
-        }>(
-          'SELECT id,public_id,status,version FROM work_items WHERE project_id=$1 AND external_ref=$2',
-          [context.projectId, input.externalRef],
-        );
-        if (existing.rows[0]) {
-          const task = existing.rows[0];
-          const seq = await client.query<{ value: string }>(
-            "SELECT value FROM project_counters WHERE project_id=$1 AND kind='EVENT'",
-            [context.projectId],
+    return this.command(
+      context,
+      'task.create',
+      key,
+      input,
+      async (client) => {
+        if (input.externalRef) {
+          // Serialize exact external identity even when callers use different idempotency keys.
+          await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
+            canonicalJson([context.projectId, 'externalRef', input.externalRef]),
+          ]);
+          const existing = await client.query<{
+            id: string;
+            public_id: string;
+            status: string;
+            version: number;
+          }>(
+            'SELECT id,public_id,status,version FROM work_items WHERE project_id=$1 AND external_ref=$2',
+            [context.projectId, input.externalRef],
           );
-          return {
-            id: task.id,
-            publicId: task.public_id,
-            status: task.status,
-            version: task.version,
-            projectSeq: seq.rows[0]?.value ?? '0',
-          };
+          if (existing.rows[0]) {
+            const task = existing.rows[0];
+            const seq = await client.query<{ value: string }>(
+              "SELECT value FROM project_counters WHERE project_id=$1 AND kind='EVENT'",
+              [context.projectId],
+            );
+            return {
+              id: task.id,
+              publicId: task.public_id,
+              status: task.status,
+              version: task.version,
+              projectSeq: seq.rows[0]?.value ?? '0',
+            };
+          }
         }
-      }
-      const id = randomUUID();
-      const publicId = `TASK-${await this.counter(client, context.projectId, 'TASK')}`;
-      await client.query(
-        'INSERT INTO work_items(id,project_id,public_id,title,criteria,external_ref,created_by,work_type) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
-        [
-          id,
-          context.projectId,
+        const requirements = await client.query<{ id: string; approved_revision: number | null }>(
+          'SELECT id,approved_revision FROM requirements WHERE project_id=$1 AND id=ANY($2::uuid[]) ORDER BY id FOR UPDATE',
+          [context.projectId, input.requirementIds],
+        );
+        if (requirements.rowCount !== input.requirementIds.length)
+          throw new DomainError('REQUIREMENT_NOT_FOUND');
+        const id = randomUUID();
+        const publicId = `TASK-${await this.counter(client, context.projectId, 'TASK')}`;
+        await client.query(
+          'INSERT INTO work_items(id,project_id,public_id,title,criteria,external_ref,created_by,work_type) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+          [
+            id,
+            context.projectId,
+            publicId,
+            input.title,
+            JSON.stringify(input.criteria),
+            input.externalRef ?? null,
+            context.principalId,
+            input.workType,
+          ],
+        );
+        for (const requirement of requirements.rows) {
+          await client.query(
+            'INSERT INTO requirement_task_links(project_id,requirement_id,task_id,evaluated_revision) VALUES ($1,$2,$3,$4)',
+            [context.projectId, requirement.id, id, requirement.approved_revision],
+          );
+          await client.query(
+            'UPDATE requirements SET version=version+1 WHERE project_id=$1 AND id=$2',
+            [context.projectId, requirement.id],
+          );
+        }
+        await client.query(
+          'UPDATE work_items SET impact_pending=$3 WHERE project_id=$1 AND id=$2',
+          [context.projectId, id, requirements.rows.some((r) => r.approved_revision === null)],
+        );
+        const projectSeq = await this.event(client, context, id, 'task.created', {
           publicId,
-          input.title,
-          JSON.stringify(input.criteria),
-          input.externalRef ?? null,
-          context.principalId,
-          input.workType,
-        ],
-      );
-      const projectSeq = await this.event(client, context, id, 'task.created', {
-        publicId,
-        version: 1,
-      });
-      return { id, publicId, status: 'BACKLOG', version: 1, projectSeq };
-    });
+          version: 1,
+          requirementIds: input.requirementIds,
+          requirementBaselines: requirements.rows.map((r) => ({
+            requirementId: r.id,
+            revision: r.approved_revision,
+          })),
+        });
+        return { id, publicId, status: 'BACKLOG', version: 1, projectSeq };
+      },
+      true,
+    );
   }
 
   private async lockTask(

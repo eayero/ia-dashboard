@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+  "design": "docs/requirements/TASK_REQUIREMENT_API.md",
+  "authorization": "Explicit user instruction: debe hacerlo la api y formar parte del flujo de trabajo del mcp",
+  "delivered": [
+    "REST/MCP task creation requires one to one hundred unique requirement UUIDs",
+    "Atomic task, initial links, approved revision baselines or draft impact, audit, outbox and idempotency",
+    "Same-project scope validation and unchanged links on exact externalRef recovery",
+    "Human removal of final association rejected with 409 TASK_REQUIREMENT_REQUIRED",
+    "Migration 010 deferred PostgreSQL invariant, concurrent removal protection and no-truncate safeguard",
+    "Migration refuses existing orphans and API startup requires the invariant trigger",
+    "MCP tool guidance, repository importer, OpenAPI and web create form updated"
+  ],
+  "verification": {
+    "unitTests": 67,
+    "integrationTests": 118,
+    "focusedRealApiMcpPostgres": 6,
+    "protocolTests": 16,
+    "types": "PASS",
+    "lint": "PASS",
+    "buildFivePackages": "PASS",
+    "openApi": "PASS",
+    "format": "PASS"
+  },
+  "browser": {
+    "environment": "Isolated API/Vite/PostgreSQL schema at http://localhost:55176",
+    "desktop": "1440x900",
+    "mobile": "390x844",
+    "missingSelectionInvalid": true,
+    "selectedRequirementSent": true,
+    "createdTaskLinkedInDetail": true,
+    "screenshots": [
+      "output/playwright/requirements-ui/mandatory-create-desktop.png",
+      "output/playwright/requirements-ui/mandatory-create-mobile.png",
+      "output/playwright/requirements-ui/mandatory-task-linked-mobile.png"
+    ],
+    "runnerCorrection": "Fixed a malformed URL-matching regular expression in the QA script; final script loaded by filename and passed",
+    "fixtureStoppedAndSchemaRemoved": true
+  },
+  "existingDeploymentAudit": {
+    "requirements": 23,
+    "tasks": 28,
+    "covered": 28,
+    "orphans": 0
+  },
+  "migration": {
+    "file": "packages/db/migrations/010_task_requirement_required.sql",
+    "testedIsolatedSchemas": true,
+    "appliedToExistingDeployment": false,
+    "previousMigrationsModified": false
+  },
+  "publication": {
+    "committed": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "limitations": [
+    "Current deployed service still uses migration 009 and the old creation signature until upgraded",
+    "Requirement approval and later impact evaluation remain human operations; no approvals were generated",
+    "Existing regression scenarios explicitly seed approved synthetic scope through a test-only fixture; production has no default requirement",
+    "No independent review, load test or production deployment performed"
+  ],
+  "installations": 0,
+  "subagents": 0,
+  "checkedAt": "2026-11-04T19:17:17.706Z",
+  "accMirror": {
+    "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+    "status": "IN_PROGRESS",
+    "version": 15,
+    "workRevision": 4,
+    "projectSeq": "387",
+    "sessionEnded": true,
+    "claimReleased": true,
+    "summaryReadVerified": true,
+    "contextComplete": true,
+    "deltaComplete": true
+  }
+}

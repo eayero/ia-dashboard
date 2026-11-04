@@ -28,6 +28,7 @@
     "outbox:dev": "node --env-file=.env --import tsx apps/api/src/outbox/main.ts",
     "outbox:start": "node --env-file=.env apps/api/dist/outbox/main.js",
     "mcp:smoke": "node --env-file=.env --import tsx apps/api/src/mcp/smoke.ts",
+    "requirements:check": "node --env-file=.env --import tsx scripts/check-task-requirements.mjs",
     "db:migrate": "node --env-file=.env --import tsx packages/db/src/migrate.ts",
     "db:generate": "pnpm --filter @acc/db generate"
   },

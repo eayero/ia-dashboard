@@ -100,8 +100,8 @@
     "accTaskTracking": "required-by-existing-project-instruction"
   },
   "currentTaskConstraints": {
-    "taskId": "ACC-LOCAL-020",
-    "scope": "Approved requirements UI A and explicit agent start/pause work-time tracking by task/day/agent",
+    "taskId": "ACC-LOCAL-015",
+    "scope": "Enforce mandatory task requirements in REST/MCP creation, protect final link in API/PostgreSQL, update web and MCP workflow",
     "functionalCodeChanges": true,
     "architectureChanges": false,
     "installations": false,
@@ -116,17 +116,19 @@
       "merge": false,
       "installations": false,
       "delegation": false,
-      "source": "Explicit user instruction: haz los coomit el push y despliega"
+      "source": "User continua after pending commit/push/deployment notice; continuation of prior publication instruction"
     },
     "previousDeliveryAuthorization": {
+      "implementation": true,
       "commit": true,
       "push": true,
       "deploy": "local Docker Compose at http://localhost:55173",
       "merge": false,
       "installations": false,
-      "source": "Explicit user instruction: haz el commit sube el push despliega"
+      "delegation": false,
+      "source": "Explicit user instruction: haz los coomit el push y despliega"
     },
-    "relatedTaskIds": ["ACC-LOCAL-014"]
+    "relatedTaskIds": ["ACC-LOCAL-014", "ACC-LOCAL-021", "ACC-LOCAL-022"]
   },
   "quality": {
     "requireApplicableFullSuite": true,
@@ -142,7 +144,9 @@
       "DONE",
       "CANCELLED"
     ],
-    "humanValidation": "Separate human audit acknowledgement after DONE; no prior human task-state gate"
+    "humanValidation": "Separate human audit acknowledgement after DONE; no prior human task-state gate",
+    "requireRequirementForEveryTask": true,
+    "requirementCoverageCheck": "pnpm requirements:check"
   },
   "skills": {
     "preferred": [

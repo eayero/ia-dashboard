@@ -4,6 +4,11 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
+Continuación implementada y verificada localmente: [requisitos obligatorios al
+crear tareas por API/MCP](docs/requirements/TASK_REQUIREMENT_API.md). Incluye
+asociación atómica y protección PostgreSQL; requiere migración 010 y actualización
+del servicio. Esta continuación aún no está publicada ni desplegada.
+
 Entrega publicada y desplegada localmente: [interfaz de requisitos](docs/requirements/REQUIREMENTS_UI_RESULT.json)
 y [tiempo de trabajo de agentes por tarea y día](docs/requirements/TASK_WORK_TIME_RESULT.json),
 con inicio/pausa explícitos. Migración 009 aplicada, 22 herramientas MCP disponibles.

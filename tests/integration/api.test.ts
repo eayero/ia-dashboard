@@ -1,3 +1,4 @@
+import { withTaskRequirement } from '../../apps/api/test/task-requirement-fixture.ts';
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -277,6 +278,8 @@ test('respuestas reales REST satisfacen modelos publicados y el contrato no auto
   envelope(responseModels.Mutation).parse(await cancelled.json());
 });
 async function post(path: string, body: unknown, extra: Record<string, string> = {}) {
+  if (path.endsWith('/tasks') && body && typeof body === 'object' && 'criteria' in body)
+    body = await withTaskRequirement(pool, projectId, body);
   return fetch(`${transportOrigin}/api/v1${path}`, {
     method: 'POST',
     headers: {

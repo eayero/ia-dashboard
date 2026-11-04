@@ -1,5 +1,10 @@
 # Gateway MCP local
 
+Contrato local nuevo, pendiente de despliegue: `acc_find_or_create_task` exige
+`input.requirementIds` no vacío. Primero consultar/proponer el requisito, después
+crear tarea y vínculos atómicamente, y verificar ambos detalles. Aprobación e
+impacto posterior siguen siendo humanos. Ver [flujo obligatorio](../requirements/TASK_REQUIREMENT_API.md).
+
 `/mcp` ofrece Streamable HTTP autenticado dentro del proceso NestJS. Reutiliza
 los contratos, lecturas y comandos transaccionales de REST, sin llamadas HTTP
 internas ni reenvío de tokens. Se aloja en la API para compartir autorización y

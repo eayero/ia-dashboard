@@ -45,6 +45,7 @@ export async function api<T>(
   return body.data as T;
 }
 const messages: Record<string, string> = {
+  TASK_REQUIREMENT_REQUIRED: 'La tarea debe conservar al menos un requisito asociado.',
   PASSWORD_UNCHANGED: 'La nueva contraseña debe ser diferente de la actual.',
   LOGIN_FAILED: 'Usuario o contraseña incorrectos.',
   LOGIN_THROTTLED: 'Demasiados intentos de acceso. Espera quince minutos antes de reintentar.',

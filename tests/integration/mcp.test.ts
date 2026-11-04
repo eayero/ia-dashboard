@@ -1,8 +1,10 @@
+import { withTaskRequirement } from '../../apps/api/test/task-requirement-fixture.ts';
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import type { AddressInfo } from 'node:net';
-import { CoordinationStore, Pool } from '../../packages/db/src/index.ts';
+import { Pool } from '../../packages/db/src/index.ts';
+import { FixtureCoordinationStore as CoordinationStore } from '../../apps/api/test/task-requirement-fixture.ts';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { createApplication } from '../../apps/api/src/app.ts';
 import { loadConfiguration } from '../../apps/api/src/config.ts';
@@ -119,6 +121,8 @@ test('MCP inicia/pausa tiempo explícito del agente y consulta su desglose diari
   const connection = await client();
   try {
     const call = async (name: string, args: Record<string, unknown>) => {
+      if (name === 'acc_find_or_create_task')
+        args = { ...args, input: await withTaskRequirement(pool, seeded.projectId, args.input) };
       const r = await connection.callTool({
         name,
         arguments: { projectId: seeded.projectId, ...args },
@@ -243,6 +247,8 @@ test('cliente oficial descubre contratos estrictos y usa contexto, tareas, sesio
     const query = tools.find((tool) => tool.name === 'acc_get_context');
     assert.equal(query?.annotations?.readOnlyHint, true);
     const call = async (name: string, args: Record<string, unknown>) => {
+      if (name === 'acc_find_or_create_task')
+        args = { ...args, input: await withTaskRequirement(pool, seeded.projectId, args.input) };
       const result = await connection.callTool({
         name,
         arguments: { projectId: seeded.projectId, ...args },
@@ -405,6 +411,8 @@ test('dos clientes MCP compiten por claim y el agente recorre READY hasta DONE s
     args: Record<string, unknown>,
     expectedError?: string,
   ) {
+    if (name === 'acc_find_or_create_task')
+      args = { ...args, input: await withTaskRequirement(pool, projectId, args.input) };
     const result = await connections[index]!.callTool({
       name,
       arguments: { projectId, idempotencyKey: randomUUID(), ...args },

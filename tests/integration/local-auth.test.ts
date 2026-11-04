@@ -1,8 +1,10 @@
+import { withTaskRequirement } from '../../apps/api/test/task-requirement-fixture.ts';
 import { after, before, test } from 'node:test';
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
 import type { AddressInfo } from 'node:net';
-import { Pool, CoordinationStore } from '../../packages/db/src/index.ts';
+import { Pool } from '../../packages/db/src/index.ts';
+import { FixtureCoordinationStore as CoordinationStore } from '../../apps/api/test/task-requirement-fixture.ts';
 import { migrate } from '../../packages/db/src/migrate.ts';
 import { createApplication } from '../../apps/api/src/app.ts';
 import { loadConfiguration } from '../../apps/api/src/config.ts';
@@ -51,6 +53,9 @@ async function start() {
   return { cookie: cookie(response), csrf: (await response.json()).data.csrfToken as string };
 }
 async function post(path: string, body: unknown, session: { cookie: string; csrf: string }) {
+  const project = /\/projects\/([^/]+)\/tasks$/.exec(path)?.[1];
+  if (project && body && typeof body === 'object' && 'criteria' in body)
+    body = await withTaskRequirement(pool, project, body);
   return fetch(`${origin}/api/v1${path}`, {
     method: 'POST',
     headers: {
@@ -193,6 +198,7 @@ test('un usuario tiene agentes propios con una identidad y credencial para vario
           projectId: id,
           idempotencyKey: randomUUID(),
           input: {
+            ...(await withTaskRequirement(pool, id, { title: 'Owned agent attribution' })),
             title: 'Owned agent attribution',
             criteria: [{ id: 'c', description: 'Owner is auditable', required: true }],
           },

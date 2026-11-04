@@ -118,3 +118,14 @@ métricas avanzadas ni un despliegue de producción.
 Hosting, dominio y operación de producción se concretarán antes de publicar.
 Diseño visual se presenta para revisión antes de implementar UI. Métricas avanzadas,
 integraciones Git, adjuntos, organizaciones y facturación no pertenecen al primer slice.
+
+## Tarea vinculada obligatoriamente desde API/MCP — 2026-11-04
+
+El usuario exige que toda tarea forme parte del desarrollo de un requisito y
+que la API imponga la regla dentro del flujo MCP. Crear requiere IDs reales del
+mismo proyecto y confirma tarea/vínculos atómicamente; no existe valor por
+defecto. La asociación inicial por agente complementa Q24: una revisión aprobada
+es base inicial, sin emitir evaluación humana; DRAFT conserva impacto pendiente.
+Aprobaciones, evaluaciones posteriores y modificaciones de vínculos existentes
+conservan autorización humana. Retirar el último vínculo se rechaza en API y DB.
+[Contrato y alcance](requirements/TASK_REQUIREMENT_API.md).

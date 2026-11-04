@@ -56,8 +56,17 @@ try {
   const changesCursor = snapshot.changesCursor;
   assert.equal(typeof changesCursor, 'string');
   const rows = [];
+  const trace = JSON.parse(await readFile('docs/requirements/TRACEABILITY.json', 'utf8')) as {
+    requirements: { tasks: { fileId: string }[]; acc?: { requirementId: string } }[];
+  };
   for (const item of catalog) {
+    const requirementIds = trace.requirements
+      .filter((r) => r.acc && r.tasks.some((t) => t.fileId === item.id))
+      .map((r) => r.acc!.requirementId);
+    if (!requirementIds.length)
+      throw new Error(`Associate ${item.id} with a real requirement before import`);
     const input = {
+      requirementIds,
       title: `[${item.id}] ${item.title}`,
       workType: 'OTHER',
       externalRef: `repo:dashboard:${item.id}`,

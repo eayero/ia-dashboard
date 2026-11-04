@@ -203,6 +203,11 @@ export async function requirementCommand(
             [randomUUID(), projectId, id, link.taskId, approvedRevision],
           );
       } else {
+        const remaining = await client.query(
+          'SELECT 1 FROM requirement_task_links WHERE project_id=$1 AND task_id=$2 AND requirement_id<>$3 LIMIT 1',
+          [projectId, link.taskId, id],
+        );
+        if (!remaining.rowCount) throw new DomainError('TASK_REQUIREMENT_REQUIRED');
         const removed = await client.query(
           'DELETE FROM requirement_task_links WHERE project_id=$1 AND requirement_id=$2 AND task_id=$3 RETURNING task_id',
           [projectId, id, link.taskId],

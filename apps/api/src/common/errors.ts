@@ -65,6 +65,7 @@ export function errorResponse(error: unknown, request: ApiRequest) {
                   'DEPENDENCY_EXISTS',
                   'REQUIREMENT_REVISION_CONFLICT',
                   'REQUIREMENT_LINK_EXISTS',
+                  'TASK_REQUIREMENT_REQUIRED',
                   'WORK_ALREADY_RUNNING',
                   'WORK_NOT_RUNNING',
                 ].includes(code)
