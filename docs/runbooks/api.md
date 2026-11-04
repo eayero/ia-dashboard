@@ -10,7 +10,8 @@ notificaciones autorizadas. La creación general de proyectos sigue pendiente.
 
 `GET /api/v1/openapi.json` descarga OpenAPI 3.1.1 sin autenticar, con JSON directo
 (sin envelope ACC), no-store y el mismo proxy del origen público. Describe las
-52 operaciones REST actuales en 46 paths; MCP y WS conservan sus propios protocolos.
+55 operaciones REST en el código local actual, en 49 paths; MCP y WS conservan sus
+propios protocolos. La instancia previa desplegada conserva su contrato hasta actualizarse.
 No incluye URLs de base de datos/Redis, configuración privada ni secretos reales.
 El servidor relativo `/` permite usarlo desde el origen donde se descarga.
 
@@ -26,6 +27,8 @@ La exportación no necesita servicios ni secretos.
 La entrega de requisitos necesita migración 008 antes de arrancar su API;
 ya se aplicó a la instancia local en el despliegue de `ee55b37`.
 Ver [uso de requisitos](../requirements/VERSIONED_REQUIREMENTS_API.md).
+El código local añade inicio/pausa de tiempo por agente y consulta diaria por tarea;
+requiere migración 009. Ver [tiempo registrado](../requirements/TASK_WORK_TIME_API.md).
 Las pruebas comparan el inventario de controllers Nest y comandos concretos con
 el documento, resuelven sus referencias y validan muestras reales de respuestas.
 

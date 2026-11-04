@@ -166,5 +166,17 @@
       "Detectar stack real, verificar skills ECC disponibles y generar perfiles especializados y adaptadores sin instalar ni ejecutar agentes automáticamente.",
       "Comprobar generación segura, instrucciones de Claude Code y Codex, enlaces, límites de permisos e invariancia del código funcional; registrar alcance y pendientes reales."
     ]
+  },
+  {
+    "id": "ACC-LOCAL-020",
+    "title": "Registrar tiempo de trabajo por tarea, día y agente",
+    "source": "docs/requirements/TASK_WORK_TIME_DESIGN.md",
+    "context": "Petición expresa: cada tarea acumula el tiempo trabajado por los agentes y muestra los días, qué agente y cuánto tiempo empleó. El usuario eligió inicio y pausa explícitos. Reglas detalladas y presentación propuestas para aprobación.",
+    "criteria": [
+      "Inicio y pausa explícitos por agente, con acumulación por tarea y conservación de intervalos e identidad.",
+      "Desglosar tiempo por día y agente, repartir tramos que cruzan medianoche y conservar totales exactos.",
+      "Validar autorización, claim/sesión/fencing, idempotencia y cierres por expiración/revocación mediante API/MCP y PostgreSQL real.",
+      "Mostrar total y desglose en la tarea, documentar contratos y verificar escritorio/móvil sin inventar tiempos históricos."
+    ]
   }
 ]

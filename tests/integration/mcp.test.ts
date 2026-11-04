@@ -115,6 +115,73 @@ async function client(index = 0) {
   return connection;
 }
 
+test('MCP inicia/pausa tiempo explícito del agente y consulta su desglose diario', async () => {
+  const connection = await client();
+  try {
+    const call = async (name: string, args: Record<string, unknown>) => {
+      const r = await connection.callTool({
+        name,
+        arguments: { projectId: seeded.projectId, ...args },
+      });
+      assert.notEqual(r.isError, true, JSON.stringify(r.content));
+      return (r.structuredContent as { data: Record<string, unknown> }).data;
+    };
+    const task = await call('acc_find_or_create_task', {
+      idempotencyKey: randomUUID(),
+      input: {
+        title: 'MCP timed work',
+        criteria: [{ id: 'a', description: 'Timer', required: true }],
+      },
+    });
+    const ready = await call('acc_transition_task', {
+      taskId: task.id,
+      idempotencyKey: randomUUID(),
+      input: { expectedVersion: task.version, to: 'READY' },
+    });
+    const session = await call('acc_register_session', { idempotencyKey: randomUUID(), input: {} });
+    const claim = await call('acc_claim_task', {
+      taskId: task.id,
+      idempotencyKey: randomUUID(),
+      input: { expectedVersion: ready.version, sessionId: session.id },
+    });
+    const lease = { sessionId: session.id, fencingToken: claim.fencingToken };
+    const args = {
+      taskId: task.id,
+      idempotencyKey: randomUUID(),
+      input: { ...lease, expectedVersion: claim.version },
+    };
+    const start = await call('acc_start_work', args);
+    assert.equal((await call('acc_start_work', args)).id, start.id);
+    const pause = await call('acc_pause_work', {
+      taskId: task.id,
+      idempotencyKey: randomUUID(),
+      input: { ...lease, expectedVersion: start.version },
+    });
+    const time = await call('acc_get_task_time', {
+      taskId: task.id,
+      query: { timeZone: 'America/Caracas' },
+    });
+    assert.equal((time.intervals as unknown[]).length, 1);
+    await call('acc_transition_task', {
+      taskId: task.id,
+      idempotencyKey: randomUUID(),
+      input: {
+        ...lease,
+        expectedVersion: pause.version,
+        to: 'CANCELLED',
+        reason: 'Synthetic timer check complete',
+      },
+    });
+    await call('acc_end_session', {
+      sessionId: session.id,
+      idempotencyKey: randomUUID(),
+      input: { expectedVersion: session.version, reason: 'Fixture complete' },
+    });
+  } finally {
+    await connection.close();
+  }
+});
+
 test('MCP propone requisitos versionados, consulta historial y no expone aprobación humana', async () => {
   const connection = await client();
   try {

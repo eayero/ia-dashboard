@@ -50,6 +50,10 @@ test('OpenAPI distingue POST humano, bearer, CSRF e idempotencia real', () => {
   );
   assert.ok(!paths['/api/v1/agents']!.post!.parameters.some((p) => p.name === 'Idempotency-Key'));
   assert.deepEqual(paths['/api/v1/auth/session']!.get!.security, []);
+  assert.deepEqual(
+    paths['/api/v1/projects/{projectId}/tasks/{taskId}/start-work']!.post!.security,
+    [{ agentBearer: [] }],
+  );
   assert.deepEqual(document.components.schemas.createOwnAgentInput!.oneOf, [
     { required: ['projectId'], not: { required: ['projectIds'] } },
     { required: ['projectIds'], not: { required: ['projectId'] } },

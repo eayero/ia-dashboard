@@ -1,21 +1,21 @@
 {
-  "checkedAt": "2026-11-04T08:26:32.665Z",
+  "checkedAt": "2026-11-04T17:02:51.293Z",
   "method": "native Codex MCP tools",
   "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
   "publishedCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
-  "catalogTasks": 19,
-  "projectTasks": 25,
+  "catalogTasks": 20,
+  "projectTasks": 26,
   "previousTaskIdsPreserved": true,
   "context": {
     "pages": 2,
-    "records": 117,
     "complete": true,
-    "projectSeq": "219"
+    "projectSeq": "247"
   },
   "delta": {
-    "events": 18,
+    "events": 22,
     "complete": true,
-    "projectSeq": "219"
+    "projectSeq": "247",
+    "afterSeq": "225"
   },
   "publishedWorkReconciled": [
     {
@@ -179,7 +179,7 @@
     }
   ],
   "session": {
-    "id": "0bcb6bd7-8766-443a-9508-e738e992ea4d",
+    "id": "300bf419-1239-4635-9781-20875d865471",
     "version": 2,
     "ended": true,
     "claimsReleased": true
@@ -397,9 +397,9 @@
       "fileId": "ACC-LOCAL-014",
       "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
       "status": "IN_PROGRESS",
-      "version": 14,
-      "workRevision": 4,
-      "summary": "Publicación y despliegue expresamente autorizados por el usuario. Código y protocolo publicados en origin/feat/acc-foundation, commit ee55b37d75652bb08d9e444975071f709c431c11. Despliegue local Compose en http://localhost:55173 completado: migración008 aplicada, API/UI/PG/Redis saludables, worker activo y migrate/bootstrap salida0. Comprobados OpenAPI52operaciones/46paths idéntico al artefacto, readiness200, anónimo401 y asset inexistente404. SDKMCP oficial sobre proxy real confirma19tools incluidas4requisitos, listado de requisitos, contexto2páginas y delta completos. Snapshot privado antes/después confirma preservación exacta de2proyectos,9principals,4usuarios,11membresías,5perfilesagente,8credenciales y25tareas, además de archivos de credenciales. Copia privada deBD en.cache excluida deGit. Repetidas58unitarias,101integraciones y16protocolo; lint/formato/diffcheck pasan; imágenes Docker construidas. Informe docs/requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json. La implementación queda publicada y desplegada, pero ACC-LOCAL-014 sigueIN_PROGRESS porque agrupaUIrequisitos,decisiones/preguntas eimpacto correspondiente pendientes. Revisión propia; sin subagentes,merge ni validación humana atribuida al agente.",
+      "version": 25,
+      "workRevision": 7,
+      "summary": "UI de requisitos alternativa A aprobada e implementada localmente: catálogo y filtros, propuestas/sucesoras, aprobación exacta, vínculos y evaluación de impacto, historial y deep links. Navegador real escritorio/móvil: permisos VIEWER/revocación, conflicto conserva borrador, modo offline, reintento y navegación tarea/requisito. Resultado docs/requirements/REQUIREMENTS_UI_RESULT.json. Suite acumulada: 66 unitarias, 112 integraciones, 16 pruebas de protocolo; tipos, lint, formato, OpenAPI y build pasan. Cambios sin publicar ni desplegar; instancia previa conserva migración 008/19 herramientas. La tarea amplia permanece IN_PROGRESS por decisiones/preguntas y otras entidades pendientes. No validación humana atribuida al agente.",
       "source": "docs/SPECIFICATION.md",
       "evidence": [
         {
@@ -505,11 +505,23 @@
       ],
       "humanValidated": false,
       "humanValidationsObserved": []
+    },
+    {
+      "fileId": "ACC-LOCAL-020",
+      "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+      "status": "IN_PROGRESS",
+      "version": 8,
+      "workRevision": 3,
+      "summary": "Diseño aprobado por el usuario e implementado localmente. Inicio/pausa/reanudación explícitos por agente mediante REST/MCP, intervalos inmutables con reloj PostgreSQL y cierre limitado por claim/sesión, expiración o revocación. Un temporizador por agente/proyecto; permisos, fencing, versión e idempotencia. Total por tarea, agente y día, America/Caracas predeterminada y UTC/IANA, reparto exacto a medianoche y DST. UI con tabla diaria y tramos. 66 unitarias y 112 integraciones pasan (9 específicas de tiempo), 16 pruebas de protocolo, tipos/lint/formato/OpenAPI/build. Navegador real escritorio/móvil: dos agentes, total 1h30m, tres filas diarias; inicio activo aumenta y pausa detiene. docs/requirements/TASK_WORK_TIME_RESULT.json y TASK_WORK_TIME_API.md. Migración 009 solo probada en esquemas aislados. Código sin commit/push/despliegue; evidencia formal pendiente, sin reconstruir tiempo histórico ni emitir validación humana.",
+      "source": "docs/requirements/TASK_WORK_TIME_DESIGN.md",
+      "evidence": [],
+      "humanValidated": false,
+      "humanValidationsObserved": []
     }
   ],
   "previousCheck": {
-    "checkedAt": "2026-11-04T06:26:57.148Z",
-    "projectSeq": "180"
+    "checkedAt": "2026-11-04T12:53:58.097Z",
+    "projectSeq": "225"
   },
   "limitations": [
     "Source criteria in the initial catalog remain historical and were not rewritten to override human scope.",
@@ -518,7 +530,8 @@
     "Synthetic UI validation does not represent human acceptance of the development.",
     "ACC-LOCAL-019 is locally implemented and statically verified; remains IN_PROGRESS pending formal HTTPS evidence because this task forbids publication. Fresh Claude/Codex agent execution was not performed.",
     "ACC-LOCAL-014 now includes locally verified versioned requirements FR-004 by REST/MCP. Requirements UI, decisions/questions and formal published evidence remain pending. Running local service was not upgraded.",
-    "Previous unpublished/old-service limitations are historical. New authorization published commit ee55b37d75652bb08d9e444975071f709c431c11 and deployed requirements locally; static ECC adoption is DONE. Broader entity task remains IN_PROGRESS."
+    "Previous unpublished/old-service limitations are historical. New authorization published commit ee55b37d75652bb08d9e444975071f709c431c11 and deployed requirements locally; static ECC adoption is DONE. Broader entity task remains IN_PROGRESS.",
+    "Current continuation: requirements UI A and explicit agent work time implemented and locally verified. Source has migration 009/22 tools; existing deployment remains 008/19. No new publication or historical time backfill. ACC-LOCAL-020 remains IN_PROGRESS pending published evidence; ACC-LOCAL-014 also retains other entity scope."
   ],
   "ownershipVerification": {
     "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
@@ -567,5 +580,34 @@
     "summaryReadVerified": true,
     "formalEvidencePending": false,
     "publicationAuthorized": true
+  },
+  "requirementsUiDesignPreparation": {
+    "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+    "design": "docs/requirements/REQUIREMENTS_UI_DESIGN.md",
+    "options": "docs/design/requirements-options.html",
+    "status": "LOCAL_IMPLEMENTED_VERIFIED",
+    "recommended": "A",
+    "selected": "A",
+    "implemented": true,
+    "checks": {
+      "unitTests": 66,
+      "integrationTests": 112,
+      "protocolTests": 16,
+      "format": true,
+      "diffCheck": true
+    },
+    "sessionEnded": true,
+    "claimReleased": true,
+    "result": "docs/requirements/REQUIREMENTS_UI_RESULT.json"
+  },
+  "taskWorkTimeVerification": {
+    "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+    "result": "docs/requirements/TASK_WORK_TIME_RESULT.json",
+    "status": "IN_PROGRESS",
+    "sessionEnded": true,
+    "claimReleased": true,
+    "summaryReadVerified": true,
+    "formalEvidencePending": true,
+    "publication": false
   }
 }

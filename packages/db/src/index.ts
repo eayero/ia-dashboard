@@ -1,5 +1,8 @@
 import { createHash, randomUUID } from 'node:crypto';
 import pg from 'pg';
+import { startWorkSchema, pauseWorkSchema } from '@acc/contracts';
+import { startWorkInterval, pauseWorkInterval } from './work-time.ts';
+export { readTaskWorkTime } from './work-time.ts';
 import {
   requirementCommand,
   requirementSchemas,
@@ -214,6 +217,81 @@ export class CoordinationStore {
   }
   evaluateRequirementImpact(context: CommandContext, key: string, id: string, payload: unknown) {
     return this.requirement(context, key, 'evaluate', id, payload);
+  }
+
+  async startWork(context: CommandContext, key: string, taskId: string, payload: unknown) {
+    const input = startWorkSchema.parse(payload);
+    return this.command(
+      context,
+      'work.start',
+      key,
+      { taskId, ...input },
+      async (client, actor) => {
+        if (actor.kind !== 'AGENT') throw new DomainError('FORBIDDEN');
+        const task = await this.lockTask(client, context, taskId);
+        this.assertVersion(task, input.expectedVersion);
+        await this.assertLease(client, context, taskId, input);
+        if (task.status !== 'IN_PROGRESS') throw new DomainError('INVALID_TRANSITION');
+        const interval = await startWorkInterval(
+          client,
+          context,
+          taskId,
+          task.work_revision,
+          input,
+        );
+        await client.query('UPDATE work_items SET version=version+1 WHERE id=$1', [taskId]);
+        const version = task.version + 1,
+          projectSeq = await this.event(
+            client,
+            context,
+            taskId,
+            'work.started',
+            {
+              id: interval.id,
+              version,
+              startedAt: interval.startedAt.toISOString(),
+              validUntil: interval.validUntil.toISOString(),
+            },
+            input.sessionId,
+          );
+        return {
+          id: interval.id,
+          version,
+          projectSeq,
+          startedAt: interval.startedAt.toISOString(),
+          validUntil: interval.validUntil.toISOString(),
+        };
+      },
+      true,
+    );
+  }
+  async pauseWork(context: CommandContext, key: string, taskId: string, payload: unknown) {
+    const input = pauseWorkSchema.parse(payload);
+    return this.command(
+      context,
+      'work.pause',
+      key,
+      { taskId, ...input },
+      async (client, actor) => {
+        if (actor.kind !== 'AGENT') throw new DomainError('FORBIDDEN');
+        const task = await this.lockTask(client, context, taskId);
+        this.assertVersion(task, input.expectedVersion);
+        await this.assertLease(client, context, taskId, input);
+        const interval = await pauseWorkInterval(client, context, taskId, input);
+        await client.query('UPDATE work_items SET version=version+1 WHERE id=$1', [taskId]);
+        const version = task.version + 1,
+          projectSeq = await this.event(
+            client,
+            context,
+            taskId,
+            'work.paused',
+            { id: interval.id, version, endedAt: interval.endedAt.toISOString() },
+            input.sessionId,
+          );
+        return { id: interval.id, version, projectSeq, endedAt: interval.endedAt.toISOString() };
+      },
+      true,
+    );
   }
 
   async createTask(context: CommandContext, key: string, payload: unknown): Promise<Task> {

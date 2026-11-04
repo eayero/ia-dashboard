@@ -84,6 +84,45 @@ const requirementRevision = z.looseObject({
   approvedAt: date.nullable(),
 });
 export const responseModels = {
+  TaskTime: z.strictObject({
+    asOf: date,
+    timeZone: z.string(),
+    totalMilliseconds: z.string().regex(/^\d+$/u),
+    agents: z.array(
+      z.strictObject({
+        principalId: id,
+        agentName: z.string(),
+        ownerUserId: id,
+        milliseconds: z.string(),
+      }),
+    ),
+    days: z.array(
+      z.strictObject({
+        date: z.string(),
+        principalId: id,
+        agentName: z.string(),
+        ownerUserId: id,
+        milliseconds: z.string(),
+      }),
+    ),
+    intervals: z.array(
+      z.strictObject({
+        id,
+        principalId: id,
+        agentName: z.string(),
+        ownerUserId: id,
+        sessionId: id,
+        workRevision: version,
+        startedAt: date,
+        endedAt: date.nullable(),
+        effectiveEnd: date,
+        validUntil: date,
+        milliseconds: z.string(),
+        state: z.enum(['RUNNING', 'CLOSED', 'EXPIRED']),
+        closeReason: z.string().nullable(),
+      }),
+    ),
+  }),
   RequirementMutation: requirement.extend({
     projectSeq: sequenceSchema,
     taskVersion: version.optional(),

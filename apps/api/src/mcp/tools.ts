@@ -21,6 +21,9 @@ import {
   createRequirementSchema,
   reviseRequirementSchema,
   requirementQuerySchema,
+  startWorkSchema,
+  pauseWorkSchema,
+  taskTimeQuerySchema,
 } from '@acc/contracts';
 import type { ApiRuntime } from '../context.ts';
 import type { ApiRequest } from '../auth/types.ts';
@@ -57,6 +60,27 @@ export function createMcpServer(runtime: ApiRuntime, req: ApiRequest) {
     };
   }
   const tools = [
+    tool(
+      'acc_start_work',
+      'Explicitly start recording work for the agent holding a live task claim. Does not infer past time.',
+      z.strictObject({ ...task, input: startWorkSchema }),
+      false,
+      (a) => runtime.store.startWork(context(a.projectId), a.idempotencyKey, a.taskId, a.input),
+    ),
+    tool(
+      'acc_pause_work',
+      'Pause the current agent work interval. Claim/session expiry also bounds recorded duration.',
+      z.strictObject({ ...task, input: pauseWorkSchema }),
+      false,
+      (a) => runtime.store.pauseWork(context(a.projectId), a.idempotencyKey, a.taskId, a.input),
+    ),
+    tool(
+      'acc_get_task_time',
+      'Read accumulated agent work by task, agent and calendar date in the requested IANA time zone.',
+      z.strictObject({ ...project, taskId: z.uuid(), query: taskTimeQuerySchema }),
+      true,
+      (a) => runtime.queries.taskTime(a.projectId, req.identity!.id, a.taskId, a.query),
+    ),
     tool(
       'acc_register_requirement',
       'Propose a versioned requirement by exact externalRef; human approval remains separate.',

@@ -1,7 +1,8 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import type pg from 'pg';
-import { taskQuerySchema } from '@acc/contracts';
+import { taskQuerySchema, taskTimeQuerySchema } from '@acc/contracts';
+import { readTaskWorkTime } from '@acc/db';
 import { ApiError } from '../common/errors.ts';
 
 export class ProjectQueries {
@@ -155,6 +156,18 @@ export class ProjectQueries {
         requirements: requirements.rows,
         projectSeq: seq.rows[0]?.value ?? '0',
       };
+    });
+  }
+  async taskTime(projectId: string, principalId: string, taskId: string, query: unknown) {
+    z.uuid().parse(taskId);
+    const input = taskTimeQuerySchema.parse(query);
+    return this.inProject(projectId, principalId, async (client) => {
+      const found = await client.query('SELECT id FROM work_items WHERE project_id=$1 AND id=$2', [
+        projectId,
+        taskId,
+      ]);
+      if (!found.rowCount) throw new ApiError(404, 'TASK_NOT_FOUND');
+      return readTaskWorkTime(client, projectId, taskId, input.timeZone);
     });
   }
   async sessions(projectId: string, principalId: string) {

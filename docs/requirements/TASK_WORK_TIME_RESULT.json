@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "task": "ACC-LOCAL-020",
+  "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+  "publicId": "TASK-26",
+  "designApprovedByUser": true,
+  "design": "docs/requirements/TASK_WORK_TIME_DESIGN.md",
+  "plan": "docs/superpowers/plans/2026-11-04-task-work-time.md",
+  "method": "Explicit agent start/pause; PostgreSQL clock; bounded by current claim and ACC session",
+  "delivered": [
+    "Immutable work intervals with agent/owner attribution, session/fencing and work revision",
+    "Explicit start, pause and resume without inferring time from claims or past history",
+    "At most one active interval per agent and project; idempotent commands with version/lease checks",
+    "Automatic bounded closure on claim/session end or revocation; heartbeat cannot resurrect expired work",
+    "Exact task/agent/day totals in decimal millisecond strings, America/Caracas default and IANA/UTC reporting",
+    "Timezone-aware midnight and DST splitting, including 25-hour days",
+    "Three REST operations and three MCP tools; interval context records without fencing",
+    "Task UI total, per-agent totals, daily table and expandable intervals; five-second read refresh"
+  ],
+  "migration": {
+    "file": "packages/db/migrations/009_task_work_time.sql",
+    "appliedToIsolatedTestSchemas": true,
+    "appliedToDeployedInstance": false,
+    "previousMigrations001Through008Modified": false
+  },
+  "contract": {
+    "restOperations": 55,
+    "restPaths": 49,
+    "mcpToolsInSource": 22,
+    "deployedMcpToolsUnchanged": 19
+  },
+  "verification": {
+    "unitSuite": 66,
+    "integrationSuite": 112,
+    "focusedPostgreSqlTests": 9,
+    "protocolTests": 16,
+    "types": "PASS",
+    "lint": "PASS",
+    "format": "PASS",
+    "build": "PASS",
+    "openApi": "PASS"
+  },
+  "browser": {
+    "environment": "Independent real API/Vite instance and synthetic PostgreSQL schema at localhost:55175",
+    "staticFixture": {
+      "totalMilliseconds": "5400000",
+      "agents": 2,
+      "dailyRows": 3,
+      "midnightSplitVerified": true,
+      "utcChangeVerified": true
+    },
+    "liveTimer": {
+      "explicitStartVerified": true,
+      "totalIncreases": true,
+      "explicitPauseVerified": true,
+      "sessionEnded": true
+    },
+    "emptyState": true,
+    "desktop": "1440x900",
+    "mobile": "390x844",
+    "horizontalBodyOverflow": false,
+    "screenshots": [
+      "output/playwright/requirements-ui/task-time-desktop.png",
+      "output/playwright/requirements-ui/task-time-mobile.png",
+      "output/playwright/requirements-ui/task-time-running.png"
+    ]
+  },
+  "notRun": [
+    "Deployment or migration of the existing local service",
+    "Native Codex discovery of new time tools on the old deployed server; official SDK tests used isolated current API",
+    "Independent QA/security review or load tests"
+  ],
+  "review": {
+    "independent": false,
+    "method": "Self-review of timer lifecycle, authorization, deadlines, immutable attribution and exact timezone sums"
+  },
+  "publication": {
+    "committed": false,
+    "pushed": false,
+    "deployed": false,
+    "formalEvidence": "PENDING_UNPUBLISHED"
+  },
+  "historicalTimeBackfilled": false,
+  "installations": 0,
+  "subagents": 0,
+  "checkedAt": "2026-11-04T17:02:51.293Z",
+  "accMirror": {
+    "sessionEnded": true,
+    "claimReleased": true,
+    "summaryReadVerified": true,
+    "contextComplete": true,
+    "deltaComplete": true,
+    "projectSeq": "247"
+  }
+}

@@ -65,6 +65,8 @@ export function errorResponse(error: unknown, request: ApiRequest) {
                   'DEPENDENCY_EXISTS',
                   'REQUIREMENT_REVISION_CONFLICT',
                   'REQUIREMENT_LINK_EXISTS',
+                  'WORK_ALREADY_RUNNING',
+                  'WORK_NOT_RUNNING',
                 ].includes(code)
               ? 409
               : code === 'REQUEST_IN_PROGRESS'

@@ -101,9 +101,12 @@
           "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180"
         }
       ],
-      "evidence": ["docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json"],
-      "assessment": "PARTIAL",
-      "note": "Entrega API/MCP local implementada: revisiones inmutables, aprobación Q23, supersesión y vínculos/impacto Q24. UI pendiente; ver VERSIONED_REQUIREMENTS_RESULT.json."
+      "evidence": [
+        "docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
+        "docs/requirements/REQUIREMENTS_UI_RESULT.json"
+      ],
+      "assessment": "LOCAL_VERIFIED_UI_WITH_PUBLISHED_BACKEND",
+      "note": "UI alternativa A aprobada e implementada localmente con prueba de navegador; backend 008 publicado anteriormente. Nuevos cambios pendientes de publicación."
     },
     {
       "scope": "product",
@@ -519,10 +522,15 @@
           "readSupersessions": true
         }
       ],
-      "tasks": [],
-      "evidence": [],
-      "assessment": "PENDING",
-      "note": "Métricas avanzadas/observabilidad y carga objetivo pendientes."
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-020",
+          "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60"
+        }
+      ],
+      "evidence": ["docs/requirements/TASK_WORK_TIME_RESULT.json"],
+      "assessment": "VERIFIED_SLICE",
+      "note": "Componente de tiempo implementado localmente por inicio/pausa explícitos con desglose tarea/agente/día; otras métricas avanzadas siguen pendientes."
     },
     {
       "scope": "product",

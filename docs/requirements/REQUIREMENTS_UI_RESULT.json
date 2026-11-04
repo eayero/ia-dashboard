@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "task": "ACC-LOCAL-014",
+  "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+  "baselineCommit": "eb2e0124fbb08389f301ce6acb3b58ddf6515ff8",
+  "design": "docs/requirements/REQUIREMENTS_UI_DESIGN.md",
+  "approvedAlternative": "A",
+  "approval": "User: si procede",
+  "delivered": [
+    "Requirements catalog with search/type/proposal/impact filters and complete-snapshot counts",
+    "Desktop drawer and full-width mobile detail with content, task links and immutable history",
+    "Create and successor proposals, exact-content approval confirmation, link/remove and motivated impact evaluation",
+    "Deep links and reload; links from tasks and requirement impacts in attention",
+    "Role restrictions, offline/stale guards, preserved drafts on concurrent updates and error retry",
+    "Unique dialog label IDs and keyboard focus/Escape restoration"
+  ],
+  "browser": {
+    "tool": "Existing cached Playwright CLI; no installation",
+    "environment": "Isolated PostgreSQL schema, real API and Vite UI on localhost:55174; production/local deployed instance preserved",
+    "data": "Synthetic users, requirements and tasks only",
+    "desktop": "1440x900",
+    "mobile": "390x844",
+    "passedFlows": [
+      "create",
+      "approve",
+      "link",
+      "evaluate impact",
+      "successor proposal preserving approved scope",
+      "supersede approval",
+      "history",
+      "deep-link reload",
+      "Escape/focus restoration",
+      "attention links",
+      "task-to-requirement links",
+      "unlink preserving evaluations",
+      "concurrent draft preservation",
+      "offline actions disabled",
+      "503/error retry",
+      "VIEWER read-only",
+      "project isolation",
+      "revocation removes private detail"
+    ],
+    "screenshots": [
+      "output/playwright/requirements-ui/proposal-and-approved-desktop.png",
+      "output/playwright/requirements-ui/history-desktop.png",
+      "output/playwright/requirements-ui/detail-mobile-final.png",
+      "output/playwright/requirements-ui/conflict-preserves-draft.png",
+      "output/playwright/requirements-ui/offline-desktop.png",
+      "output/playwright/requirements-ui/viewer-desktop.png",
+      "output/playwright/requirements-ui/access-revoked.png"
+    ],
+    "observedLimitations": [
+      "Expected network errors were injected for offline/503/revoked scenarios",
+      "Development StrictMode emitted transient WebSocket reconnect warnings; REST snapshot/delta remained authoritative",
+      "Screenshots are local ignored artifacts, not published HTTPS evidence"
+    ]
+  },
+  "verification": {
+    "unitSuite": 66,
+    "integrationSuite": 112,
+    "protocolTests": 16,
+    "types": "PASS",
+    "lint": "PASS",
+    "format": "PASS",
+    "build": "PASS",
+    "openApi": "PASS"
+  },
+  "review": {
+    "method": "Self-review with real browser and regression suites",
+    "independent": false
+  },
+  "publication": {
+    "committed": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "remaining": [
+    "Decisions/questions remain separate MVP work",
+    "Publication of this new UI has not been performed"
+  ],
+  "checkedAt": "2026-11-04T17:02:51.293Z",
+  "accMirror": {
+    "sessionEnded": true,
+    "claimReleased": true,
+    "summaryReadVerified": true,
+    "contextComplete": true,
+    "deltaComplete": true,
+    "projectSeq": "247"
+  }
+}

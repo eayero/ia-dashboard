@@ -47,6 +47,16 @@ export class ProjectsController {
   ) {
     return success(req, await this.runtime.queries.sessions(projectId, req.identity!.id));
   }
+  @Get(':projectId/tasks/:taskId/time') async taskTime(
+    @Req() req: ApiRequest,
+    @Param('projectId') projectId: string,
+    @Param('taskId') taskId: string,
+  ) {
+    return success(
+      req,
+      await this.runtime.queries.taskTime(projectId, req.identity!.id, taskId, req.query),
+    );
+  }
   private context(req: ApiRequest, projectId: string) {
     return { projectId: z.uuid().parse(projectId), principalId: req.identity!.id };
   }

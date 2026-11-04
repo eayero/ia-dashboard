@@ -46,27 +46,30 @@ completo. El login humano por usuario/contraseña es independiente.
 
 ## Herramientas disponibles
 
-| Herramienta              | Función                                                   |
-| ------------------------ | --------------------------------------------------------- |
-| acc_list_projects        | Proyectos accesibles al agente                            |
-| acc_get_context          | Snapshot consistente paginado                             |
-| acc_get_changes          | Delta con secuencia y cursores                            |
-| acc_list_tasks           | Listado paginado de tareas                                |
-| acc_get_task             | Detalle, versión, evidencias, aprobaciones y claim propio |
-| acc_find_or_create_task  | Identidad externa exacta o creación BACKLOG               |
-| acc_register_session     | Registrar sesión ACC explícita                            |
-| acc_heartbeat_session    | Renovar sesión; no renueva claims                         |
-| acc_end_session          | Terminar sesión e invalidar claims                        |
-| acc_claim_task           | Adquirir propiedad con versión y sesión vigentes          |
-| acc_heartbeat_task       | Renovar claim con fencing y versión                       |
-| acc_release_task         | Liberar claim propio                                      |
-| acc_update_task          | Actualizar resumen de implementación bajo claim           |
-| acc_transition_task      | Solicitar transición respetando gates y permisos          |
-| acc_add_evidence         | Adjuntar evidencia; no constituye aceptación humana       |
-| acc_register_requirement | Proponer requisito o recuperar externalRef exacta         |
-| acc_revise_requirement   | Nueva propuesta sin sustituir la revisión aprobada        |
-| acc_list_requirements    | Requisitos paginados por proyecto                         |
-| acc_get_requirement      | Historial, aprobación, vínculos e impacto                 |
+| Herramienta              | Función                                                                |
+| ------------------------ | ---------------------------------------------------------------------- |
+| acc_list_projects        | Proyectos accesibles al agente                                         |
+| acc_get_context          | Snapshot consistente paginado                                          |
+| acc_get_changes          | Delta con secuencia y cursores                                         |
+| acc_list_tasks           | Listado paginado de tareas                                             |
+| acc_get_task             | Detalle, versión, evidencias, aprobaciones y claim propio              |
+| acc_find_or_create_task  | Identidad externa exacta o creación BACKLOG                            |
+| acc_register_session     | Registrar sesión ACC explícita                                         |
+| acc_heartbeat_session    | Renovar sesión; no renueva claims                                      |
+| acc_end_session          | Terminar sesión e invalidar claims                                     |
+| acc_claim_task           | Adquirir propiedad con versión y sesión vigentes                       |
+| acc_heartbeat_task       | Renovar claim con fencing y versión                                    |
+| acc_release_task         | Liberar claim propio                                                   |
+| acc_update_task          | Actualizar resumen de implementación bajo claim                        |
+| acc_transition_task      | Solicitar transición respetando gates y permisos                       |
+| acc_add_evidence         | Adjuntar evidencia; no constituye aceptación humana                    |
+| acc_register_requirement | Proponer requisito o recuperar externalRef exacta                      |
+| acc_revise_requirement   | Nueva propuesta sin sustituir la revisión aprobada                     |
+| acc_list_requirements    | Requisitos paginados por proyecto                                      |
+| acc_get_requirement      | Historial, aprobación, vínculos e impacto                              |
+| acc_start_work           | Iniciar explícitamente el contador de trabajo propio con claim vigente |
+| acc_pause_work           | Pausar el tramo de trabajo propio sin perder el claim                  |
+| acc_get_task_time        | Consultar acumulado por tarea, agente y día                            |
 
 Todos los inputs son objetos estrictos. Las herramientas de proyecto reciben
 `projectId`; lecturas paginadas reciben `query`, aunque sea `{}`. Mutaciones
@@ -103,9 +106,15 @@ adjuntar evidencia → solicitar revisión mediante transición → liberar o te
 sesión. Al retomar, consultar delta y reconciliar detalles; un cursor inválido o
 expirado requiere snapshot nuevo. [Semántica de contexto y eventos](events.md).
 
-Hay 19 herramientas en el código actual. Las cuatro de requisitos se probaron con
+Hay 22 herramientas en el código local actual; la instancia desplegada anterior
+conserva 19 hasta actualizarse con migración 009. Las cuatro de requisitos se probaron con
 el SDK oficial en instancias aisladas y en el proxy local desplegado desde `ee55b37`.
 [Contrato y uso](../requirements/VERSIONED_REQUIREMENTS_API.md).
+El registro de tiempo requiere inicio/pausa explícitos: reclamar no inicia un
+contador. Tras reclamar, el agente llama acc_start_work; pausa antes de esperas o
+al terminar el tramo y conserva la última versión devuelta. Renovar sesión y claim
+por separado; un heartbeat no reanuda trabajo caducado. Ver
+[operaciones y límites](../requirements/TASK_WORK_TIME_API.md).
 Herramientas de decisiones y preguntas, `acc_request_approval` separado,
 skill portable y adaptador ECC siguen pendientes. No se anuncian herramientas
 que no tengan persistencia/comportamiento implementados.

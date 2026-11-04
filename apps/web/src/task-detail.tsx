@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { api } from './api.ts';
 import type { TaskDetail, Session } from './data.ts';
 import { Modal, Notice, Status, date, useCommand } from './components.tsx';
+import { TaskTime } from './task-time.tsx';
 
 export function TaskPanel({
   projectId,
@@ -14,6 +15,7 @@ export function TaskPanel({
   currentVersion,
   blocked,
   close,
+  openRequirement,
 }: {
   projectId: string;
   taskId: string;
@@ -24,6 +26,7 @@ export function TaskPanel({
   currentVersion?: number;
   blocked: boolean;
   close: () => void;
+  openRequirement: (id: string) => void;
 }) {
   const query = useQuery({
     queryKey: ['project', projectId, 'task', taskId, principalId],
@@ -108,6 +111,26 @@ export function TaskPanel({
             ))}
           </ul>
           {task.impactPending && <p className="notice">Hay impacto pendiente de revisión.</p>}
+          {task.requirements.length > 0 && (
+            <>
+              <h3>Requisitos vinculados</h3>
+              <ul className="criteria">
+                {task.requirements.map((requirement) => (
+                  <li key={requirement.id}>
+                    <button className="task-link" onClick={() => openRequirement(requirement.id)}>
+                      {requirement.publicId}
+                    </button>
+                    <span>
+                      {requirement.evaluatedRevision === null
+                        ? 'Sin evaluación'
+                        : `Evaluado contra r${requirement.evaluatedRevision}`}{' '}
+                      · {requirement.impactPending ? 'Impacto pendiente' : 'Evaluado'}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           {task.dependencies.length > 0 && (
             <>
               <h3>Dependencias</h3>
@@ -120,6 +143,7 @@ export function TaskPanel({
               </ul>
             </>
           )}
+          <TaskTime projectId={projectId} taskId={taskId} principalId={principalId} />
           <h3>Implementación</h3>
           <p className="summary">{task.summary || 'Todavía no hay resumen de implementación.'}</p>
           <h3>Evidencias</h3>

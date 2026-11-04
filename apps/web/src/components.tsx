@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, useId, type ReactNode } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, message } from './api.ts';
 import { statusText } from './data.ts';
@@ -18,12 +18,15 @@ export function Modal({
   title,
   close,
   children,
+  className,
 }: {
   title: string;
   close: () => void;
   children: ReactNode;
+  className?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
   useEffect(() => {
     const element = dialog.current!;
     const previous = document.activeElement as HTMLElement | null;
@@ -36,14 +39,15 @@ export function Modal({
   return (
     <dialog
       ref={dialog}
-      aria-labelledby="dialog-title"
+      className={className}
+      aria-labelledby={titleId}
       onCancel={(event) => {
         event.preventDefault();
         close();
       }}
     >
       <header className="dialog-header">
-        <h2 id="dialog-title">{title}</h2>
+        <h2 id={titleId}>{title}</h2>
         <button onClick={close} aria-label="Cerrar detalle">
           Cerrar
         </button>

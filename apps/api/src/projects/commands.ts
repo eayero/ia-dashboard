@@ -11,10 +11,14 @@ import {
   validateTaskSchema,
   dependencySchema,
   sessionHeartbeatSchema,
+  startWorkSchema,
+  pauseWorkSchema,
 } from '@acc/contracts';
 
 // Runtime dispatch and OpenAPI share this inventory and the actual input schemas.
 export const taskCommands = {
+  'start-work': { method: 'startWork', schema: startWorkSchema, agent: true },
+  'pause-work': { method: 'pauseWork', schema: pauseWorkSchema, agent: true },
   claim: { method: 'claimTask', schema: claimTaskSchema },
   heartbeat: { method: 'heartbeatClaim', schema: heartbeatClaimSchema },
   release: { method: 'releaseClaim', schema: heartbeatClaimSchema },

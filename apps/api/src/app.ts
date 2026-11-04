@@ -47,6 +47,7 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
   await pool.query(
     'SELECT r.current_revision,l.evaluated_revision FROM requirements r CROSS JOIN requirement_task_links l LIMIT 0',
   );
+  await pool.query('SELECT valid_until FROM task_work_intervals LIMIT 0');
   const queries = new ProjectQueries(pool, config.sessionSecret);
   const runtime: ApiRuntime = {
     config,

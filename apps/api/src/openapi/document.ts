@@ -4,7 +4,7 @@ import { taskCommands, sessionCommands } from '../projects/commands.ts';
 import { responseModels, envelope, errorModel } from './models.ts';
 
 type Schema = Record<string, unknown>;
-type Access = 'public' | 'cookie' | 'either';
+type Access = 'public' | 'cookie' | 'either' | 'agent';
 type Parameter = {
   name: string;
   in: 'path' | 'header' | 'query';
@@ -37,8 +37,20 @@ type Definition = {
   idempotent?: boolean;
   description?: string;
   query?: 'tasks' | 'context' | 'events' | 'requirements';
+  timeZoneQuery?: boolean;
 };
 const definitions: Definition[] = [
+  {
+    path: '/projects/{projectId}/tasks/{taskId}/time',
+    method: 'get',
+    operationId: 'getTaskTime',
+    summary: 'Consultar tiempo registrado por agente y día',
+    tag: 'Tareas',
+    response: 'TaskTime',
+    timeZoneQuery: true,
+    description:
+      'Intervalos explícitos de agentes; UTC almacenado y zona IANA para reparto diario. Caducidad del claim/sesión limita tramos activos. No reconstruye tiempo histórico.',
+  },
   {
     path: '/projects/{projectId}/requirements',
     method: 'get',
@@ -274,7 +286,11 @@ const definitions: Definition[] = [
     operationId: definition.method,
     summary: `Comando de tarea: ${command}`,
     tag: 'Tareas',
-    access: ('human' in definition ? 'cookie' : 'either') as Access,
+    access: ('human' in definition
+      ? 'cookie'
+      : 'agent' in definition
+        ? 'agent'
+        : 'either') as Access,
     body: definition.schema,
     response: (command === 'claim' || command === 'heartbeat'
       ? 'Claim'
@@ -283,11 +299,13 @@ const definitions: Definition[] = [
         : 'Mutation') as keyof typeof responseModels,
     idempotent: true,
     description:
-      command === 'validate'
-        ? 'Exclusivamente humano con rol de escritura en DONE. OK de auditoría ligado a finalización; no cambia estado ni revisión de trabajo.'
-        : command === 'transition'
-          ? 'Agente con task:write puede recorrer todos los estados válidos sin aprobación humana previa. Conserva claims, versiones, dependencias, evidencia y motivos.'
-          : 'Gates, roles, versión y claim se comprueban en servidor. Accept-evidence y approve conservan compatibilidad/historial; no son gates humanos previos del flujo autónomo.',
+      command === 'start-work' || command === 'pause-work'
+        ? 'Solo agentes con sesión y claim propios vigentes. Inicio y pausa explícitos; el servidor calcula el tiempo y limita intervalos al lease.'
+        : command === 'validate'
+          ? 'Exclusivamente humano con rol de escritura en DONE. OK de auditoría ligado a finalización; no cambia estado ni revisión de trabajo.'
+          : command === 'transition'
+            ? 'Agente con task:write puede recorrer todos los estados válidos sin aprobación humana previa. Conserva claims, versiones, dependencias, evidencia y motivos.'
+            : 'Gates, roles, versión y claim se comprueban en servidor. Accept-evidence y approve conservan compatibilidad/historial; no son gates humanos previos del flujo autónomo.',
   })),
   ...Object.entries(sessionCommands).map(([command, definition]) => ({
     path: `/projects/{projectId}/agent-sessions/{sessionId}/${command}`,
@@ -483,6 +501,15 @@ export function buildOpenApi() {
             'Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva.',
         });
     }
+    if (definition.timeZoneQuery)
+      parameters.push({
+        name: 'timeZone',
+        in: 'query',
+        required: false,
+        schema: { type: 'string', default: 'America/Caracas' },
+        description:
+          'Zona IANA válida o UTC. El reparto a medianoche conserva exactamente los totales.',
+      });
     if (definition.query) {
       parameters.push({
         name: 'cursor',
@@ -521,9 +548,11 @@ export function buildOpenApi() {
     const security =
       access === 'public'
         ? []
-        : access === 'cookie'
-          ? [cookieSecurity]
-          : [cookieSecurity, { agentBearer: [] }];
+        : access === 'agent'
+          ? [{ agentBearer: [] }]
+          : access === 'cookie'
+            ? [cookieSecurity]
+            : [cookieSecurity, { agentBearer: [] }];
     const responses: Operation['responses'] = {
       [mutation ? '201' : '200']: {
         description: definition.response

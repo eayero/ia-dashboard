@@ -12,6 +12,74 @@
     }
   ],
   "paths": {
+    "/api/v1/projects/{projectId}/tasks/{taskId}/time": {
+      "get": {
+        "operationId": "getTaskTime",
+        "summary": "Consultar tiempo registrado por agente y día",
+        "tags": ["Tareas"],
+        "description": "Intervalos explícitos de agentes; UTC almacenado y zona IANA para reparto diario. Caducidad del claim/sesión limita tramos activos. No reconstruye tiempo histórico. Bearer requiere audiencia API y task:read; cookie requiere permisos vigentes.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "timeZone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "America/Caracas"
+            },
+            "description": "Zona IANA válida o UTC. El reparto a medianoche conserva exactamente los totales."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskTime"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/projects/{projectId}/requirements": {
       "get": {
         "operationId": "listRequirements",
@@ -1517,6 +1585,178 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/revokeAgentAccessInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/tasks/{taskId}/start-work": {
+      "post": {
+        "operationId": "startWork",
+        "summary": "Comando de tarea: start-work",
+        "tags": ["Tareas"],
+        "description": "Solo agentes con sesión y claim propios vigentes. Inicio y pausa explícitos; el servidor calcula el tiempo y limita intervalos al lease. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/startWorkInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Mutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/tasks/{taskId}/pause-work": {
+      "post": {
+        "operationId": "pauseWork",
+        "summary": "Comando de tarea: pause-work",
+        "tags": ["Tareas"],
+        "description": "Solo agentes con sesión y claim propios vigentes. Inicio y pausa explícitos; el servidor calcula el tiempo y limita intervalos al lease. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/pauseWorkInput"
               }
             }
           }
@@ -3631,6 +3871,195 @@
           }
         },
         "required": ["error"],
+        "additionalProperties": false
+      },
+      "TaskTime": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "asOf": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "timeZone": {
+                "type": "string"
+              },
+              "totalMilliseconds": {
+                "type": "string",
+                "pattern": "^\\d+$"
+              },
+              "agents": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "principalId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "agentName": {
+                      "type": "string"
+                    },
+                    "ownerUserId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "milliseconds": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["principalId", "agentName", "ownerUserId", "milliseconds"],
+                  "additionalProperties": false
+                }
+              },
+              "days": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "date": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "agentName": {
+                      "type": "string"
+                    },
+                    "ownerUserId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "milliseconds": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["date", "principalId", "agentName", "ownerUserId", "milliseconds"],
+                  "additionalProperties": false
+                }
+              },
+              "intervals": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "agentName": {
+                      "type": "string"
+                    },
+                    "ownerUserId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "sessionId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "workRevision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "startedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "endedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "effectiveEnd": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "validUntil": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "milliseconds": {
+                      "type": "string"
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": ["RUNNING", "CLOSED", "EXPIRED"]
+                    },
+                    "closeReason": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "principalId",
+                    "agentName",
+                    "ownerUserId",
+                    "sessionId",
+                    "workRevision",
+                    "startedAt",
+                    "endedAt",
+                    "effectiveEnd",
+                    "validUntil",
+                    "milliseconds",
+                    "state",
+                    "closeReason"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": ["asOf", "timeZone", "totalMilliseconds", "agents", "days", "intervals"],
+            "additionalProperties": false
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "projectSeq": {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,18})$"
+              }
+            },
+            "required": ["requestId"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["data", "meta"],
         "additionalProperties": false
       },
       "RequirementMutation": {
@@ -6485,6 +6914,50 @@
           }
         },
         "required": ["expectedVersion", "reason"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
+      },
+      "startWorkInput": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "fencingToken": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{0,18}$"
+          }
+        },
+        "required": ["expectedVersion", "sessionId", "fencingToken"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
+      },
+      "pauseWorkInput": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "fencingToken": {
+            "type": "string",
+            "pattern": "^[1-9]\\d{0,18}$"
+          }
+        },
+        "required": ["expectedVersion", "sessionId", "fencingToken"],
         "additionalProperties": false,
         "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
       },

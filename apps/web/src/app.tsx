@@ -15,6 +15,7 @@ import {
   Plus,
   RefreshCw,
   ArrowUpRight,
+  FileText,
 } from 'lucide-react';
 import { api, ApiError, message } from './api.ts';
 import { clearAuthenticatedState } from './auth-cache.ts';
@@ -35,8 +36,12 @@ import { LoginForm, PasswordForm, type Me } from './auth-forms.tsx';
 import { Accounts } from './accounts.tsx';
 import { Agents } from './agents.tsx';
 import { watchProject } from './realtime.ts';
+import { parseProjectSearch } from './project-search.ts';
+import { Requirements } from './requirements.tsx';
+import { RequirementPanel } from './requirement-detail.tsx';
+import { RequirementForm } from './requirement-form.tsx';
+import { requirementAttention } from './requirements-data.ts';
 
-type Search = { projectId?: string; taskId?: string; view?: 'accounts' | 'agents' };
 function App() {
   const client = useQueryClient();
   const search = rootRoute.useSearch();
@@ -204,6 +209,18 @@ function App() {
           project={project}
           me={me.data}
           taskId={search.taskId}
+          requirementId={search.requirementId}
+          requirementsView={search.view === 'requirements'}
+          openRequirement={(id) =>
+            void navigate({
+              search: {
+                projectId: project.id,
+                view: 'requirements',
+                ...(id ? { requirementId: id } : {}),
+              },
+            })
+          }
+          leaveRequirements={() => void navigate({ search: { projectId: project.id } })}
           openTask={(id) =>
             void navigate({ search: { projectId: project.id, ...(id ? { taskId: id } : {}) } })
           }
@@ -237,11 +254,19 @@ function Dashboard({
   me,
   taskId,
   openTask,
+  requirementId,
+  requirementsView,
+  openRequirement,
+  leaveRequirements,
 }: {
   project: Project;
   me: Me;
   taskId?: string;
   openTask: (id?: string) => void;
+  requirementId?: string;
+  requirementsView: boolean;
+  openRequirement: (id?: string) => void;
+  leaveRequirements: () => void;
 }) {
   const client = useQueryClient();
   const key = ['project', project.id, 'context', me.principal.id];
@@ -280,7 +305,11 @@ function Dashboard({
     };
   }, [client, project.id, me.principal.id]);
   const command = useCommand(project.id, me.csrfToken);
-  const [view, setView] = useState('overview');
+  const [view, setView] = useState(requirementsView || requirementId ? 'requirements' : 'overview');
+  const [creatingRequirement, setCreatingRequirement] = useState(false);
+  useEffect(() => {
+    if (requirementsView || requirementId) setView('requirements');
+  }, [requirementsView, requirementId]);
   const [filter, setFilter] = useState('ALL');
   const [search, setSearch] = useState('');
   const [creating, setCreating] = useState(false);
@@ -315,6 +344,8 @@ function Dashboard({
   const blocked =
     !data || !online || query.isError || now - data.checkedAt > 30000 || currentProject.archived;
   const attention = tasks.filter((task) => ['BLOCKED', 'IN_REVIEW', 'IN_QA'].includes(task.status));
+  const impacts = data ? requirementAttention(data) : [];
+  const attentionCount = attention.length + impacts.length;
   const selected = tasks.find((task) => task.id === taskId);
   const shown = (view === 'attention' ? attention : tasks).filter(
     (task) =>
@@ -324,6 +355,7 @@ function Dashboard({
   const nav = [
     { id: 'overview', label: 'Resumen', icon: LayoutDashboard },
     { id: 'tasks', label: 'Tareas', icon: ListTodo },
+    { id: 'requirements', label: 'Requisitos', icon: FileText },
     { id: 'attention', label: 'Atención pendiente', icon: BellRing },
     { id: 'sessions', label: 'Sesiones', icon: Users },
   ];
@@ -350,6 +382,8 @@ function Dashboard({
               key={item.id}
               onClick={() => {
                 setView(item.id);
+                if (item.id === 'requirements') openRequirement();
+                else if (requirementsView || requirementId) leaveRequirements();
                 setFilter('ALL');
               }}
               aria-current={view === item.id ? 'page' : undefined}
@@ -357,7 +391,7 @@ function Dashboard({
               <item.icon size={18} aria-hidden="true" />
               {item.label}
               {item.id === 'attention' && data && (
-                <span className="nav-count">{attention.length}</span>
+                <span className="nav-count">{attentionCount}</span>
               )}
             </button>
           ))}
@@ -403,7 +437,7 @@ function Dashboard({
             >
               <RefreshCw size={18} aria-hidden="true" />
             </button>
-            {writable && (
+            {writable && view !== 'requirements' && (
               <button className="primary" disabled={blocked} onClick={() => setCreating(true)}>
                 <Plus size={17} aria-hidden="true" />
                 Crear tarea
@@ -448,11 +482,19 @@ function Dashboard({
                 </div>
                 <div className="attention-stat">
                   <span>Requieren atención</span>
-                  <strong>{attention.length}</strong>
+                  <strong>{attentionCount}</strong>
                 </div>
               </div>
             )}
-            {view === 'sessions' ? (
+            {view === 'requirements' ? (
+              <Requirements
+                state={data}
+                open={(id) => openRequirement(id)}
+                create={() => setCreatingRequirement(true)}
+                writable={writable}
+                blocked={blocked}
+              />
+            ) : view === 'sessions' ? (
               <section className="panel">
                 <div className="section-header">
                   <h2>Sesiones de trabajo</h2>
@@ -506,6 +548,29 @@ function Dashboard({
               </section>
             ) : (
               <div className={view === 'overview' ? 'columns' : ''}>
+                {view === 'attention' && impacts.length > 0 && (
+                  <section className="panel requirement-attention">
+                    <h2>Impacto de requisitos pendiente</h2>
+                    {impacts.map((impact) => (
+                      <article className="evidence" key={impact.key}>
+                        <span className="pill state-BLOCKED">
+                          {impact.completed ? 'Cambio en tarea completada' : 'Evaluar impacto'}
+                        </span>
+                        <button
+                          className="task-link"
+                          onClick={() => openRequirement(impact.requirementId)}
+                        >
+                          {impact.publicId} · {impact.taskPublicId} · {impact.taskTitle}
+                        </button>
+                        <p className="muted">
+                          {impact.completed
+                            ? 'Se conserva el cierre; revisa el nuevo alcance aprobado.'
+                            : 'Evalúa este requisito antes de avanzar a revisión, QA o cierre.'}
+                        </p>
+                      </article>
+                    ))}
+                  </section>
+                )}
                 <section className="panel task-panel">
                   <div className="section-header">
                     <h2>
@@ -651,7 +716,7 @@ function Dashboard({
                   <section className="panel inbox">
                     <span className="eyebrow">BANDEJA DE ATENCIÓN</span>
                     <h2>Necesita tu mirada</h2>
-                    {attention.length === 0 ? (
+                    {attentionCount === 0 ? (
                       <div className="inbox-empty">
                         <BellRing size={26} aria-hidden="true" />
                         <p>No hay tareas bloqueadas ni entregas en revisión o QA.</p>
@@ -670,6 +735,22 @@ function Dashboard({
                         </article>
                       ))
                     )}
+                    {impacts.map((impact) => (
+                      <article key={impact.key}>
+                        <span className="pill state-BLOCKED">Impacto pendiente</span>
+                        <button
+                          className="task-link"
+                          onClick={() => openRequirement(impact.requirementId)}
+                        >
+                          {impact.publicId} · {impact.taskTitle}
+                          <ArrowUpRight size={15} aria-hidden="true" />
+                        </button>
+                        <small>
+                          {impact.taskPublicId}
+                          {impact.completed ? ' · Completada; conserva su cierre' : ''}
+                        </small>
+                      </article>
+                    ))}
                     <p className="muted inbox-note">
                       Las evidencias y aprobaciones se revisan en el detalle de cada tarea.
                     </p>
@@ -697,6 +778,32 @@ function Dashboard({
           }}
         />
       )}
+      {creatingRequirement && (
+        <RequirementForm
+          projectId={project.id}
+          csrf={me.csrfToken}
+          blocked={blocked || !writable}
+          close={() => setCreatingRequirement(false)}
+          saved={(id) => {
+            setCreatingRequirement(false);
+            openRequirement(id);
+          }}
+        />
+      )}
+      {requirementId && data && (
+        <RequirementPanel
+          key={requirementId}
+          state={data}
+          projectId={project.id}
+          requirementId={requirementId}
+          principalId={me.principal.id}
+          csrf={me.csrfToken}
+          roles={roles}
+          blocked={blocked}
+          close={() => openRequirement()}
+          openTask={(id) => openTask(id)}
+        />
+      )}
       {taskId && data && (
         <TaskPanel
           key={taskId}
@@ -709,23 +816,15 @@ function Dashboard({
           currentVersion={selected?.version}
           blocked={blocked}
           close={() => openTask()}
+          openRequirement={(id) => openRequirement(id)}
         />
       )}
     </>
   );
 }
-const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/iu;
 const rootRoute = createRootRoute({
   component: Outlet,
-  validateSearch: (value: Record<string, unknown>): Search => ({
-    ...(value.view === 'accounts' || value.view === 'agents' ? { view: value.view } : {}),
-    ...(typeof value.projectId === 'string' && uuid.test(value.projectId)
-      ? { projectId: value.projectId }
-      : {}),
-    ...(typeof value.taskId === 'string' && uuid.test(value.taskId)
-      ? { taskId: value.taskId }
-      : {}),
-  }),
+  validateSearch: parseProjectSearch,
   errorComponent: ({ error }) => (
     <main className="welcome">
       <h1>No se pudo mostrar la aplicación</h1>

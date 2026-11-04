@@ -104,6 +104,17 @@ ambiguas. [Diseño](AGENT_OWNERSHIP_DESIGN.md).
 
 ## Decisiones aplazadas por alcance
 
+### Registro explícito de tiempo solicitado posteriormente
+
+El usuario solicitó acumular tiempo por tarea, día y agente, eligió inicio/pausa
+explícitos y aprobó [el diseño](requirements/TASK_WORK_TIME_DESIGN.md). Un claim no
+inicia el contador. PostgreSQL registra intervalos del agente, conserva identidad y
+propietario y limita su duración por sesión/claim. Se suman intervalos sin pausas y
+se reparten por calendario America/Caracas por defecto, con consulta UTC/IANA.
+No se reconstruye tiempo anterior ni se permite al humano suplantar al agente.
+Esta decisión concreta el componente de tiempo de FR-019; no aprueba las restantes
+métricas avanzadas ni un despliegue de producción.
+
 Hosting, dominio y operación de producción se concretarán antes de publicar.
 Diseño visual se presenta para revisión antes de implementar UI. Métricas avanzadas,
 integraciones Git, adjuntos, organizaciones y facturación no pertenecen al primer slice.

@@ -1,6 +1,8 @@
 // Every source is scoped to $1. HTTP sessions, OIDC subjects and credentials are excluded.
 export const materializeContextSql = `
 WITH records(entity_type,entity_key,data) AS (
+  SELECT 'WORK_INTERVAL',w.id::text,jsonb_build_object('id',w.id,'taskId',w.task_id,'principalId',w.principal_id,'agentName',w.agent_name,'ownerUserId',w.owner_user_id,'sessionId',w.session_id,'workRevision',w.work_revision,'startedAt',w.started_at,'validUntil',w.valid_until,'endedAt',w.ended_at,'closeReason',w.close_reason) FROM task_work_intervals w WHERE w.project_id=$1
+  UNION ALL
   SELECT 'REQUIREMENT',r.id::text,jsonb_build_object('id',r.id,'publicId',r.public_id,'version',r.version,'revision',r.current_revision,'approvedRevision',r.approved_revision,'externalRef',r.external_ref) FROM requirements r WHERE r.project_id=$1
   UNION ALL SELECT 'REQUIREMENT_REVISION',v.requirement_id::text||':'||v.revision::text,jsonb_build_object('requirementId',v.requirement_id,'revision',v.revision,'type',v.type,'title',v.title,'description',v.description,'reason',v.reason,'status',v.status,'createdBy',v.created_by,'createdAt',v.created_at,'approvedBy',v.approved_by,'approvedAt',v.approved_at) FROM requirement_revisions v WHERE v.project_id=$1
   UNION ALL SELECT 'REQUIREMENT_LINK',l.requirement_id::text||':'||l.task_id::text,jsonb_build_object('requirementId',l.requirement_id,'taskId',l.task_id,'evaluatedRevision',l.evaluated_revision,'approvedRevision',r.approved_revision,'impactPending',r.approved_revision IS NULL OR l.evaluated_revision IS DISTINCT FROM r.approved_revision) FROM requirement_task_links l JOIN requirements r ON r.project_id=l.project_id AND r.id=l.requirement_id WHERE l.project_id=$1

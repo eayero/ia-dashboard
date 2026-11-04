@@ -140,6 +140,14 @@ export type Session = {
   endedAt: string | null;
 };
 export type TaskDetail = Task & {
+  requirements: {
+    id: string;
+    publicId: string;
+    version: number;
+    approvedRevision: number | null;
+    evaluatedRevision: number | null;
+    impactPending: boolean;
+  }[];
   completionVersion: number | null;
   validations: {
     id: string;

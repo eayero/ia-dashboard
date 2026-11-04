@@ -62,7 +62,12 @@ const messages: Record<string, string> = {
   NETWORK_ERROR: 'No pudimos confirmar la operación. Comprueba la conexión y reintenta.',
   FORBIDDEN: 'No tienes permiso para esta operación.',
   AUTH_REQUIRED: 'Tu sesión ha terminado. Vuelve a entrar.',
-  VERSION_CONFLICT: 'La tarea cambió. Actualiza el detalle antes de continuar.',
+  VERSION_CONFLICT: 'La información cambió. Actualiza el detalle antes de continuar.',
+  REQUIREMENT_REVISION_CONFLICT:
+    'La revisión del requisito cambió. Actualiza el detalle y revisa su contenido.',
+  REQUIREMENT_NOT_FOUND: 'El requisito no existe en este proyecto o ya no está disponible.',
+  REQUIREMENT_LINK_EXISTS: 'La tarea ya está vinculada a este requisito.',
+  REQUIREMENT_LINK_NOT_FOUND: 'El vínculo cambió. Actualiza el detalle antes de continuar.',
   WORK_REVISION_CONFLICT: 'Cambió la revisión de trabajo. Revisa el contenido actualizado.',
   STALE_CLAIM: 'El claim dejó de ser válido. Actualiza y vuelve a reclamar la tarea.',
   TASK_ALREADY_CLAIMED: 'Otra sesión ya tiene esta tarea.',

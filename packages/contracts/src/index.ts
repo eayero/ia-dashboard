@@ -1,5 +1,6 @@
 import { z } from 'zod';
 export * from './requirements.ts';
+export * from './work-time.ts';
 
 export const taskStatusSchema = z.enum([
   'BACKLOG',

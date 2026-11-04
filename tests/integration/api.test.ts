@@ -66,6 +66,63 @@ async function get(path: string, withCookie = cookie) {
   });
 }
 
+test('REST registra inicio y pausa del agente y consulta acumulado autorizado por día', async () => {
+  const base = `/projects/${projectId}`,
+    headers = { authorization: `Bearer ${agents[0]!.apiToken}` };
+  const created = await post(`${base}/tasks`, {
+    title: 'Tiempo HTTP',
+    criteria: [{ id: 'a', description: 'Tiempo comprobado', required: true }],
+  });
+  const task = (await created.json()).data;
+  const ready = (
+    await (
+      await post(`${base}/tasks/${task.id}/transition`, { expectedVersion: 1, to: 'READY' })
+    ).json()
+  ).data;
+  const session = (await (await post(`${base}/agent-sessions`, {}, headers)).json()).data;
+  const claim = (
+    await (
+      await post(
+        `${base}/tasks/${task.id}/claim`,
+        { expectedVersion: ready.version, sessionId: session.id },
+        headers,
+      )
+    ).json()
+  ).data;
+  const lease = { sessionId: session.id, fencingToken: claim.fencingToken };
+  const start = await post(
+    `${base}/tasks/${task.id}/start-work`,
+    { ...lease, expectedVersion: claim.version },
+    headers,
+  );
+  assert.equal(start.status, 201);
+  const started = (await start.json()).data;
+  const pause = await post(
+    `${base}/tasks/${task.id}/pause-work`,
+    { ...lease, expectedVersion: started.version },
+    headers,
+  );
+  assert.equal(pause.status, 201);
+  const paused = (await pause.json()).data;
+  const timeResponse = await get(`${base}/tasks/${task.id}/time?timeZone=UTC`);
+  assert.equal(timeResponse.status, 200);
+  const time = envelope(responseModels.TaskTime).parse(await timeResponse.json()).data;
+  assert.equal(time.intervals.length, 1);
+  assert.equal(time.agents[0]!.principalId, agents[0]!.principalId);
+  assert.equal((await get(`${base}/tasks/${task.id}/time?timeZone=Not/AZone`)).status, 400);
+  const cancelled = await post(`${base}/tasks/${task.id}/transition`, {
+    expectedVersion: paused.version,
+    to: 'CANCELLED',
+    reason: 'Verificación sintética de tiempo finalizada',
+  });
+  assert.equal(cancelled.status, 201);
+  await post(
+    `${base}/agent-sessions/${session.id}/end`,
+    { expectedVersion: session.version, reason: 'Fixture complete' },
+    headers,
+  );
+});
+
 test('REST registra requisitos, aprueba revisiones y devuelve historial y contexto', async () => {
   const path = `/projects/${projectId}/requirements`;
   const response = await post(path, {

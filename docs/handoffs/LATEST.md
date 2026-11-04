@@ -16,9 +16,21 @@ historial, contexto/delta y OpenAPI. Pruebas HTTP usan puerto efímero: el proxy
 [Resultado del despliegue](../requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json).
 No reiniciar ni actualizar servicios por leer el handoff.
 
-Siguiente bloque: diseño visual de gestión de requisitos o preguntas/decisiones,
+Siguiente bloque de entidades: preguntas/decisiones,
 concretando el encargo del usuario. ACC-LOCAL-014 permanece IN_PROGRESS porque
 agrupa otras entidades; ya tiene evidencia publicada del bloque de requisitos.
+
+La continuación solicitada implementó la alternativa A de requisitos, aprobada por
+el usuario, y el registro de tiempo explícito ACC-LOCAL-020 / TASK-26. Leer
+[resultado UI](../requirements/REQUIREMENTS_UI_RESULT.json) y
+[resultado tiempo](../requirements/TASK_WORK_TIME_RESULT.json). El registro ofrece
+inicio/pausa por API/MCP y total/día/agente en el detalle de tarea; no usa todo el
+tiempo del claim ni reconstruye tiempos anteriores.
+
+Cambios locales sin commit/push/despliegue de esta continuación. Antes de actualizar
+la instancia se requiere migración 009; no modificar 001–008. El servidor desplegado
+sigue con la entrega anterior y 19 herramientas; el código nuevo tiene 22. El entorno
+de navegador usó esquemas/usuarios sintéticos, preservando la instancia habitual.
 
 La migración ECC previa está publicada y DONE; su auditoría de hashes describe
 la adopción anterior, no una prohibición permanente del desarrollo autorizado actual.

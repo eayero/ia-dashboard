@@ -1,5 +1,10 @@
 # Evidencias y alcance de verificación
 
+Continuación local: [UI de requisitos](../requirements/REQUIREMENTS_UI_RESULT.json)
+y [tiempo por tarea/agente/día](../requirements/TASK_WORK_TIME_RESULT.json).
+Incluyen navegador real con datos aislados y suites actuales; no acreditan publicación
+ni despliegue de esta continuación.
+
 Requisitos FR-004: [resultado local](../requirements/VERSIONED_REQUIREMENTS_RESULT.json)
 incluye pruebas PostgreSQL/REST/MCP, historial, impacto, tipos/lint/build y límites.
 No atribuye revisión independiente ni publicación a esta implementación.

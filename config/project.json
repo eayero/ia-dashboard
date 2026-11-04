@@ -100,8 +100,8 @@
     "accTaskTracking": "required-by-existing-project-instruction"
   },
   "currentTaskConstraints": {
-    "taskId": "ACC-LOCAL-014",
-    "scope": "Approved versioned requirements FR-004: persistence, REST/MCP, task links, impact, OpenAPI and verification",
+    "taskId": "ACC-LOCAL-020",
+    "scope": "Approved requirements UI A and explicit agent start/pause work-time tracking by task/day/agent",
     "functionalCodeChanges": true,
     "architectureChanges": false,
     "installations": false,
@@ -109,13 +109,24 @@
     "delegationsLaunched": false,
     "previousPushAuthorizationApplies": false,
     "authorizedActions": {
+      "implementation": true,
+      "commit": true,
+      "push": true,
+      "deploy": "local Docker Compose at http://localhost:55173",
+      "merge": false,
+      "installations": false,
+      "delegation": false,
+      "source": "Explicit user instruction: haz los coomit el push y despliega"
+    },
+    "previousDeliveryAuthorization": {
       "commit": true,
       "push": true,
       "deploy": "local Docker Compose at http://localhost:55173",
       "merge": false,
       "installations": false,
       "source": "Explicit user instruction: haz el commit sube el push despliega"
-    }
+    },
+    "relatedTaskIds": ["ACC-LOCAL-014"]
   },
   "quality": {
     "requireApplicableFullSuite": true,
