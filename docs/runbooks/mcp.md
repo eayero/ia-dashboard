@@ -159,3 +159,6 @@ duplicados, contexto y delta. Ver [evidencia de Codex](../CODEX_MCP_RESULT.json)
 El recorrido autónomo se comprobó después por MCP nativo de Codex; ver
 [resultado del flujo](../AGENT_WORKFLOW_RESULT.json). La nueva conexión de Claude
 continúa pendiente de revalidación.
+
+Instancia local actualizada: UI de requisitos y tiempo explícito desplegados con
+migración 009 y 22 herramientas MCP. Ver [despliegue](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).

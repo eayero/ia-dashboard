@@ -36,3 +36,10 @@ La migración ECC previa está publicada y DONE; su auditoría de hashes describ
 la adopción anterior, no una prohibición permanente del desarrollo autorizado actual.
 Su resultado y pendientes permanecen en
 [RESULT.json](../process/migrations/2026-11-04-ecc/RESULT.json).
+
+Publicación y despliegue de esta continuación completados por orden expresa del usuario:
+commit `02e232f` en origin/feat/acc-foundation, http://localhost:55173, migración 009,
+22 herramientas MCP y servicios saludables. [Resultado](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
+Las referencias anteriores a cambios locales/008/19 herramientas describen el estado previo.
+ACC-LOCAL-020 conserva IN_PROGRESS hasta registrar repositorio y evidencia CODE/TEST
+pareada exigida por el servidor; implementación entregada sin eludir gates.

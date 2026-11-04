@@ -213,3 +213,6 @@ Socket.IO `/ws/v1` comparte sesiones y autorización de proyecto con REST. Usa
 REDIS_URL opcional para las notificaciones del outbox; REST sigue operativo sin
 Redis. No ofrece comandos de escritura por WS. Protocolo, revocación y recuperación:
 [eventos](events.md).
+
+Instancia local actualizada: UI de requisitos y tiempo explícito desplegados con
+migración 009 y 22 herramientas MCP. Ver [despliegue](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).

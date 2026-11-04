@@ -50,3 +50,10 @@ y 19 herramientas; el código local tiene 22. No se ha publicado esta continuaci
 Continuidad: [handoff](../handoffs/LATEST.md), [decisiones](../decisions/DECISIONS.md),
 [historial anterior preservado](../IMPLEMENTATION_STATUS.md). No añadir cronologías
 al arranque: actualizar este resumen y guardar detalle por trabajo.
+
+Publicación y despliegue de esta continuación completados por orden expresa del usuario:
+commit `02e232f` en origin/feat/acc-foundation, http://localhost:55173, migración 009,
+22 herramientas MCP y servicios saludables. [Resultado](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
+Las referencias anteriores a cambios locales/008/19 herramientas describen el estado previo.
+ACC-LOCAL-020 conserva IN_PROGRESS hasta registrar repositorio y evidencia CODE/TEST
+pareada exigida por el servidor; implementación entregada sin eludir gates.

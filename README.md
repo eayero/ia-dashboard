@@ -4,16 +4,16 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
-Nueva continuación implementada localmente: [interfaz de requisitos](docs/requirements/REQUIREMENTS_UI_RESULT.json)
+Entrega publicada y desplegada localmente: [interfaz de requisitos](docs/requirements/REQUIREMENTS_UI_RESULT.json)
 y [tiempo de trabajo de agentes por tarea y día](docs/requirements/TASK_WORK_TIME_RESULT.json),
-con inicio/pausa explícitos. Estos cambios todavía no están publicados ni desplegados;
-requieren migración 009 al actualizar la instancia.
+con inicio/pausa explícitos. Migración 009 aplicada, 22 herramientas MCP disponibles.
+[Despliegue verificado](docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json) en http://localhost:55173, commit `02e232f`.
 
 Entrega publicada y desplegada localmente: requisitos versionados por REST/MCP, aprobación humana,
 supersesión, vínculos a tareas e impacto. Ver [uso](docs/requirements/VERSIONED_REQUIREMENTS_API.md)
 y [resultado](docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json).
 [Despliegue verificado](docs/requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json)
-en http://localhost:55173 desde el commit `ee55b37`; la UI de requisitos queda pendiente de despliegue.
+en http://localhost:55173 desde el commit `ee55b37`; entrega anterior conservada como evidencia histórica.
 
 La entrega de administración web/móvil, flujo autónomo, agentes por usuario,
 WebSocket y OpenAPI está publicada en `feat/acc-foundation` mediante el commit

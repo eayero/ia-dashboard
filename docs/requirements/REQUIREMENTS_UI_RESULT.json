@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "phase": "PUBLISHED_DEPLOYED_LOCAL",
   "task": "ACC-LOCAL-014",
   "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
   "baselineCommit": "eb2e0124fbb08389f301ce6acb3b58ddf6515ff8",
@@ -71,9 +71,14 @@
     "independent": false
   },
   "publication": {
-    "committed": false,
-    "pushed": false,
-    "deployed": false
+    "committed": true,
+    "pushed": true,
+    "deployed": true,
+    "codeCommit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+    "branch": "feat/acc-foundation",
+    "origin": "http://localhost:55173",
+    "deployment": "docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json",
+    "formalEvidence": "Published immutable result at codeCommit"
   },
   "remaining": [
     "Decisions/questions remain separate MVP work",
@@ -86,6 +91,7 @@
     "summaryReadVerified": true,
     "contextComplete": true,
     "deltaComplete": true,
-    "projectSeq": "247"
-  }
+    "projectSeq": "257"
+  },
+  "notRun": []
 }

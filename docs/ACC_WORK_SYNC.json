@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-04T17:02:51.293Z",
+  "checkedAt": "2026-11-04T17:29:16.862Z",
   "method": "native Codex MCP tools",
   "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
   "publishedCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
@@ -9,13 +9,13 @@
   "context": {
     "pages": 2,
     "complete": true,
-    "projectSeq": "247"
+    "projectSeq": "257"
   },
   "delta": {
-    "events": 22,
+    "events": 10,
     "complete": true,
-    "projectSeq": "247",
-    "afterSeq": "225"
+    "projectSeq": "257",
+    "afterSeq": "247"
   },
   "publishedWorkReconciled": [
     {
@@ -179,8 +179,10 @@
     }
   ],
   "session": {
-    "id": "300bf419-1239-4635-9781-20875d865471",
+    "id": "8a02b5e5-bfba-4c9e-89dd-d6fbd8f128c1",
     "version": 2,
+    "expiresAt": "2026-11-04T17:49:29.840Z",
+    "projectSeq": "248",
     "ended": true,
     "claimsReleased": true
   },
@@ -397,9 +399,9 @@
       "fileId": "ACC-LOCAL-014",
       "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
       "status": "IN_PROGRESS",
-      "version": 25,
-      "workRevision": 7,
-      "summary": "UI de requisitos alternativa A aprobada e implementada localmente: catálogo y filtros, propuestas/sucesoras, aprobación exacta, vínculos y evaluación de impacto, historial y deep links. Navegador real escritorio/móvil: permisos VIEWER/revocación, conflicto conserva borrador, modo offline, reintento y navegación tarea/requisito. Resultado docs/requirements/REQUIREMENTS_UI_RESULT.json. Suite acumulada: 66 unitarias, 112 integraciones, 16 pruebas de protocolo; tipos, lint, formato, OpenAPI y build pasan. Cambios sin publicar ni desplegar; instancia previa conserva migración 008/19 herramientas. La tarea amplia permanece IN_PROGRESS por decisiones/preguntas y otras entidades pendientes. No validación humana atribuida al agente.",
+      "version": 29,
+      "workRevision": 8,
+      "summary": "Publicado commit 02e232f8570139cd57bd2c6271e1d1f70efb7af0 en origin/feat/acc-foundation por orden expresa de commit/push/despliegue. UI de requisitos y tiempo explícito por tarea/agente/día implementados, 66 unitarias/112 integraciones y 16 protocolo; tipos/lint/formato/build y navegador real escritorio/móvil. Desplegado Docker local http://localhost:55173: migración 009, API/UI/PG/Redis saludables, worker activo, migrate/bootstrap salida 0, 22 herramientas MCP y OpenAPI actualizado. Verificada conservación exacta de 26 tareas, identidades, permisos, credenciales y archivos secretos; respaldo privado previo. Resultado publicado docs/requirements/REQUIREMENTS_UI_RESULT.json. Sin validación humana atribuida. Tarea amplia permanece IN_PROGRESS por decisiones/preguntas pendientes.",
       "source": "docs/SPECIFICATION.md",
       "evidence": [
         {
@@ -407,6 +409,16 @@
           "kind": "OTHER",
           "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
           "workRevision": 4,
+          "repositoryId": null,
+          "commit": null,
+          "result": null,
+          "acceptedBy": null
+        },
+        {
+          "id": "1b8f5847-ac29-446c-a827-df15cf367450",
+          "kind": "OTHER",
+          "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/REQUIREMENTS_UI_RESULT.json",
+          "workRevision": 8,
           "repositoryId": null,
           "commit": null,
           "result": null,
@@ -510,18 +522,29 @@
       "fileId": "ACC-LOCAL-020",
       "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
       "status": "IN_PROGRESS",
-      "version": 8,
-      "workRevision": 3,
-      "summary": "Diseño aprobado por el usuario e implementado localmente. Inicio/pausa/reanudación explícitos por agente mediante REST/MCP, intervalos inmutables con reloj PostgreSQL y cierre limitado por claim/sesión, expiración o revocación. Un temporizador por agente/proyecto; permisos, fencing, versión e idempotencia. Total por tarea, agente y día, America/Caracas predeterminada y UTC/IANA, reparto exacto a medianoche y DST. UI con tabla diaria y tramos. 66 unitarias y 112 integraciones pasan (9 específicas de tiempo), 16 pruebas de protocolo, tipos/lint/formato/OpenAPI/build. Navegador real escritorio/móvil: dos agentes, total 1h30m, tres filas diarias; inicio activo aumenta y pausa detiene. docs/requirements/TASK_WORK_TIME_RESULT.json y TASK_WORK_TIME_API.md. Migración 009 solo probada en esquemas aislados. Código sin commit/push/despliegue; evidencia formal pendiente, sin reconstruir tiempo histórico ni emitir validación humana.",
+      "version": 12,
+      "workRevision": 4,
+      "summary": "Publicado commit 02e232f8570139cd57bd2c6271e1d1f70efb7af0 en origin/feat/acc-foundation por orden expresa de commit/push/despliegue. UI de requisitos y tiempo explícito por tarea/agente/día implementados, 66 unitarias/112 integraciones y 16 protocolo; tipos/lint/formato/build y navegador real escritorio/móvil. Desplegado Docker local http://localhost:55173: migración 009, API/UI/PG/Redis saludables, worker activo, migrate/bootstrap salida 0, 22 herramientas MCP y OpenAPI actualizado. Verificada conservación exacta de 26 tareas, identidades, permisos, credenciales y archivos secretos; respaldo privado previo. Resultado publicado docs/requirements/TASK_WORK_TIME_RESULT.json. Sin validación humana atribuida. Implementación completa; cierre técnico de tarea CODE pendiente de catálogo de repositorios (actualmente vacío), sin eludir gates ni cambiar workType.",
       "source": "docs/requirements/TASK_WORK_TIME_DESIGN.md",
-      "evidence": [],
+      "evidence": [
+        {
+          "id": "4fba321e-b518-4f78-855b-afd6d23b2be6",
+          "kind": "OTHER",
+          "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+          "workRevision": 4,
+          "repositoryId": null,
+          "commit": null,
+          "result": null,
+          "acceptedBy": null
+        }
+      ],
       "humanValidated": false,
       "humanValidationsObserved": []
     }
   ],
   "previousCheck": {
-    "checkedAt": "2026-11-04T12:53:58.097Z",
-    "projectSeq": "225"
+    "checkedAt": "2026-11-04T17:02:51.293Z",
+    "projectSeq": "247"
   },
   "limitations": [
     "Source criteria in the initial catalog remain historical and were not rewritten to override human scope.",
@@ -531,7 +554,8 @@
     "ACC-LOCAL-019 is locally implemented and statically verified; remains IN_PROGRESS pending formal HTTPS evidence because this task forbids publication. Fresh Claude/Codex agent execution was not performed.",
     "ACC-LOCAL-014 now includes locally verified versioned requirements FR-004 by REST/MCP. Requirements UI, decisions/questions and formal published evidence remain pending. Running local service was not upgraded.",
     "Previous unpublished/old-service limitations are historical. New authorization published commit ee55b37d75652bb08d9e444975071f709c431c11 and deployed requirements locally; static ECC adoption is DONE. Broader entity task remains IN_PROGRESS.",
-    "Current continuation: requirements UI A and explicit agent work time implemented and locally verified. Source has migration 009/22 tools; existing deployment remains 008/19. No new publication or historical time backfill. ACC-LOCAL-020 remains IN_PROGRESS pending published evidence; ACC-LOCAL-014 also retains other entity scope."
+    "Current continuation: requirements UI A and explicit agent work time implemented and locally verified. Source has migration 009/22 tools; existing deployment remains 008/19. No new publication or historical time backfill. ACC-LOCAL-020 remains IN_PROGRESS pending published evidence; ACC-LOCAL-014 also retains other entity scope.",
+    "Latest user authorization published and locally deployed UI/time continuation at 02e232f8570139cd57bd2c6271e1d1f70efb7af0; previous unpublished/008/19-tool notes are historical. Task-26 technical closure remains pending repository catalog registration, without bypassing gates."
   ],
   "ownershipVerification": {
     "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
@@ -585,7 +609,7 @@
     "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
     "design": "docs/requirements/REQUIREMENTS_UI_DESIGN.md",
     "options": "docs/design/requirements-options.html",
-    "status": "LOCAL_IMPLEMENTED_VERIFIED",
+    "status": "PUBLISHED_DEPLOYED_LOCAL",
     "recommended": "A",
     "selected": "A",
     "implemented": true,
@@ -607,7 +631,15 @@
     "sessionEnded": true,
     "claimReleased": true,
     "summaryReadVerified": true,
-    "formalEvidencePending": true,
-    "publication": false
+    "formalEvidencePending": false,
+    "publication": true,
+    "closurePending": "Repository registration and matching CODE/TEST evidence required by server"
+  },
+  "currentPublication": {
+    "codeCommit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+    "branch": "feat/acc-foundation",
+    "pushed": true,
+    "deployed": true,
+    "result": "docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json"
   }
 }

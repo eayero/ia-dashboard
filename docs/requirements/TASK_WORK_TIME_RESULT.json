@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "phase": "PUBLISHED_DEPLOYED_LOCAL",
   "task": "ACC-LOCAL-020",
   "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
   "publicId": "TASK-26",
@@ -21,14 +21,14 @@
   "migration": {
     "file": "packages/db/migrations/009_task_work_time.sql",
     "appliedToIsolatedTestSchemas": true,
-    "appliedToDeployedInstance": false,
+    "appliedToDeployedInstance": true,
     "previousMigrations001Through008Modified": false
   },
   "contract": {
     "restOperations": 55,
     "restPaths": 49,
     "mcpToolsInSource": 22,
-    "deployedMcpToolsUnchanged": 19
+    "deployedMcpToolsUnchanged": 22
   },
   "verification": {
     "unitSuite": 66,
@@ -67,7 +67,6 @@
     ]
   },
   "notRun": [
-    "Deployment or migration of the existing local service",
     "Native Codex discovery of new time tools on the old deployed server; official SDK tests used isolated current API",
     "Independent QA/security review or load tests"
   ],
@@ -76,10 +75,14 @@
     "method": "Self-review of timer lifecycle, authorization, deadlines, immutable attribution and exact timezone sums"
   },
   "publication": {
-    "committed": false,
-    "pushed": false,
-    "deployed": false,
-    "formalEvidence": "PENDING_UNPUBLISHED"
+    "committed": true,
+    "pushed": true,
+    "deployed": true,
+    "codeCommit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+    "branch": "feat/acc-foundation",
+    "origin": "http://localhost:55173",
+    "deployment": "docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json",
+    "formalEvidence": "Published immutable result at codeCommit"
   },
   "historicalTimeBackfilled": false,
   "installations": 0,
@@ -91,6 +94,6 @@
     "summaryReadVerified": true,
     "contextComplete": true,
     "deltaComplete": true,
-    "projectSeq": "247"
+    "projectSeq": "257"
   }
 }

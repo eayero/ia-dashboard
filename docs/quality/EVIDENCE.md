@@ -23,3 +23,5 @@ Pruebas de generador y migración viven en tests/agents-setup.test.mjs y
 tests/agent-protocol.test.mjs; su éxito no acredita QA independiente ni ejecución
 de agentes. No se lanza el producto ni sus suites de infraestructura por adoptar
 instrucciones. [Comandos pertinentes](COMMANDS.md).
+
+- [Publicación y despliegue UI/tiempo](../requirements/TASK_WORK_TIME_DEPLOYMENT.json): migración 009, 22 tools, persistencia y navegador compilado.

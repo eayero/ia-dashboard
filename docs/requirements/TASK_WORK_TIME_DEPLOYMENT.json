@@ -1,0 +1,156 @@
+{
+  "checkedAt": "2026-11-04T17:29:16.857Z",
+  "codeCommit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+  "branch": "feat/acc-foundation",
+  "pushed": true,
+  "target": "local Docker Compose",
+  "origin": "http://localhost:55173",
+  "deploySucceeded": true,
+  "backup": "Private PostgreSQL custom-format backup under ignored .cache; no secrets or database contents published",
+  "services": {
+    "api": "healthy",
+    "ui": "healthy",
+    "postgres": "healthy",
+    "redis": "healthy",
+    "worker": "running",
+    "migrate": "exited 0",
+    "bootstrap": "exited 0"
+  },
+  "images": {
+    "api": "sha256:6d99537a1aaddf8623c2be32bdc9753fbda95e10cd67d96660961cf824fa5b2d",
+    "ui": "sha256:cb207baa22b812ca488b972b2740c65710c7bd7756dd5d8e978cd8d56b44af66"
+  },
+  "verification": {
+    "checkedAt": "2026-11-04T17:22:16.581Z",
+    "origin": "http://localhost:55173",
+    "migrationCount": 9,
+    "existingRowsUnchanged": true,
+    "credentialFilesUnchanged": true,
+    "tables": {
+      "projects": 2,
+      "principals": 9,
+      "local_users": 4,
+      "project_members": 11,
+      "agent_profiles": 5,
+      "agent_credentials": 8,
+      "work_items": 26
+    },
+    "http": {
+      "ui": 200,
+      "readiness": 200,
+      "anonymousMe": 401,
+      "missingAsset": 404,
+      "openApiMatchesArtifact": true
+    },
+    "mcp": {
+      "tools": 22,
+      "requirementToolsPresent": true,
+      "listRequirements": true,
+      "contextPages": 2,
+      "contextComplete": true,
+      "deltaComplete": true,
+      "workTimeToolsPresent": true,
+      "getTaskTime": true
+    }
+  },
+  "browser": {
+    "compiledDeployment": true,
+    "requirementsCatalog": true,
+    "taskTimeDetail": true,
+    "desktop": "1440x900",
+    "mobile": "390x844",
+    "screenshots": [
+      "output/playwright/requirements-ui/deployed-requirements.png",
+      "output/playwright/requirements-ui/deployed-task-time.png",
+      "output/playwright/requirements-ui/deployed-task-time-mobile.png"
+    ]
+  },
+  "regression": {
+    "unit": 66,
+    "integration": 112,
+    "protocol": 16,
+    "types": "PASS",
+    "lint": "PASS",
+    "format": "PASS",
+    "dockerBuild": "PASS"
+  },
+  "acc": {
+    "session": {
+      "id": "8a02b5e5-bfba-4c9e-89dd-d6fbd8f128c1",
+      "version": 2,
+      "expiresAt": "2026-11-04T17:49:29.840Z",
+      "projectSeq": "248",
+      "ended": true,
+      "claimsReleased": true
+    },
+    "tasks": [
+      {
+        "id": "d001e794-fc3e-4b42-86a6-60a45d413180",
+        "publicId": "TASK-15",
+        "status": "IN_PROGRESS",
+        "version": 29,
+        "workRevision": 8,
+        "evidence": [
+          {
+            "id": "419e46b2-5e05-452d-8d59-20647535f3e9",
+            "kind": "OTHER",
+            "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
+            "workRevision": 4,
+            "repositoryId": null,
+            "commit": null,
+            "result": null,
+            "acceptedBy": null
+          },
+          {
+            "id": "1b8f5847-ac29-446c-a827-df15cf367450",
+            "kind": "OTHER",
+            "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/REQUIREMENTS_UI_RESULT.json",
+            "workRevision": 8,
+            "repositoryId": null,
+            "commit": null,
+            "result": null,
+            "acceptedBy": null
+          }
+        ],
+        "humanValidated": false
+      },
+      {
+        "id": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+        "publicId": "TASK-26",
+        "status": "IN_PROGRESS",
+        "version": 12,
+        "workRevision": 4,
+        "evidence": [
+          {
+            "id": "4fba321e-b518-4f78-855b-afd6d23b2be6",
+            "kind": "OTHER",
+            "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+            "workRevision": 4,
+            "repositoryId": null,
+            "commit": null,
+            "result": null,
+            "acceptedBy": null
+          }
+        ],
+        "humanValidated": false
+      }
+    ],
+    "context": {
+      "pages": 2,
+      "complete": true,
+      "projectSeq": "257"
+    },
+    "delta": {
+      "events": 10,
+      "complete": true,
+      "projectSeq": "257"
+    }
+  },
+  "limitations": [
+    "Local deployment only; no production target configured",
+    "ACC-LOCAL-014 retains decisions/questions scope",
+    "ACC-LOCAL-020 implementation delivered; CODE task closure awaits repository registration because repository catalog is empty. Published report attached as OTHER without bypassing code/test gates.",
+    "No historical work time backfilled; existing tasks start with zero unless explicitly timed",
+    "Independent review not performed"
+  ]
+}

@@ -34,3 +34,10 @@ La autorización posterior permitió publicar y cerrar la adopción estática EC
 evidencia HTTPS real. Requisitos están publicados y desplegados localmente;
 no constituye aprobación de los otros diseños pendientes.
 [Procedimiento MCP](../ACC_MIRROR.md).
+
+Publicación y despliegue de esta continuación completados por orden expresa del usuario:
+commit `02e232f` en origin/feat/acc-foundation, http://localhost:55173, migración 009,
+22 herramientas MCP y servicios saludables. [Resultado](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
+Las referencias anteriores a cambios locales/008/19 herramientas describen el estado previo.
+ACC-LOCAL-020 conserva IN_PROGRESS hasta registrar repositorio y evidencia CODE/TEST
+pareada exigida por el servidor; implementación entregada sin eludir gates.

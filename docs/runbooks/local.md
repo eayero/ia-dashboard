@@ -104,3 +104,6 @@ La coordinación sigue validando identidad, membresía, versión, claim y gates
 dentro de transacciones. Redis recibe eventos después del commit mediante outbox.
 Requisitos versionados y servidor WS están implementados; preguntas, decisiones
 y pantallas de gestión de requisitos siguen pendientes.
+
+Instancia local actualizada: UI de requisitos y tiempo explícito desplegados con
+migración 009 y 22 herramientas MCP. Ver [despliegue](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
