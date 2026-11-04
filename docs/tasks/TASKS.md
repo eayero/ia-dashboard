@@ -66,3 +66,8 @@ integraciones, 16 protocolo, tipos/lint/build y navegador escritorio/móvil.
 No publicado/desplegado: el servicio habitual sigue en 009; actualizar clientes
 y API/UI junto con 010. La limitación anterior de solo control operativo queda
 resuelta en el código local, pendiente de actualizar la instancia.
+
+Publicación/despliegue de requisitos obligatorios completados: `94d7a34`,
+migración 010, datos y credenciales conservados; smokes 400/409 y cobertura 28/28.
+[Informe](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json). ACC-LOCAL-015 permanece
+IN_PROGRESS por impacto pendiente del requisito, sin eludir aprobación humana.

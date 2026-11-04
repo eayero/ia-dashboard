@@ -68,3 +68,7 @@ crear si un trabajo no tiene requisito. El formulario web carga el catálogo,
 exige seleccionar alcance y bloquea la creación cuando no hay requisitos.
 
 Resultado: [TASK_REQUIREMENT_API_RESULT.json](TASK_REQUIREMENT_API_RESULT.json).
+
+Instancia local actualizada con el contrato obligatorio y migración 010, commit
+`94d7a34`; las notas anteriores de despliegue pendiente son históricas.
+Ver [despliegue verificado](TASK_REQUIREMENT_DEPLOYMENT.json).

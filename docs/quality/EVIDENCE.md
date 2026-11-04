@@ -31,3 +31,5 @@ instrucciones. [Comandos pertinentes](COMMANDS.md).
 - [Cobertura completa tarea-requisito](../requirements/TASK_REQUIREMENT_COVERAGE.json): 28/28 tareas y cero huérfanas, incluidas pruebas canceladas; segunda pasada sin mutaciones.
 
 - [Requisito obligatorio en API/MCP/DB](../requirements/TASK_REQUIREMENT_API_RESULT.json): 67 unitarias, 118 integraciones, transacciones/concurrencia y creación web real. Código local pendiente de desplegar con migración 010.
+
+- [Despliegue de requisitos obligatorios](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json): migración 010, contrato MCP, rechazos 400/409, persistencia y activos compilados verificados.

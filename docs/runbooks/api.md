@@ -219,3 +219,7 @@ Redis. No ofrece comandos de escritura por WS. Protocolo, revocación y recupera
 
 Instancia local actualizada: UI de requisitos y tiempo explícito desplegados con
 migración 009 y 22 herramientas MCP. Ver [despliegue](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
+
+Instancia local actualizada con el contrato obligatorio y migración 010, commit
+`94d7a34`; las notas anteriores de despliegue pendiente son históricas.
+Ver [despliegue verificado](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json).

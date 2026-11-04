@@ -44,3 +44,7 @@ Propuestas importadas a ACC como DRAFT, pendientes de aprobación humana:
 Resultado verificado: [TASK_REQUIREMENT_COVERAGE.json](TASK_REQUIREMENT_COVERAGE.json).
 El [informe inicial](ACC_REQUIREMENTS_SYNC.json) conserva la primera importación de
 20 FR/27 vínculos; este resultado amplía la cobertura a todas las tareas existentes.
+
+Instancia local actualizada con el contrato obligatorio y migración 010, commit
+`94d7a34`; las notas anteriores de despliegue pendiente son históricas.
+Ver [despliegue verificado](TASK_REQUIREMENT_DEPLOYMENT.json).

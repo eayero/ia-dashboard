@@ -1,84 +1,46 @@
 # Estado actual de ACC
 
-Fecha de adopción: 2026-11-04. Fase del producto: IMPLEMENTING; MVP incompleto.
-Encargo activo: ACC-LOCAL-020 / TASK-26 y ACC-LOCAL-014 / TASK-15. El usuario pidió continuar el desarrollo,
-eligió requisitos versionados y aprobó [el diseño](../requirements/VERSIONED_REQUIREMENTS_DESIGN.md).
-Entrega local por REST/MCP: revisiones inmutables, aprobación humana Q23,
-supersesión, vínculos e impacto Q24; contexto/delta, outbox y OpenAPI actualizados.
-La [migración ECC](../process/migrations/2026-11-04-ecc/RESULT.json) previa se conserva.
+Producto: IMPLEMENTING; MVP incompleto. Instancia local: http://localhost:55173.
+Código publicado en `origin/feat/acc-foundation`: `94d7a34`.
 
-Código base publicado: `0c347e0`; seguimiento publicado: `edaf57d`, rama observada
-`feat/acc-foundation`. [Publicación verificable](../PUBLICATION_RESULT.json).
-La base publicada acreditó 56 unitarias/92 integraciones. Las comprobaciones del
-bloque actual y sus límites están en [el resultado](../requirements/VERSIONED_REQUIREMENTS_RESULT.json).
-Requisitos y protocolo publicados en `ee55b37` en origin/feat/acc-foundation;
-despliegue local verificado en http://localhost:55173. Ver
-[resultado del despliegue](../requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json).
+Entrega actual publicada y desplegada: tareas obligatoriamente asociadas a
+requisitos por REST/MCP, creación atómica, protección del último vínculo y
+restricción diferida PostgreSQL. Migración **010** aplicada. API/UI/PG/Redis
+saludables, worker activo, migrate/bootstrap salida 0; 22 herramientas MCP.
+[Contrato](../requirements/TASK_REQUIREMENT_API.md),
+[resultado](../requirements/TASK_REQUIREMENT_API_RESULT.json) y
+[despliegue](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json).
 
-Disponible en código: tareas/claims/idempotencia, autenticación propia y agentes por
-usuario/proyectos múltiples, contexto/delta, outbox/WS, dashboard, requisitos por
-API/MCP y OpenAPI, UI de requisitos y registro explícito de tiempo. Pendiente: entidades de decisiones/preguntas e
-impacto correspondiente, iteraciones, creación general de proyectos, revalidación
-de Claude MCP y restantes métricas/operación/CI del MVP. [Tareas](../tasks/TASKS.md).
-Migración 008 aplicada a la instancia local. API/UI/PG/Redis saludables, worker activo;
-19 herramientas MCP, contexto/delta y conservación de datos/credenciales verificados.
-ACC-LOCAL-019 está DONE con evidencia publicada; su validación de runtimes sigue
-siendo estática, sin ejecución de agentes. ACC-LOCAL-014 continúa IN_PROGRESS por
-las otras entidades pendientes.
+Datos verificados: **28 tareas, 23 requisitos, 42 vínculos, cero tareas huérfanas**.
+Se conservaron identidades, permisos, credenciales y tres validaciones humanas.
+Los requisitos importados siguen DRAFT y su impacto pendiente: asociar trabajo
+no aprueba requisitos ni acredita implementación. ACC-LOCAL-015 / TASK-16 sigue
+IN_PROGRESS por ese gate humano; resumen/evidencia releídos en ACC, sesión
+finalizada y claims liberados. [Espejo](../ACC_WORK_SYNC.json).
 
-Continuación actual implementada localmente: UI de requisitos alternativa A,
-aprobada y comprobada en navegador real, y registro de tiempo por agente con
-inicio/pausa explícitos, aprobado como ACC-LOCAL-020 / TASK-26. Resultados:
-[interfaz](../requirements/REQUIREMENTS_UI_RESULT.json) y
-[tiempo](../requirements/TASK_WORK_TIME_RESULT.json). Cada tarea muestra total,
-agentes y días; no se reconstruye tiempo histórico. La migración 009 solo se aplicó
-a esquemas aislados. La instancia desplegada sigue en la entrega previa, con 008
-y 19 herramientas; el código local tiene 22. No se ha publicado esta continuación.
+Verificación: 67 unitarias, 118 integraciones, 16 protocolo, tipos, lint, formato,
+OpenAPI y build de cinco paquetes; navegador de escritorio/móvil. En despliegue,
+REST y MCP rechazan tareas sin requisito, el último vínculo devuelve 409 y los
+activos compilados coinciden. DockerHub falló por TLS/DNS: se usaron runtimes
+locales verificados con fuentes exportadas y compilados actuales, tras comprobar
+seis manifiestos, lockfile y políticas sin cambios. Detalle y corrección del
+empaquetado documentados en el informe. Producción no configurada.
 
-## Restricciones y sustituciones vigentes
+También disponibles: requisitos versionados con UI, aprobación/supersesión e
+impacto; tiempo explícito por tarea/agente/día; tareas/claims/idempotencia;
+identidad propia, agentes por usuario y varios proyectos; contexto/delta,
+outbox/WS y OpenAPI. Entregas anteriores:
+[UI/tiempo](../requirements/TASK_WORK_TIME_DEPLOYMENT.json),
+[requisitos](../requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json),
+[publicación base](../PUBLICATION_RESULT.json) y
+[protocolo ECC estático](../process/migrations/2026-11-04-ecc/RESULT.json).
 
-- No reinstalar Keycloak/OIDC: sustituidos por identidad propia ACC.
-- No reinstalar gates humanos previos: agente recorre estados válidos; OK humano
-  después de DONE. No recrear apps/mcp o paquetes propuestos solo porque figuren
-  en la especificación: el gateway actual está en apps/api.
-- No editar migraciones aplicadas ni borrar volúmenes. El usuario autorizó commit,
-  push y despliegue local de la entrega previa; realizados sin merge ni instalaciones.
-  Producción no está configurada. La restricción anterior de solo protocolo
-  pertenecía a ACC-LOCAL-019.
-- Roles generados no acreditan subagentes ejecutados ni skills cargadas por Claude.
+Pendientes del MVP: preguntas/decisiones, iteraciones, gestión general de
+proyectos/repositorios, resto de métricas/export/operación/CI y cliente Claude.
+ACC-LOCAL-014 conserva ese alcance amplio; ACC-LOCAL-020 necesita catálogo de
+repositorios/evidencia CODE/TEST y resolución de impacto para cerrar sus gates.
+No reinstalar OIDC ni gates humanos previos de estados; preservar migraciones
+001–010, auditoría, datos y credenciales. No hay merge, instalaciones o subagentes.
 
-Continuidad: [handoff](../handoffs/LATEST.md), [decisiones](../decisions/DECISIONS.md),
-[historial anterior preservado](../IMPLEMENTATION_STATUS.md). No añadir cronologías
-al arranque: actualizar este resumen y guardar detalle por trabajo.
-
-Publicación y despliegue de esta continuación completados por orden expresa del usuario:
-commit `02e232f` en origin/feat/acc-foundation, http://localhost:55173, migración 009,
-22 herramientas MCP y servicios saludables. [Resultado](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
-Las referencias anteriores a cambios locales/008/19 herramientas describen el estado previo.
-ACC-LOCAL-020 conserva IN_PROGRESS hasta registrar repositorio y evidencia CODE/TEST
-pareada exigida por el servidor; implementación entregada sin eludir gates.
-
-Sincronización solicitada de requisitos/tareas completada: 20 propuestas FR, 27 vínculos
-a 13 tareas, 2 tareas faltantes creadas en BACKLOG (TASK-27 webhooks y TASK-28 export/backups).
-[Resultado y correspondencias](../requirements/ACC_REQUIREMENTS_SYNC.json). Requisitos DRAFT:
-pendientes de aprobación e impacto humano, sin modificar estados DONE ni validaciones.
-Segunda pasada sin duplicados; snapshot completo de 3 páginas y delta hasta secuencia 339.
-ACC-LOCAL-015 registra este trabajo y queda IN_PROGRESS pendiente de evidencia publicada.
-
-Regla posterior aplicada: toda tarea tiene requisito. [Cobertura completa](../requirements/TASK_REQUIREMENT_COVERAGE.json):
-28/28 tareas, 0 huérfanas, 23 requisitos y 42 vínculos, incluidas pruebas históricas
-y canceladas. Tres propuestas NFR documentan arquitectura/build, operación y
-trazabilidad; aprobación/impacto siguen pendientes. `pnpm requirements:check`
-audita todas las tareas por MCP y falla si alguna carece de requisito.
-Guía y auditor local actualizados; la creación atómica con requisito aún no es
-un gate del servidor. No hay commit/push/despliegue nuevos de estos archivos.
-
-Implementado localmente por orden posterior del usuario: la API/MCP exige
-`requirementIds` al crear tareas y confirma sus vínculos en la misma transacción.
-Retirar el último vínculo devuelve 409; PostgreSQL impone la invariante diferida
-mediante migración 010. Formulario, importador, OpenAPI y flujo MCP actualizados.
-[Resultado](../requirements/TASK_REQUIREMENT_API_RESULT.json): 67 unitarias, 118
-integraciones, 16 protocolo, tipos/lint/build y navegador escritorio/móvil.
-No publicado/desplegado: el servicio habitual sigue en 009; actualizar clientes
-y API/UI junto con 010. La limitación anterior de solo control operativo queda
-resuelta en el código local, pendiente de actualizar la instancia.
+[Tareas](../tasks/TASKS.md), [handoff](../handoffs/LATEST.md),
+[decisiones](../DECISIONS.md), [historial inicial](../IMPLEMENTATION_STATUS.md).

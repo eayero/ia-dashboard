@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-04T20:50:46.537Z",
+  "codeCommit": "94d7a34584b84ff9a42ce062243adb1a21f89f01",
+  "branch": "feat/acc-foundation",
+  "pushed": true,
+  "origin": "http://localhost:55173",
+  "target": "local Docker Compose",
+  "deploySucceeded": true,
+  "backup": "Private custom-format PostgreSQL backup in ignored .cache; not published",
+  "services": {
+    "api": "healthy",
+    "ui": "healthy",
+    "postgres": "healthy",
+    "redis": "healthy",
+    "worker": "running",
+    "migrate": "exited 0",
+    "bootstrap": "exited 0"
+  },
+  "images": {
+    "api": "sha256:ce45fc37ac0007cf419872f0bebb48ffa8f84f6213543bca370ccf1102463c5a",
+    "ui": "sha256:292be823a6bf120dad506fc5e13ac47f271a2c5d7cebb3fbd4f9e406f2477002"
+  },
+  "build": {
+    "method": "Reused verified local runtime images and dependencies; overlaid current workspace source exports, compiled artifacts and migrations",
+    "previousApi": "sha256:6d99537a1aaddf8623c2be32bdc9753fbda95e10cd67d96660961cf824fa5b2d",
+    "previousUi": "sha256:cb207baa22b812ca488b972b2740c65710c7bd7756dd5d8e978cd8d56b44af66",
+    "manifestsVerified": 6,
+    "dependenciesUnchanged": true,
+    "lockfileAndPoliciesUnchanged": true,
+    "newPackagesDownloaded": 0,
+    "nativeBuild": "Five packages PASS, repeated cached build exit 0",
+    "networkLimit": "Standard build encountered DockerHub TLS/DNS failures and stalled registry metadata; no lockfile or policy relaxation",
+    "packagingCorrection": "Initial runtime overlay omitted TypeScript package source exports; smoke caught contract mismatch. Rebuilt with source plus dist and repeated deployment/readback successfully."
+  },
+  "verification": {
+    "checkedAt": "2026-11-04T20:49:11.427Z",
+    "origin": "http://localhost:55173",
+    "migrationCount": 10,
+    "existingRowsUnchanged": true,
+    "credentialFilesUnchanged": true,
+    "tables": {
+      "projects": 2,
+      "principals": 9,
+      "local_users": 4,
+      "project_members": 11,
+      "agent_profiles": 5,
+      "agent_credentials": 8,
+      "work_items": 28,
+      "requirements": 23,
+      "requirement_revisions": 23,
+      "requirement_task_links": 42,
+      "requirement_impact_reviews": 0,
+      "requirement_impact_alerts": 0,
+      "task_validations": 3,
+      "task_work_intervals": 0
+    },
+    "http": {
+      "ui": 200,
+      "readiness": 200,
+      "anonymousMe": 401,
+      "missingAsset": 404,
+      "openApiMatchesArtifact": true
+    },
+    "mcp": {
+      "tools": 22,
+      "requirementToolsPresent": true,
+      "listRequirements": true,
+      "contextPages": 3,
+      "contextComplete": true,
+      "deltaComplete": true
+    },
+    "restRejectsMissingRequirement": 400,
+    "mcpSchemaRequiresRequirementIds": true,
+    "mcpRejectsMissingRequirement": true,
+    "lastLinkRejected": 409,
+    "lastLinkPreserved": true,
+    "noTaskCreated": true,
+    "compiledIndexMatches": true,
+    "compiledAssetsMatch": true,
+    "assets": {
+      "/assets/index-BUtJVVLQ.js": "2a05422020fb4a7d44b6196e3543f02ebdb8066cbd011887b16477fe89d35375",
+      "/assets/index-2Jvyo21x.css": "f130ddcb48daba6c86e32fb778828cd71cadaa65cd326dbe6541bf56e270ab32"
+    },
+    "coverage": {
+      "requirements": 23,
+      "tasks": 28,
+      "links": 42,
+      "orphans": 0
+    }
+  },
+  "regression": {
+    "unit": 67,
+    "integration": 118,
+    "protocol": 16,
+    "types": "PASS",
+    "lint": "PASS",
+    "format": "PASS",
+    "openApi": "PASS",
+    "build": "PASS",
+    "browser": "Desktop and mobile verified in isolated source QA; deployed compiled index/CSS/JS match exact compiled artifacts"
+  },
+  "acc": {
+    "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
+    "status": "IN_PROGRESS",
+    "version": 21,
+    "workRevision": 5,
+    "impactPending": true,
+    "evidence": [
+      {
+        "id": "cf0d9dca-cc82-4587-8cfd-136111dc9268",
+        "kind": "OTHER",
+        "url": "https://github.com/eayero/ia-dashboard/blob/94d7a34584b84ff9a42ce062243adb1a21f89f01/docs/requirements/TASK_REQUIREMENT_API_RESULT.json",
+        "workRevision": 5,
+        "repositoryId": null,
+        "commit": null,
+        "result": null,
+        "acceptedBy": null
+      }
+    ],
+    "session": {
+      "id": "04d49b36-9b15-440e-89a3-edeb22502948",
+      "ended": true,
+      "version": 2,
+      "claimsReleased": true
+    },
+    "context": {
+      "pages": 3,
+      "complete": true,
+      "projectSeq": "397"
+    },
+    "delta": {
+      "events": 10,
+      "complete": true,
+      "projectSeq": "397"
+    }
+  },
+  "limitations": [
+    "Local deployment only; no production target configured",
+    "Requirement proposals and associated impact remain pending human approval/evaluation; DONE states and prior human validations preserved",
+    "ACC-LOCAL-015 remains IN_PROGRESS due pending requirement impact; no human validation emitted",
+    "New MCP schema may require tool inventory refresh in clients caching the old schema",
+    "Independent review and load testing not performed"
+  ]
+}

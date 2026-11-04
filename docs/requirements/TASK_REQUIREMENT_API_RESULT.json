@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "phase": "PUBLISHED_DEPLOYED_LOCAL",
   "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
   "design": "docs/requirements/TASK_REQUIREMENT_API.md",
   "authorization": "Explicit user instruction: debe hacerlo la api y formar parte del flujo de trabajo del mcp",
@@ -48,16 +48,19 @@
   "migration": {
     "file": "packages/db/migrations/010_task_requirement_required.sql",
     "testedIsolatedSchemas": true,
-    "appliedToExistingDeployment": false,
+    "appliedToExistingDeployment": true,
     "previousMigrationsModified": false
   },
   "publication": {
-    "committed": false,
-    "pushed": false,
-    "deployed": false
+    "committed": true,
+    "pushed": true,
+    "deployed": true,
+    "codeCommit": "94d7a34584b84ff9a42ce062243adb1a21f89f01",
+    "branch": "feat/acc-foundation",
+    "origin": "http://localhost:55173",
+    "deployment": "docs/requirements/TASK_REQUIREMENT_DEPLOYMENT.json"
   },
   "limitations": [
-    "Current deployed service still uses migration 009 and the old creation signature until upgraded",
     "Requirement approval and later impact evaluation remain human operations; no approvals were generated",
     "Existing regression scenarios explicitly seed approved synthetic scope through a test-only fixture; production has no default requirement",
     "No independent review, load test or production deployment performed"
@@ -68,9 +71,9 @@
   "accMirror": {
     "taskId": "d4ccacd9-57e8-4579-8195-25f1c9c1d27f",
     "status": "IN_PROGRESS",
-    "version": 15,
-    "workRevision": 4,
-    "projectSeq": "387",
+    "version": 21,
+    "workRevision": 5,
+    "projectSeq": "397",
     "sessionEnded": true,
     "claimReleased": true,
     "summaryReadVerified": true,
