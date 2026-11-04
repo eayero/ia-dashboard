@@ -111,6 +111,7 @@ export class ProjectQueries {
         status: string;
         version: number;
         workRevision: number;
+        impactPending: boolean;
       }>(
         `SELECT id,title,public_id AS "publicId",status,version,work_revision AS "workRevision",work_type AS "workType",work_summary AS summary,criteria,impact_pending AS "impactPending",completion_version AS "completionVersion" FROM work_items WHERE project_id=$1 AND id=$2`,
         [projectId, taskId],
@@ -136,6 +137,10 @@ export class ProjectQueries {
         'SELECT d.depends_on AS id,w.public_id AS "publicId",w.status FROM task_dependencies d JOIN work_items w ON w.id=d.depends_on AND w.project_id=d.project_id WHERE d.project_id=$1 AND d.task_id=$2 ORDER BY d.depends_on',
         [projectId, taskId],
       );
+      const requirements = await client.query(
+        'SELECT r.id,r.public_id AS "publicId",r.version,r.approved_revision AS "approvedRevision",l.evaluated_revision AS "evaluatedRevision",(r.approved_revision IS NULL OR l.evaluated_revision IS DISTINCT FROM r.approved_revision) AS "impactPending" FROM requirement_task_links l JOIN requirements r ON r.project_id=l.project_id AND r.id=l.requirement_id WHERE l.project_id=$1 AND l.task_id=$2 ORDER BY r.id',
+        [projectId, taskId],
+      );
       const seq = await client.query<{ value: string }>(
         "SELECT value FROM project_counters WHERE project_id=$1 AND kind='EVENT'",
         [projectId],
@@ -147,6 +152,7 @@ export class ProjectQueries {
         validations: validations.rows,
         claim: claim.rows[0] ?? null,
         dependencies: dependencies.rows,
+        requirements: requirements.rows,
         projectSeq: seq.rows[0]?.value ?? '0',
       };
     });

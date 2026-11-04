@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export * from './requirements.ts';
 
 export const taskStatusSchema = z.enum([
   'BACKLOG',
@@ -172,7 +173,10 @@ export const eventEnvelopeSchema = z.strictObject({
   schemaVersion: z.literal(1),
   type: z.string().min(1).max(100),
   occurredAt: z.iso.datetime({ offset: true }),
-  entity: z.strictObject({ id: z.uuid(), type: z.enum(['TASK', 'SESSION', 'PRINCIPAL']) }),
+  entity: z.strictObject({
+    id: z.uuid(),
+    type: z.enum(['TASK', 'SESSION', 'PRINCIPAL', 'REQUIREMENT']),
+  }),
   actorId: z.uuid(),
   actorUserId: z.uuid().nullable().optional(),
   sessionId: z.uuid().nullable(),

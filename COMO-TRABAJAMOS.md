@@ -1,104 +1,69 @@
-﻿# Cómo trabajamos en ia-dashboard
+# Cómo trabajamos en ACC
 
-Guía compartida para personas, Codex y Claude.
+Guía compartida de Claude Code, Codex y otros agentes. Adopta el protocolo universal
+v1.3-ECC sin sustituir decisiones explícitas ni arquitectura del proyecto.
 
-## 1. Contexto del proyecto
+## Precedencia y fuentes
 
-El repositorio contiene especificación, acuerdos, monorepo, infraestructura local,
-dominio/persistencia, API y MCP autenticados, worker outbox y dashboard ejecutable.
-El MVP completo sigue en construcción; hay entidades y flujos pendientes.
-Consultar `docs/IMPLEMENTATION_STATUS.md` antes de asumir que un componente existe.
+Encargo vigente del usuario y límites de herramientas → decisiones explícitas ACC
+→ esta guía y reglas del proyecto → protocolo universal → roles/skills.
+Documentar conflictos sin inventar aprobación. Leer instrucciones o una tarea
+no autoriza trabajo fuera del encargo.
 
-[README.md](README.md) es la entrada a la documentación del proyecto. Cuando se
-cambien el propósito, los requisitos o el stack, documentarlos allí junto con los
-pasos de instalación, ejecución y verificación que realmente existan.
+- [Configuración y permisos](config/project.json).
+- [Particularidades vinculantes de ACC](docs/process/PROJECT-RULES.md).
+- [Protocolo universal y procedencia](docs/process/UNIVERSAL-PROTOCOL.md).
+- [Estado](docs/project/STATUS.md), [mapa](docs/architecture/README.md),
+  [tareas](docs/tasks/TASKS.md), [decisiones](docs/decisions/DECISIONS.md).
 
-Antes de una tarea, revisar los archivos relevantes y el estado de Git: rama,
-cambios locales y operaciones pendientes. Respetar los cambios del usuario.
-Las instrucciones explícitas del usuario y las reglas de la herramienta
-prevalecen sobre esta guía.
+## Arranque de cada sesión
 
-## 2. Forma de trabajar
+1. Leer README, esta guía, configuración, acta/estado y tareas. Consultar requisitos,
+   decisiones e historial pertinentes; no todas las bitácoras por defecto.
+2. Revisar raíz, rama, Git y operaciones pendientes; preservar cambios ajenos.
+   No hacer pull/checkout/limpieza ni instalaciones por arrancar.
+3. Diagnosticar stack sin escrituras con el generador y verificar capacidades reales:
 
-- Concretar el objetivo y cómo se comprobará antes de modificar archivos.
-- Para tareas sencillas, hacer un cambio acotado y verificarlo sin exigir planes
-  extensos. Para cambios amplios, aclarar requisitos y decisiones de arquitectura
-  antes de implementar.
-- Reutilizar lo que exista y evitar dependencias, abstracciones o documentos sin
-  una necesidad concreta. No importar reglas o tecnologías de otros proyectos.
-- Resolver decisiones reversibles con criterio y comunicar los supuestos.
-  Consultar las dudas que afecten sustancialmente al alcance o al producto.
-- Pedir autorización antes de lanzar subagentes, salvo que el usuario ya haya
-  autorizado la delegación para el alcance de la tarea. Evitar ediciones
-  simultáneas sobre los mismos archivos.
+       node scripts/agents/setup.mjs --root .
 
-## 3. Implementación y verificación
+   Leer agents/README y perfiles relevantes. --write solo con encargo autorizado;
+   no ejecuta agentes ni instala habilidades.
 
-- Seguir las convenciones del código y del stack cuando estén definidos.
-- Corregir la causa de los fallos y reproducirlos cuando sea posible. No relajar
-  comprobaciones para ocultar errores.
-- Ejecutar las comprobaciones pertinentes al cambio y las exigidas por el
-  proyecto: pruebas, análisis estático y build, según existan.
-- En interfaces, revisar los tamaños y estados relevantes, así como la
-  accesibilidad. La compilación por sí sola no acredita una revisión visual.
-- En documentación, comprobar enlaces locales, coherencia y vigencia de las
-  instrucciones. No inventar comandos ni suites que aún no existen.
-- Informar qué se verificó, el resultado y cualquier limitación. No declarar
-  terminada o publicada una tarea sin evidencia.
+4. Resolver objetivo vigente, dependencias, riesgos y controles. Sin encargo,
+   diagnosticar y proponer; no ejecutar backlog. Dar avance breve en español.
+5. Comprobar MCP nativo y proyecto; reutilizar tarea estable, registrar sesión,
+   reclamar cuando corresponda y renovar sesión/claim por separado. Archivos como
+   referencia principal y duplicación de todo trabajo en ACC son obligatorios.
 
-## 4. Git y publicación
+## Ejecución y calidad
 
-No hay un flujo de ramas acordado todavía. No asumir que existen ramas de
-desarrollo, entornos de producción o automatizaciones. Acordar el flujo cuando
-sea necesario y documentarlo en esta guía.
+Elegir SIMPLE/STANDARD/CRITICAL/BATCH según riesgo. Conservar stack, convenciones,
+requisitos aceptados y diseño existente. Resolver decisiones reversibles dentro del
+encargo y consultar las sustanciales. Reproducir fallos, corregir causas y verificar
+lo pertinente sin relajar pruebas. UI exige revisión visual real. Claims, versiones,
+dependencias, evidencia y permisos se validan en servidor.
 
-Los nombres de ramas y mensajes de commit se escriben en inglés. Incluir solo
-archivos relacionados con la tarea y revisar el diff antes de preparar un commit.
-No reescribir el historial ni descartar cambios del usuario sin petición expresa.
+El agente puede recorrer estados válidos hasta DONE, cancelar/reabrir y planificar
+READY sin aprobación humana previa. Se mantienen IN_REVIEW e IN_QA. El humano puede
+dar un OK de auditoría después de DONE, sin cambiar estado/revisión; el agente no lo emite.
 
-Commit, push, merge y despliegue requieren autorización del usuario. Una petición
-expresa ya cuenta como autorización para su alcance; no implica autorización
-para las demás acciones.
+Definir roles no autoriza delegación. Con autorización aplicable usar contratos en
+agents/templates, propietarios de archivos y aislamiento; verificar entregas y
+declarar revisiones no independientes. No instalar herramientas/skills, publicar,
+modificar secretos, desplegar o actuar externamente sin autorización para esa acción.
 
-## 5. Secretos y herramientas
+## Cierre y continuidad
 
-No versionar ni mostrar credenciales, tokens o valores privados. Cuando se
-necesite configuración por variables de entorno, documentar sus nombres con
-ejemplos no sensibles y excluir los archivos de secretos del control de versiones.
+Actualizar solo las fuentes afectadas: estado, requisitos/decisiones, tareas,
+evidencias y handoff. Detalle por trabajo en sus documentos; no añadir cronologías
+a AGENTS, CLAUDE o esta guía. Preservar documentos/decisiones y mantener enlaces.
+Actualizar README cuando cambien propósito, requisitos o ejecución.
 
-Usar skills y herramientas disponibles cuando aporten al trabajo. No asumir que
-hay plugins, servicios o skills locales instalados por aparecer en documentación
-de otro proyecto. Adaptar los comandos al entorno de la sesión.
+Registrar avances/resultados/pendientes por MCP, leer detalle y delta completos y
+finalizar sesión. No inventar evidencia HTTPS ni afirmar sincronización incompleta
+como completa. Entregar cambios, verificaciones, NOT_RUN, riesgos y próximo paso
+autorizado en español. No prometer trabajo en segundo plano. [Evidencias](docs/quality/EVIDENCE.md)
+y [handoff](docs/handoffs/LATEST.md).
 
-## 6. Documentación y comunicación
-
-Duplicar todo el trabajo del proyecto en ACC mediante sus herramientas MCP:
-desarrollo, correcciones, documentación, decisiones, pruebas, revisiones y
-publicación. No limitar la copia a importar el backlog inicial. Los archivos
-siguen siendo la referencia principal; ACC refleja alcance, avances, resultados,
-evidencias, bloqueos y pendientes de cada trabajo, sin incluir secretos.
-
-Antes de trabajar, consultar el proyecto y las tareas por MCP, reutilizar su
-referencia estable o registrar la tarea que falte y abrir una sesión ACC. Cuando
-el estado y los permisos lo permitan, reclamar antes de implementar, renovar
-sesión/claim, registrar avances y evidencias, solicitar revisión y liberar o
-finalizar la sesión. El agente con permisos de escritura puede recorrer todos los
-estados, incluidos READY, QA, DONE, cancelación y reapertura, respetando transiciones,
-versiones, claims, dependencias y evidencia técnica. No necesita aprobaciones
-humanas previas. En DONE, una persona con permisos puede registrar Validar tarea:
-es un OK de auditoría que no cambia estado ni revisión y no puede darlo el agente.
-
-Al terminar cada bloque, actualizar archivos y su copia por MCP y comprobarla
-mediante lectura y delta. Registrar IDs, resultados, commit/push si existen y
-cualquier diferencia o sincronización pendiente. No afirmar sincronización
-completa cuando falten datos o el contrato MCP no permita copiarlos. Aplicar
-[el procedimiento de copia](docs/ACC_MIRROR.md). Importar o adjuntar no constituye
-aceptación de evidencia ni aprobación humana.
-
-Mantener la documentación proporcional al proyecto y actualizarla cuando cambien
-el comportamiento, la configuración o las decisiones relevantes. Enlazar desde
-el README los nuevos documentos que deban servir de referencia.
-
-Comunicar en español, de forma breve y verificable: qué cambió, qué se comprobó
-y qué queda pendiente. Distinguir el trabajo local de lo publicado y los supuestos
-de las decisiones confirmadas.
+Las reglas completas anteriores se integran en PROJECT-RULES. Copias exactas en
+docs/process/migrations/2026-11-04-ecc/original.

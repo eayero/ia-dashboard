@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 1,
+  "scope": "Navigation and observed slice assessments, not new acceptance criteria",
+  "requirements": [
+    {
+      "scope": "product",
+      "id": "FR-001",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q1",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q21",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "BOOT-006",
+          "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c"
+        }
+      ],
+      "evidence": ["docs/OPENAPI_RESULT.json"],
+      "assessment": "PARTIAL",
+      "note": "Membresías/proyecto local presentes; creación/archivo general pendientes."
+    },
+    {
+      "scope": "product",
+      "id": "FR-002",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q22",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180"
+        }
+      ],
+      "evidence": [],
+      "assessment": "PENDING",
+      "note": "Iteraciones todavía no implementadas como entidades."
+    },
+    {
+      "scope": "product",
+      "id": "FR-003",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q17",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q32",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "BOOT-005",
+          "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18"
+        },
+        {
+          "fileId": "BOOT-006",
+          "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c"
+        }
+      ],
+      "evidence": ["docs/OPENAPI_RESULT.json"],
+      "assessment": "PARTIAL",
+      "note": "Tareas versionadas y criterios/evidencia presentes; no certificar todo el MVP."
+    },
+    {
+      "scope": "product",
+      "id": "FR-004",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q23",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q24",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180"
+        }
+      ],
+      "evidence": ["docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json"],
+      "assessment": "PARTIAL",
+      "note": "Entrega API/MCP local implementada: revisiones inmutables, aprobación Q23, supersesión y vínculos/impacto Q24. UI pendiente; ver VERSIONED_REQUIREMENTS_RESULT.json."
+    },
+    {
+      "scope": "product",
+      "id": "FR-005",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q23",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q24",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180"
+        }
+      ],
+      "evidence": [],
+      "assessment": "PENDING",
+      "note": "Decisiones del producto como entidades pendientes."
+    },
+    {
+      "scope": "product",
+      "id": "FR-006",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q13",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180"
+        }
+      ],
+      "evidence": [],
+      "assessment": "PENDING",
+      "note": "Preguntas/respuestas de producto pendientes."
+    },
+    {
+      "scope": "product",
+      "id": "FR-007",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q19",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q20",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "BOOT-005",
+          "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18"
+        }
+      ],
+      "evidence": [],
+      "assessment": "PARTIAL",
+      "note": "Idempotencia/external_ref comprobadas; no se infiere toda similitud semántica."
+    },
+    {
+      "scope": "product",
+      "id": "FR-008",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q1",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q9",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q37",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-018",
+          "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a"
+        },
+        {
+          "fileId": "BOOT-006",
+          "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c"
+        }
+      ],
+      "evidence": ["docs/AGENT_OWNERSHIP_RESULT.json", "docs/OPENAPI_RESULT.json"],
+      "assessment": "VERIFIED_SLICE",
+      "note": "Propiedad usuario/agente, varios proyectos y sesiones en informes publicados."
+    },
+    {
+      "scope": "product",
+      "id": "FR-009",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q3",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q6",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q12",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q15",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q37",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "BOOT-005",
+          "taskId": "557c3e1c-3489-4765-b7d3-bcb7f6200b18"
+        },
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f"
+        }
+      ],
+      "evidence": ["docs/AGENT_WORKFLOW_RESULT.json"],
+      "assessment": "VERIFIED_SLICE",
+      "note": "Claims/leases/fencing de la entrega actual; no carga objetivo global."
+    },
+    {
+      "scope": "product",
+      "id": "FR-010",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q25",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q38",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q39",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f"
+        }
+      ],
+      "evidence": ["docs/AGENT_WORKFLOW_RESULT.json"],
+      "assessment": "VERIFIED_SLICE",
+      "note": "Transiciones técnicas y concurrencia de la entrega."
+    },
+    {
+      "scope": "product",
+      "id": "FR-011",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q4",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q10",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q31",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q40",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f"
+        }
+      ],
+      "evidence": ["docs/AGENT_WORKFLOW_RESULT.json"],
+      "assessment": "VERIFIED_SLICE",
+      "note": "Leer sustitución explícita: autonomía y OK humano posterior."
+    },
+    {
+      "scope": "product",
+      "id": "FR-012",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q26",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "BOOT-008",
+          "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4"
+        },
+        {
+          "fileId": "ACC-LOCAL-011",
+          "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85"
+        }
+      ],
+      "evidence": ["docs/ADMIN_BROWSER_RESULT.json"],
+      "assessment": "PARTIAL",
+      "note": "Dashboard real; decisiones/preguntas y resto de vistas pendientes."
+    },
+    {
+      "scope": "product",
+      "id": "FR-013",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q26",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "BOOT-008",
+          "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4"
+        }
+      ],
+      "evidence": [],
+      "assessment": "PARTIAL",
+      "note": "Tabla/detalle/filtros presentes; no acreditar Kanban completo."
+    },
+    {
+      "scope": "product",
+      "id": "FR-014",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q13",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q27",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-014",
+          "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180"
+        },
+        {
+          "fileId": "BOOT-008",
+          "taskId": "a36fd189-934f-44b5-880c-89fbad1739d4"
+        }
+      ],
+      "evidence": [],
+      "assessment": "PARTIAL",
+      "note": "Atención actual no equivale al inbox completo de preguntas."
+    },
+    {
+      "scope": "product",
+      "id": "FR-015",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q16",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q35",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-013",
+          "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a"
+        },
+        {
+          "fileId": "BOOT-007",
+          "taskId": "c20557e7-a5d5-4229-9269-c6cc9f8afcd2"
+        }
+      ],
+      "evidence": ["docs/WEBSOCKET_RESULT.json"],
+      "assessment": "VERIFIED_SLICE",
+      "note": "Contexto/delta/reconexión existentes; Claude MCP actual aún pendiente."
+    },
+    {
+      "scope": "product",
+      "id": "FR-016",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q18",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q32",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q33",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-016",
+          "taskId": "f6302302-4331-4b13-a518-c8546363b60c"
+        }
+      ],
+      "evidence": ["docs/PUBLICATION_RESULT.json"],
+      "assessment": "PARTIAL",
+      "note": "Auditoría y copia de evidencia reales, sin integrar Git completo."
+    },
+    {
+      "scope": "product",
+      "id": "FR-017",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q29",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        },
+        {
+          "id": "Q34",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-017",
+          "taskId": "941cae66-75fa-49db-982e-f4a453d6203f"
+        },
+        {
+          "fileId": "ACC-LOCAL-018",
+          "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a"
+        }
+      ],
+      "evidence": ["docs/AGENT_WORKFLOW_RESULT.json", "docs/AGENT_OWNERSHIP_RESULT.json"],
+      "assessment": "PARTIAL",
+      "note": "Permisos/gates actuales; no certificar toda política configurable."
+    },
+    {
+      "scope": "product",
+      "id": "FR-018",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q18",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [],
+      "evidence": [],
+      "assessment": "PENDING",
+      "note": "Webhooks GitHub/GitLab no implementados."
+    },
+    {
+      "scope": "product",
+      "id": "FR-019",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q2",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [],
+      "evidence": [],
+      "assessment": "PENDING",
+      "note": "Métricas avanzadas/observabilidad y carga objetivo pendientes."
+    },
+    {
+      "scope": "product",
+      "id": "FR-020",
+      "source": "docs/SPECIFICATION.md",
+      "decisions": [
+        {
+          "id": "Q28",
+          "source": "docs/DECISIONS.md",
+          "readSupersessions": true
+        }
+      ],
+      "tasks": [],
+      "evidence": [],
+      "assessment": "PENDING",
+      "note": "Backups programados/exportación completa no acreditados."
+    },
+    {
+      "scope": "process",
+      "id": "PROC-ECC-MIGRATION-001",
+      "source": "docs/process/migrations/2026-11-04-ecc/DIAGNOSIS.md",
+      "decisions": [
+        {
+          "id": "Q7",
+          "source": "docs/DECISIONS.md"
+        },
+        {
+          "id": "Q28",
+          "source": "docs/DECISIONS.md"
+        }
+      ],
+      "tasks": [
+        {
+          "fileId": "ACC-LOCAL-019",
+          "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde"
+        }
+      ],
+      "evidence": ["docs/process/migrations/2026-11-04-ecc/RESULT.json"],
+      "assessment": "LOCAL_VERIFIED_FORMAL_EVIDENCE_PENDING",
+      "note": "Encargo de proceso, no requisito funcional nuevo ni aceptación del MVP."
+    }
+  ]
+}

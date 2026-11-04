@@ -1,0 +1,422 @@
+{
+  "managedBy": "scripts/agents/setup.mjs",
+  "schemaVersion": 2,
+  "target": ".",
+  "detectedProfiles": [
+    "docker-local",
+    "mcp-server",
+    "node-general",
+    "node-nest",
+    "postgresql",
+    "react-web",
+    "redis-events"
+  ],
+  "signals": [
+    {
+      "id": "node-nest",
+      "file": "apps/api/package.json",
+      "evidence": "NestJS dependency"
+    },
+    {
+      "id": "postgresql",
+      "file": "apps/api/package.json",
+      "evidence": "PostgreSQL driver dependency"
+    },
+    {
+      "id": "redis-events",
+      "file": "apps/api/package.json",
+      "evidence": "Redis/Socket.IO dependency"
+    },
+    {
+      "id": "mcp-server",
+      "file": "apps/api/package.json",
+      "evidence": "MCP SDK dependency"
+    },
+    {
+      "id": "react-web",
+      "file": "apps/web/package.json",
+      "evidence": "React dependency"
+    },
+    {
+      "id": "docker-local",
+      "file": "infra/docker-compose.yml",
+      "evidence": "Docker/Compose manifest"
+    },
+    {
+      "id": "docker-local",
+      "file": "infra/Dockerfile",
+      "evidence": "Docker/Compose manifest"
+    },
+    {
+      "id": "node-general",
+      "file": "package.json",
+      "evidence": "Node package manifest"
+    },
+    {
+      "id": "node-general",
+      "file": "packages/contracts/package.json",
+      "evidence": "Node package manifest"
+    },
+    {
+      "id": "node-general",
+      "file": "packages/db/package.json",
+      "evidence": "Node package manifest"
+    },
+    {
+      "id": "postgresql",
+      "file": "packages/db/package.json",
+      "evidence": "PostgreSQL driver dependency"
+    },
+    {
+      "id": "node-general",
+      "file": "packages/domain/package.json",
+      "evidence": "Node package manifest"
+    }
+  ],
+  "roles": [
+    "coordinator",
+    "requirements-analyst",
+    "architect",
+    "ux-designer",
+    "design-reviewer",
+    "developer",
+    "qa-engineer",
+    "security-reviewer"
+  ],
+  "roleProfiles": {
+    "coordinator": [],
+    "requirements-analyst": [],
+    "architect": [
+      "docker-local",
+      "mcp-server",
+      "node-nest",
+      "postgresql",
+      "react-web",
+      "redis-events"
+    ],
+    "ux-designer": [
+      "react-web"
+    ],
+    "design-reviewer": [
+      "react-web"
+    ],
+    "developer": [
+      "docker-local",
+      "mcp-server",
+      "node-general",
+      "node-nest",
+      "postgresql",
+      "react-web",
+      "redis-events"
+    ],
+    "qa-engineer": [
+      "mcp-server",
+      "node-nest",
+      "postgresql",
+      "react-web"
+    ],
+    "security-reviewer": [
+      "mcp-server",
+      "node-nest",
+      "postgresql",
+      "react-web"
+    ]
+  },
+  "roleSkills": {
+    "coordinator": [
+      "verification-loop",
+      "docs-governance",
+      "living-docs-governance"
+    ],
+    "requirements-analyst": [
+      "api-design"
+    ],
+    "architect": [
+      "api-design",
+      "backend-patterns",
+      "docker-patterns",
+      "mcp-server-patterns",
+      "security-review",
+      "coding-standards",
+      "tdd-workflow",
+      "verification-loop",
+      "nestjs-patterns",
+      "postgres-patterns",
+      "database-migrations",
+      "prisma-patterns",
+      "frontend-patterns",
+      "e2e-testing",
+      "react-patterns",
+      "react-testing",
+      "frontend-a11y",
+      "design-system"
+    ],
+    "ux-designer": [
+      "frontend-patterns",
+      "accessibility",
+      "frontend-a11y",
+      "design-system",
+      "frontend-design-direction"
+    ],
+    "design-reviewer": [
+      "accessibility",
+      "frontend-a11y",
+      "e2e-testing",
+      "design-system"
+    ],
+    "developer": [
+      "tdd-workflow",
+      "coding-standards",
+      "docker-patterns",
+      "mcp-server-patterns",
+      "api-design",
+      "security-review",
+      "backend-patterns",
+      "verification-loop",
+      "nestjs-patterns",
+      "postgres-patterns",
+      "database-migrations",
+      "prisma-patterns",
+      "frontend-patterns",
+      "e2e-testing",
+      "react-patterns",
+      "react-testing",
+      "frontend-a11y",
+      "design-system"
+    ],
+    "qa-engineer": [
+      "tdd-workflow",
+      "e2e-testing",
+      "react-testing",
+      "verification-loop",
+      "security-review"
+    ],
+    "security-reviewer": [
+      "security-review"
+    ]
+  },
+  "skills": [
+    {
+      "name": "accessibility",
+      "origin": "candidate-verify",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/accessibility/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "api-design",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/api-design/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "backend-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/backend-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "coding-standards",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/coding-standards/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "database-migrations",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/database-migrations/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "design-system",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/design-system/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "docker-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/docker-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "docs-governance",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/docs-governance/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "e2e-testing",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/e2e-testing/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "frontend-a11y",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/frontend-a11y/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "frontend-design-direction",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/frontend-design-direction/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "frontend-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/frontend-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "living-docs-governance",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/living-docs-governance/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "mcp-server-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/mcp-server-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "nestjs-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/nestjs-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "postgres-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/postgres-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "prisma-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/prisma-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "react-patterns",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/react-patterns/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "react-testing",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/react-testing/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "security-review",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/security-review/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "tdd-workflow",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/tdd-workflow/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    },
+    {
+      "name": "verification-loop",
+      "origin": "ECC-candidate",
+      "location": "~/.codex/plugins/cache/ecc/ecc/2.2.3/skills/verification-loop/SKILL.md",
+      "source": "ECC-plugin-cache",
+      "version": "2.2.3",
+      "status": "AVAILABLE_FILE",
+      "runtimeRegistration": "NOT_VERIFIED",
+      "executed": false
+    }
+  ],
+  "skillsMissing": [],
+  "note": "Solo manifiestos e inventario de archivos; no instala skills ni ejecuta agentes/modelos. Codex usa AGENTS; Claude requiere runtime compatible."
+}

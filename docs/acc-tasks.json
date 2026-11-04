@@ -154,5 +154,17 @@
       "Identificar agente y propietario en autenticación, contexto y auditoría; probar aislamiento y conservar credenciales existentes durante la migración.",
       "Actualizar API/UI/documentación y verificar recorridos reales con usuarios y proyectos múltiples."
     ]
+  },
+  {
+    "id": "ACC-LOCAL-019",
+    "title": "Integrar protocolo universal ECC conservando reglas y trazabilidad",
+    "source": "docs/process/migrations/2026-11-04-ecc/PLAN.md",
+    "context": "Petición expresa: diagnóstico y plan antes de integración local no destructiva desde plantilla universal v1.3-ECC; preservar decisiones, código funcional y arquitectura. Generar roles y verificar skills sin instalar, ejecutar agentes, commit, push, merge ni desplegar.",
+    "criteria": [
+      "Auditar completamente la plantilla y el proyecto; registrar diagnóstico, conflictos, decisiones preservadas y plan antes de modificar instrucciones.",
+      "Integrar protocolo y documentación por referencias, conservar fuentes e historial y mantener trazabilidad requisitos/decisiones/tareas/evidencias.",
+      "Detectar stack real, verificar skills ECC disponibles y generar perfiles especializados y adaptadores sin instalar ni ejecutar agentes automáticamente.",
+      "Comprobar generación segura, instrucciones de Claude Code y Codex, enlaces, límites de permisos e invariancia del código funcional; registrar alcance y pendientes reales."
+    ]
   }
 ]

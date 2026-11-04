@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "profiles": {
+    "java-spring": {
+      "label": "Java / Spring Boot",
+      "skills": [
+        "java-coding-standards",
+        "springboot-patterns",
+        "springboot-tdd",
+        "springboot-security",
+        "springboot-verification",
+        "jpa-patterns",
+        "api-design",
+        "database-migrations"
+      ],
+      "guidance": "Respetar límites de módulos, transacciones, validación, migraciones y contratos. Ejecutar pruebas unitarias e integración con infraestructura real cuando corresponda."
+    },
+    "node-nest": {
+      "label": "Node.js / NestJS",
+      "skills": [
+        "coding-standards",
+        "backend-patterns",
+        "api-design",
+        "tdd-workflow",
+        "security-review",
+        "verification-loop",
+        "nestjs-patterns"
+      ],
+      "guidance": "Usar módulos por dominio, DTO/validación, inyección de dependencias y contratos API; comprobar lint, typecheck, tests e integración."
+    },
+    "node-general": {
+      "label": "Node.js / TypeScript",
+      "skills": ["coding-standards", "backend-patterns", "tdd-workflow", "verification-loop"],
+      "guidance": "Ajustar arquitectura a la complejidad y respetar convenciones y comandos del proyecto."
+    },
+    "scala-akka": {
+      "label": "Scala / Akka",
+      "skills": [
+        "coding-standards",
+        "tdd-workflow",
+        "verification-loop",
+        "api-design",
+        "scala-akka-engineering"
+      ],
+      "guidance": "Priorizar inmutabilidad, semántica de mensajes, idempotencia, consistencia de actores, persistencia, recuperación y compatibilidad de eventos."
+    },
+    "android-kotlin": {
+      "label": "Android / Kotlin",
+      "skills": [
+        "kotlin-coroutines-flows",
+        "android-clean-architecture",
+        "compose-multiplatform-patterns",
+        "tdd-workflow",
+        "verification-loop",
+        "mobile-product-qa-auditor"
+      ],
+      "guidance": "Seguir convenciones Android y Material 3 si aplican; verificar navegación, estado, lifecycle, accesibilidad, teclado, permisos y pruebas en dispositivo cuando sea posible."
+    },
+    "ios-swift": {
+      "label": "iOS / Swift",
+      "skills": [
+        "swiftui-patterns",
+        "swift-concurrency-6-2",
+        "swift-actor-persistence",
+        "swift-protocol-di-testing",
+        "tdd-workflow",
+        "verification-loop",
+        "mobile-product-qa-auditor"
+      ],
+      "guidance": "Seguir SwiftUI/HIG si corresponde, accesibilidad, Dynamic Type, navegación, seguridad local y pruebas en simulador o dispositivo."
+    },
+    "react-web": {
+      "label": "Web / React",
+      "skills": [
+        "frontend-patterns",
+        "coding-standards",
+        "e2e-testing",
+        "tdd-workflow",
+        "verification-loop",
+        "react-patterns",
+        "react-testing",
+        "frontend-a11y",
+        "design-system"
+      ],
+      "guidance": "Respetar el diseño y componentes actuales; revisar responsive, navegación, estados, accesibilidad y rendimiento web."
+    },
+    "python": {
+      "label": "Python",
+      "skills": ["python-patterns", "python-testing", "tdd-workflow", "verification-loop"],
+      "guidance": "Separar responsabilidades y validar tipos, lint y pruebas según herramientas existentes."
+    },
+    "postgresql": {
+      "label": "PostgreSQL / SQL transaccional",
+      "skills": ["postgres-patterns", "database-migrations", "prisma-patterns"],
+      "guidance": "Preservar SQL parametrizado, transacciones de permisos/claims/fencing, FK compuestas e historial. No editar migraciones aplicadas. Prisma instalado no implica sustituir SQL transaccional."
+    },
+    "redis-events": {
+      "label": "Redis / outbox / Socket.IO",
+      "skills": ["backend-patterns", "verification-loop"],
+      "guidance": "PostgreSQL confirma mutación/evento/outbox; Redis puede fallar sin perder datos. Mantener idempotencia, revocación y recuperación REST/delta, sin prometer exactamente una vez."
+    },
+    "mcp-server": {
+      "label": "MCP / contratos de agentes",
+      "skills": ["mcp-server-patterns", "api-design", "security-review"],
+      "guidance": "MCP comparte comandos y autorización con REST; verificar sesiones, claims, scopes, audiencias, Origin y propietario. No cambiar identidad ni registrar OK humano como agente."
+    },
+    "docker-local": {
+      "label": "Docker Compose / Nginx local",
+      "skills": ["docker-patterns"],
+      "guidance": "Infraestructura local existente; no arrancar/desplegar por diagnosticar. No borrar volúmenes, imprimir secretos ni presuponer seguridad de producción."
+    }
+  },
+  "roleSkills": {
+    "coordinator": ["verification-loop", "docs-governance", "living-docs-governance"],
+    "requirements-analyst": ["api-design"],
+    "architect": ["api-design", "backend-patterns"],
+    "ux-designer": [
+      "frontend-patterns",
+      "accessibility",
+      "frontend-a11y",
+      "design-system",
+      "frontend-design-direction"
+    ],
+    "design-reviewer": ["accessibility", "frontend-a11y", "e2e-testing", "design-system"],
+    "developer": ["tdd-workflow", "coding-standards"],
+    "qa-engineer": ["tdd-workflow", "e2e-testing", "react-testing", "verification-loop"],
+    "security-reviewer": ["security-review"]
+  },
+  "sources": {
+    "ecc": "https://github.com/affaan-m/ECC",
+    "reference": "https://github.com/affaan-m/ECC/blob/main/skills/prompt-optimizer/SKILL.md",
+    "status": "ECC candidates must be confirmed locally before use; not bundled or automatically installed"
+  },
+  "skillOrigins": {
+    "custom": [
+      "scala-akka-engineering",
+      "mobile-product-qa-auditor",
+      "ui-craft",
+      "clean-code-engineering"
+    ],
+    "eccReference": [
+      "java-coding-standards",
+      "springboot-patterns",
+      "springboot-tdd",
+      "springboot-security",
+      "springboot-verification",
+      "jpa-patterns",
+      "coding-standards",
+      "backend-patterns",
+      "api-design",
+      "tdd-workflow",
+      "security-review",
+      "verification-loop",
+      "database-migrations",
+      "kotlin-coroutines-flows",
+      "android-clean-architecture",
+      "compose-multiplatform-patterns",
+      "swiftui-patterns",
+      "swift-concurrency-6-2",
+      "swift-actor-persistence",
+      "swift-protocol-di-testing",
+      "frontend-patterns",
+      "e2e-testing",
+      "python-patterns",
+      "python-testing",
+      "nestjs-patterns",
+      "react-patterns",
+      "react-testing",
+      "frontend-a11y",
+      "design-system",
+      "frontend-design-direction",
+      "postgres-patterns",
+      "prisma-patterns",
+      "mcp-server-patterns",
+      "docker-patterns",
+      "docs-governance",
+      "living-docs-governance"
+    ],
+    "eccCandidateVerify": ["accessibility"]
+  },
+  "projectAdaptation": {
+    "source": "plantilla-universal-agentes-v1.3-ECC",
+    "project": "ACC",
+    "notInstalled": [
+      "scala-akka-engineering",
+      "ui-craft",
+      "clean-code-engineering",
+      "mobile-product-qa-auditor"
+    ],
+    "substitutions": [
+      {
+        "candidate": "ui-craft",
+        "reason": "No disponible; se seleccionan capacidades ECC de diseño/accesibilidad presentes, sin afirmar equivalencia de skill."
+      },
+      {
+        "candidate": "mobile-product-qa-auditor",
+        "reason": "Fuera del alcance: SPA web sin aplicación móvil."
+      }
+    ],
+    "roleSelection": "Filtrar por módulo/encargo; detección no autoriza cargar todas las skills ni ejecutar agentes."
+  }
+}

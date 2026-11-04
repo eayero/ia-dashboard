@@ -18,6 +18,7 @@ const pool = new Pool({
 });
 const config = loadConfiguration(process.env);
 const origin = config.publicOrigin;
+let transportOrigin: string;
 let app: Awaited<ReturnType<typeof createApplication>>;
 let projectId: string;
 let cookie = '';
@@ -37,7 +38,8 @@ before(async () => {
   ownerLogin = { username: seeded.username, password: seeded.password };
   agents = seeded.agents;
   app = await createApplication(config, pool);
-  await app.listen(55173, '127.0.0.1');
+  await app.listen(0, '127.0.0.1');
+  transportOrigin = app.getUrl ? await app.getUrl() : origin;
   const { response: signedIn } = await login();
   assert.equal(signedIn.status, 201);
   cookie = sessionCookie(signedIn);
@@ -58,11 +60,92 @@ function sessionCookie(response: Response) {
   );
 }
 async function get(path: string, withCookie = cookie) {
-  return fetch(`${origin}/api/v1${path}`, {
+  return fetch(`${transportOrigin}/api/v1${path}`, {
     headers: withCookie ? { cookie: withCookie } : {},
     redirect: 'manual',
   });
 }
+
+test('REST registra requisitos, aprueba revisiones y devuelve historial y contexto', async () => {
+  const path = `/projects/${projectId}/requirements`;
+  const response = await post(path, {
+    title: 'Requisito HTTP',
+    description: 'Trazabilidad real',
+    type: 'FUNCTIONAL',
+  });
+  assert.equal(response.status, 201);
+  const requirement = (await response.json()).data;
+  assert.match(requirement.publicId, /^REQ-/u);
+  const approved = await post(`${path}/${requirement.id}/approve`, {
+    expectedVersion: 1,
+    revision: 1,
+  });
+  assert.equal(approved.status, 201);
+  const detail = await get(`${path}/${requirement.id}`);
+  assert.equal(detail.status, 200);
+  const data = (await detail.json()).data;
+  envelope(responseModels.RequirementDetail).parse({ data, meta: { requestId: randomUUID() } });
+  assert.equal(data.approvedRevision, 1);
+  assert.equal(data.revisions[0].status, 'APPROVED');
+  const listed = await get(`${path}?limit=1`);
+  assert.equal(listed.status, 200);
+  const page = envelope(responseModels.RequirementList).parse(await listed.json());
+  assert.equal(page.data.items[0]!.id, requirement.id);
+  const snapshot = (await (await get(`/projects/${projectId}/context?limit=100`)).json()).data;
+  assert.ok(
+    snapshot.records.some(
+      (r: { entityType: string; data: { id: string } }) =>
+        r.entityType === 'REQUIREMENT' && r.data.id === requirement.id,
+    ),
+  );
+  const taskResponse = await post(`/projects/${projectId}/tasks`, {
+    title: 'Tarea requisito HTTP',
+    criteria: [{ id: 'a', description: 'Cubrir requisito', required: true }],
+  });
+  const task = (await taskResponse.json()).data;
+  const linkResponse = await post(`${path}/${requirement.id}/link`, {
+    expectedVersion: 2,
+    taskId: task.id,
+    taskVersion: 1,
+    operation: 'ADD',
+    reason: 'Cobertura HTTP',
+  });
+  assert.equal(linkResponse.status, 201);
+  const link = (await linkResponse.json()).data;
+  const evaluated = await post(`${path}/${requirement.id}/evaluate-impact`, {
+    expectedVersion: link.version,
+    taskId: task.id,
+    taskVersion: link.taskVersion,
+    revision: 1,
+    reason: 'Evaluado por humano de prueba',
+  });
+  assert.equal(evaluated.status, 201);
+  const evaluation = (await evaluated.json()).data;
+  const revised = await post(`${path}/${requirement.id}/revise`, {
+    title: 'Requisito HTTP actualizado',
+    description: 'Nueva propuesta',
+    type: 'FUNCTIONAL',
+    expectedVersion: evaluation.version,
+    reason: 'Aclaración',
+  });
+  assert.equal(revised.status, 201);
+  const agentApproval = await fetch(`${transportOrigin}/api/v1${path}/${requirement.id}/approve`, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${agents[0]!.apiToken}`,
+      'content-type': 'application/json',
+      'idempotency-key': randomUUID(),
+    },
+    body: JSON.stringify({ expectedVersion: (await revised.json()).data.version, revision: 2 }),
+  });
+  assert.equal(agentApproval.status, 403);
+  const cleanup = await post(`/projects/${projectId}/tasks/${task.id}/transition`, {
+    expectedVersion: evaluation.taskVersion,
+    to: 'CANCELLED',
+    reason: 'Finalizada verificación sintética de requisitos HTTP',
+  });
+  assert.equal(cleanup.status, 201);
+});
 
 test('OpenAPI público describe rutas concretas, autenticación y contrato sin datos del entorno', async () => {
   const response = await get('/openapi.json', '');
@@ -137,7 +220,7 @@ test('respuestas reales REST satisfacen modelos publicados y el contrato no auto
   envelope(responseModels.Mutation).parse(await cancelled.json());
 });
 async function post(path: string, body: unknown, extra: Record<string, string> = {}) {
-  return fetch(`${origin}/api/v1${path}`, {
+  return fetch(`${transportOrigin}/api/v1${path}`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -156,7 +239,7 @@ async function login(input = ownerLogin) {
   assert.equal(start.status, 200);
   const pendingCookie = sessionCookie(start);
   const csrfToken = (await start.json()).data.csrfToken;
-  const response = await fetch(`${origin}/api/v1/auth/login`, {
+  const response = await fetch(`${transportOrigin}/api/v1/auth/login`, {
     method: 'POST',
     headers: {
       cookie: pendingCookie,
@@ -216,7 +299,7 @@ test('login ACC rota sesión, no persiste contraseñas y limita proyectos por me
   assert.equal(me.status, 200);
   const identity = (await me.json()).data;
   assert.equal(identity.principal.kind, 'HUMAN');
-  const cookieMcp = await fetch(`${origin}/mcp`, {
+  const cookieMcp = await fetch(`${transportOrigin}/mcp`, {
     method: 'POST',
     headers: {
       cookie,
@@ -353,7 +436,7 @@ test('usuario desconocido y contraseña incorrecta devuelven el mismo error sin 
 test('dos agentes con credenciales ACC compiten por claim y revocación del proyecto corta el acceso del token vigente', async () => {
   const tokens = agents.map((agent) => agent.apiToken);
   const agentPost = (index: number, path: string, body: unknown) =>
-    fetch(`${origin}/api/v1${path}`, {
+    fetch(`${transportOrigin}/api/v1${path}`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${tokens[index]}`,
@@ -397,7 +480,7 @@ test('dos agentes con credenciales ACC compiten por claim y revocación del proy
   assert.deepEqual(claims.map((response) => response.status).sort(), [201, 409]);
   const winner = claims.findIndex((response) => response.status === 201);
   const lease = (await claims[winner]!.json()).data;
-  const escalation = await fetch(`${origin}/api/v1${base}/tasks/${created.id}/approve`, {
+  const escalation = await fetch(`${transportOrigin}/api/v1${base}/tasks/${created.id}/approve`, {
     method: 'POST',
     headers: {
       cookie,
@@ -408,7 +491,7 @@ test('dos agentes con credenciales ACC compiten por claim y revocación del proy
     body: JSON.stringify({ expectedVersion: lease.version, workRevision: 1, kind: 'REVIEW' }),
   });
   assert.equal(escalation.status, 403, 'Bearer identity must not inherit browser privileges');
-  const bearerLogout = await fetch(`${origin}/api/v1/auth/logout`, {
+  const bearerLogout = await fetch(`${transportOrigin}/api/v1/auth/logout`, {
     method: 'POST',
     headers: {
       cookie,
@@ -505,14 +588,14 @@ test('paginación firmada no repite tareas y rechaza cursor manipulado, JSON inv
     'content-type': 'application/json',
     'idempotency-key': randomUUID(),
   };
-  const malformed = await fetch(`${origin}/api/v1${base}`, {
+  const malformed = await fetch(`${transportOrigin}/api/v1${base}`, {
     method: 'POST',
     headers,
     body: '{bad json',
   });
   assert.equal(malformed.status, 400);
   assert.equal((await malformed.json()).error.code, 'INVALID_JSON');
-  const large = await fetch(`${origin}/api/v1${base}`, {
+  const large = await fetch(`${transportOrigin}/api/v1${base}`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ title: 'x'.repeat(40000) }),
@@ -522,7 +605,7 @@ test('paginación firmada no repite tareas y rechaza cursor manipulado, JSON inv
 });
 test('credencial alterada se rechaza; VIEWER lee sin poder mutar', async () => {
   const token = `acc_${randomUUID()}.${'x'.repeat(43)}`;
-  const forged = await fetch(`${origin}/api/v1/projects`, {
+  const forged = await fetch(`${transportOrigin}/api/v1/projects`, {
     headers: { authorization: `Bearer ${token}` },
   });
   assert.equal(forged.status, 401);
@@ -601,7 +684,7 @@ test('HTTP entrega contexto paginado y delta; expirar snapshot pide recarga expl
   assert.equal((await get(`/projects/${randomUUID()}/context`)).status, 403);
 });
 test('logout invalida cookie y acceso; bearer inválido no cae a la sesión humana', async () => {
-  const invalid = await fetch(`${origin}/api/v1/projects`, {
+  const invalid = await fetch(`${transportOrigin}/api/v1/projects`, {
     headers: { cookie, authorization: 'Bearer invalid' },
   });
   assert.equal(invalid.status, 401);

@@ -26,6 +26,8 @@ import { AccountAdministration } from './auth/admin.ts';
 import { AccountsController, UserAgentsController } from './auth/admin-controller.ts';
 import { mountRealtime } from './realtime/gateway.ts';
 import { OpenApiController } from './openapi/controller.ts';
+import { RequirementsController } from './requirements/controller.ts';
+import { RequirementQueries } from './requirements/queries.ts';
 
 export const API_CONTROLLERS = [
   AuthController,
@@ -34,12 +36,16 @@ export const API_CONTROLLERS = [
   AccountsController,
   UserAgentsController,
   OpenApiController,
+  RequirementsController,
 ];
 
 export async function createApplication(config: ApiConfiguration, pool: pg.Pool) {
   await pool.query('SELECT 1');
   await pool.query(
     'SELECT u.credential_version,t.token_hash,h.sid,m.active,s.version,c.seq,v.completion_version,a.owner_user_id FROM local_users u CROSS JOIN agent_credentials t CROSS JOIN http_sessions h CROSS JOIN project_members m CROSS JOIN agent_sessions s CROSS JOIN context_snapshots c CROSS JOIN task_validations v CROSS JOIN agent_profiles a LIMIT 0',
+  );
+  await pool.query(
+    'SELECT r.current_revision,l.evaluated_revision FROM requirements r CROSS JOIN requirement_task_links l LIMIT 0',
   );
   const queries = new ProjectQueries(pool, config.sessionSecret);
   const runtime: ApiRuntime = {
@@ -50,6 +56,7 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     queries,
     context: new ProjectContext(queries, config.sessionSecret),
     accounts: new AccountAdministration(pool),
+    requirements: new RequirementQueries(queries, config.sessionSecret),
   };
   @Module({
     controllers: API_CONTROLLERS,

@@ -115,6 +115,56 @@ async function client(index = 0) {
   return connection;
 }
 
+test('MCP propone requisitos versionados, consulta historial y no expone aprobación humana', async () => {
+  const connection = await client();
+  try {
+    const names = (await connection.listTools()).tools.map((t) => t.name);
+    assert.ok(names.includes('acc_register_requirement'));
+    assert.equal(names.includes('acc_approve_requirement'), false);
+    const created = await connection.callTool({
+      name: 'acc_register_requirement',
+      arguments: {
+        projectId: seeded.projectId,
+        idempotencyKey: randomUUID(),
+        input: { title: 'MCP requirement', description: 'Real SDK', type: 'FUNCTIONAL' },
+      },
+    });
+    assert.notEqual(created.isError, true);
+    const data = (created.structuredContent as { data: { id: string; version: number } }).data;
+    const revised = await connection.callTool({
+      name: 'acc_revise_requirement',
+      arguments: {
+        projectId: seeded.projectId,
+        requirementId: data.id,
+        idempotencyKey: randomUUID(),
+        input: {
+          title: 'MCP revised',
+          description: 'Real SDK revision',
+          type: 'FUNCTIONAL',
+          expectedVersion: data.version,
+          reason: 'Clarification',
+        },
+      },
+    });
+    assert.notEqual(revised.isError, true);
+    const detail = await connection.callTool({
+      name: 'acc_get_requirement',
+      arguments: { projectId: seeded.projectId, requirementId: data.id },
+    });
+    assert.equal(
+      (detail.structuredContent as { data: { revisions: unknown[] } }).data.revisions.length,
+      2,
+    );
+    const list = await connection.callTool({
+      name: 'acc_list_requirements',
+      arguments: { projectId: seeded.projectId, query: { limit: 1 } },
+    });
+    assert.notEqual(list.isError, true);
+  } finally {
+    await connection.close();
+  }
+});
+
 test('cliente oficial descubre contratos estrictos y usa contexto, tareas, sesiones y delta', async () => {
   const connection = await client();
   try {

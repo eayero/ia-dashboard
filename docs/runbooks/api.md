@@ -10,7 +10,7 @@ notificaciones autorizadas. La creación general de proyectos sigue pendiente.
 
 `GET /api/v1/openapi.json` descarga OpenAPI 3.1.1 sin autenticar, con JSON directo
 (sin envelope ACC), no-store y el mismo proxy del origen público. Describe las
-45 operaciones REST actuales en 40 paths; MCP y WS conservan sus propios protocolos.
+52 operaciones REST actuales en 46 paths; MCP y WS conservan sus propios protocolos.
 No incluye URLs de base de datos/Redis, configuración privada ni secretos reales.
 El servidor relativo `/` permite usarlo desde el origen donde se descarga.
 
@@ -23,6 +23,9 @@ node --import tsx scripts/export-openapi.mjs --check
 ```
 
 La exportación no necesita servicios ni secretos.
+La entrega local de requisitos necesita migración 008 antes de arrancar su API;
+las pruebas la aplican a esquemas aislados. No se ha actualizado la instancia en servicio.
+Ver [uso de requisitos](../requirements/VERSIONED_REQUIREMENTS_API.md).
 Las pruebas comparan el inventario de controllers Nest y comandos concretos con
 el documento, resuelven sus referencias y validan muestras reales de respuestas.
 

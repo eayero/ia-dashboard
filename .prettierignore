@@ -6,3 +6,8 @@ dist
 generated
 .playwright-cli
 output/playwright
+
+# Procedencia inalterada y adaptadores gestionados por el generador.
+docs/process/UNIVERSAL-PROTOCOL.md
+docs/process/migrations/2026-11-04-ecc/original/
+.claude/agents/

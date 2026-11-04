@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "projectName": "Agent Control Center (ACC)",
+  "projectType": "existing-control-plane",
+  "lifecycle": "IMPLEMENTING",
+  "language": "es",
+  "structure": "monorepo",
+  "repositories": [{ "id": "dashboard", "path": ".", "remote": "origin" }],
+  "stack": {
+    "backend": "Node.js >=22.18 / TypeScript / NestJS / Express",
+    "frontend": "React / Vite / TanStack Router and Query",
+    "mobile": null,
+    "databases": ["PostgreSQL", "Redis"],
+    "integration": ["MCP SDK", "Socket.IO", "OpenAPI 3.1.1"],
+    "tooling": ["pnpm", "Turbo", "Docker Compose", "Nginx"]
+  },
+  "branching": {
+    "strategy": "detect-and-propose",
+    "defaultDevelopmentBranch": null,
+    "productionBranch": null,
+    "observedBranchAtMigration": "feat/acc-foundation"
+  },
+  "agents": {
+    "coordinator": "current-session",
+    "allowDelegationWithoutPerTaskApproval": false,
+    "sharedStateBackend": "files-primary-with-required-acc-mcp-mirror",
+    "acc": {
+      "enabled": true,
+      "required": true,
+      "transport": "native-mcp",
+      "server": "acc",
+      "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+      "secretStorage": "outside-version-control",
+      "connectionMustBeRechecked": true
+    },
+    "roleDirectory": "agents/roles",
+    "delegationTemplate": "agents/templates/TASK-DELEGATION.md",
+    "resultTemplate": "agents/templates/RESULT.md",
+    "enabledRoles": [
+      "coordinator",
+      "requirements-analyst",
+      "architect",
+      "ux-designer",
+      "design-reviewer",
+      "developer",
+      "qa-engineer",
+      "security-reviewer"
+    ],
+    "independentReviewPreferred": true,
+    "runtime": "detect",
+    "specialization": {
+      "profiles": [],
+      "detectOnStartup": true,
+      "generateOnAuthorizedSetup": true,
+      "catalog": "agents/profiles/catalog.json",
+      "generator": "scripts/agents/setup.mjs",
+      "roleProfiles": {
+        "coordinator": [],
+        "requirements-analyst": [],
+        "ux-designer": ["react-web"],
+        "design-reviewer": ["react-web"],
+        "security-reviewer": ["node-nest", "react-web", "postgresql", "mcp-server"],
+        "architect": [
+          "node-nest",
+          "react-web",
+          "postgresql",
+          "redis-events",
+          "mcp-server",
+          "docker-local"
+        ],
+        "developer": [
+          "node-general",
+          "node-nest",
+          "react-web",
+          "postgresql",
+          "redis-events",
+          "mcp-server",
+          "docker-local"
+        ],
+        "qa-engineer": ["node-nest", "react-web", "postgresql", "mcp-server"]
+      }
+    }
+  },
+  "permissions": {
+    "readOnlyDiscovery": true,
+    "editFilesOnTaskRequest": true,
+    "installDependencies": false,
+    "installSkills": false,
+    "gitCommit": false,
+    "gitPush": false,
+    "gitMerge": false,
+    "deploy": false,
+    "externalActions": false,
+    "accTaskTracking": "required-by-existing-project-instruction"
+  },
+  "currentTaskConstraints": {
+    "taskId": "ACC-LOCAL-014",
+    "scope": "Approved versioned requirements FR-004: persistence, REST/MCP, task links, impact, OpenAPI and verification",
+    "functionalCodeChanges": true,
+    "architectureChanges": false,
+    "installations": false,
+    "publication": false,
+    "delegationsLaunched": false,
+    "previousPushAuthorizationApplies": false
+  },
+  "quality": {
+    "requireApplicableFullSuite": true,
+    "requireRealEvidence": true,
+    "uiAlternativesForMaterialNewFlows": 3,
+    "projectTaskStates": [
+      "BACKLOG",
+      "READY",
+      "IN_PROGRESS",
+      "BLOCKED",
+      "IN_REVIEW",
+      "IN_QA",
+      "DONE",
+      "CANCELLED"
+    ],
+    "humanValidation": "Separate human audit acknowledgement after DONE; no prior human task-state gate"
+  },
+  "skills": {
+    "preferred": [
+      "coding-standards",
+      "verification-loop",
+      "docs-governance",
+      "living-docs-governance"
+    ],
+    "required": [],
+    "roots": ["~/.codex/skills", "~/.claude/skills", "~/.agents/skills"],
+    "pluginRoots": ["~/.codex/plugins/cache/ecc/ecc"],
+    "installAutomatically": false
+  },
+  "documentation": {
+    "status": "docs/project/STATUS.md",
+    "requirements": "docs/SPECIFICATION.md",
+    "decisions": "docs/DECISIONS.md",
+    "tasks": "docs/tasks/TASKS.md",
+    "taskCatalog": "docs/acc-tasks.json",
+    "evidence": "docs/quality/EVIDENCE.md",
+    "handoff": "docs/handoffs/LATEST.md",
+    "history": "docs/IMPLEMENTATION_STATUS.md",
+    "universalProtocol": "docs/process/UNIVERSAL-PROTOCOL.md",
+    "projectRules": "docs/process/PROJECT-RULES.md"
+  },
+  "environment": { "productionAccess": "not-configured-or-authorized" }
+}

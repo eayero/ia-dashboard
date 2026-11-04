@@ -18,6 +18,9 @@ import {
   taskQuerySchema,
   contextQuerySchema,
   eventsQuerySchema,
+  createRequirementSchema,
+  reviseRequirementSchema,
+  requirementQuerySchema,
 } from '@acc/contracts';
 import type { ApiRuntime } from '../context.ts';
 import type { ApiRequest } from '../auth/types.ts';
@@ -54,6 +57,40 @@ export function createMcpServer(runtime: ApiRuntime, req: ApiRequest) {
     };
   }
   const tools = [
+    tool(
+      'acc_register_requirement',
+      'Propose a versioned requirement by exact externalRef; human approval remains separate.',
+      z.strictObject({ ...mutation, input: createRequirementSchema }),
+      false,
+      (a) => runtime.store.createRequirement(context(a.projectId), a.idempotencyKey, a.input),
+    ),
+    tool(
+      'acc_revise_requirement',
+      'Propose an immutable successor revision without replacing approved content.',
+      z.strictObject({ ...mutation, requirementId: z.uuid(), input: reviseRequirementSchema }),
+      false,
+      (a) =>
+        runtime.store.reviseRequirement(
+          context(a.projectId),
+          a.idempotencyKey,
+          a.requirementId,
+          a.input,
+        ),
+    ),
+    tool(
+      'acc_list_requirements',
+      'List project requirements; follow nextCursor.',
+      z.strictObject({ ...project, query: requirementQuerySchema }),
+      true,
+      (a) => runtime.requirements.list(a.projectId, req.identity!.id, a.query),
+    ),
+    tool(
+      'acc_get_requirement',
+      'Read requirement revisions, approval provenance, task links and impact history.',
+      z.strictObject({ ...project, requirementId: z.uuid() }),
+      true,
+      (a) => runtime.requirements.detail(a.projectId, req.identity!.id, a.requirementId),
+    ),
     tool(
       'acc_list_projects',
       'List projects accessible to the authenticated agent.',

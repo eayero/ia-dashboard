@@ -12,6 +12,565 @@
     }
   ],
   "paths": {
+    "/api/v1/projects/{projectId}/requirements": {
+      "get": {
+        "operationId": "listRequirements",
+        "summary": "Listar requisitos versionados",
+        "tags": ["Requisitos"],
+        "description": "Bearer requiere audiencia API y task:read; cookie requiere permisos vigentes.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1024
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "Tamaño inicial de página; cursor conserva tamaño/continuación según recurso."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementList"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createRequirement",
+        "summary": "Proponer requisito o recuperar identidad externa exacta",
+        "tags": ["Requisitos"],
+        "description": "Bearer requiere audiencia API y task:write; cookie requiere permisos vigentes. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "cookieAuth": [],
+            "csrfToken": []
+          },
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createRequirementInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementMutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/requirements/{requirementId}": {
+      "get": {
+        "operationId": "getRequirement",
+        "summary": "Consultar revisiones, vínculos y evaluaciones de impacto",
+        "tags": ["Requisitos"],
+        "description": "Bearer requiere audiencia API y task:read; cookie requiere permisos vigentes.",
+        "security": [
+          {
+            "cookieAuth": []
+          },
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "requirementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementDetail"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/requirements/{requirementId}/revise": {
+      "post": {
+        "operationId": "reviseRequirement",
+        "summary": "Proponer una sucesora conservando la revisión aprobada",
+        "tags": ["Requisitos"],
+        "description": "Bearer requiere audiencia API y task:write; cookie requiere permisos vigentes. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "cookieAuth": [],
+            "csrfToken": []
+          },
+          {
+            "agentBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "requirementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/reviseRequirementInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementMutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/requirements/{requirementId}/approve": {
+      "post": {
+        "operationId": "approveRequirement",
+        "summary": "Aprobar revisión y marcar impacto en tareas vinculadas",
+        "tags": ["Requisitos"],
+        "description": "Solo humanos OWNER/ADMIN/MANAGER. La revisión aprobada anterior se conserva como SUPERSEDED. DONE no se reabre automáticamente. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "cookieAuth": [],
+            "csrfToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "requirementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/approveRequirementInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementMutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/requirements/{requirementId}/link": {
+      "post": {
+        "operationId": "linkRequirement",
+        "summary": "Vincular o retirar tarea del mismo proyecto",
+        "tags": ["Requisitos"],
+        "description": "Solo humanos OWNER/ADMIN/MANAGER. Requiere versión actual del requisito y de la tarea; vincular requiere evaluación explícita. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "cookieAuth": [],
+            "csrfToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "requirementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/linkRequirementInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementMutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/projects/{projectId}/requirements/{requirementId}/evaluate-impact": {
+      "post": {
+        "operationId": "evaluateRequirementImpact",
+        "summary": "Evaluar impacto contra revisión aprobada vigente",
+        "tags": ["Requisitos"],
+        "description": "Solo humanos OWNER/ADMIN/MANAGER. Conserva motivo e historial; otros requisitos pendientes mantienen el gate de impacto. Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor.",
+        "security": [
+          {
+            "cookieAuth": [],
+            "csrfToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "requirementId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Origin",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri"
+            },
+            "description": "Obligatorio con cookie: origen público exacto. Bearer rechaza Origin ajeno si se envía."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            },
+            "description": "Reusar en reintentos del mismo comando/cuerpo. Con otra intención usar una clave nueva."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/evaluateRequirementImpactInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Resultado con envelope ACC",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementMutation"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Error ACC: 400 validación/JSON/cursor; 401 auth; 403 permisos/Origin/CSRF; 404 inexistente; 409 conflicto/lease/cursor; 413 tamaño; 415 JSON requerido; 422 gates; 429 límite; 500 interno; 503 no disponible. Los detalles no incluyen secretos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/openapi.json": {
       "get": {
         "operationId": "getOpenApi",
@@ -3074,6 +3633,421 @@
         "required": ["error"],
         "additionalProperties": false
       },
+      "RequirementMutation": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "publicId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "revision": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "approvedRevision": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "projectSeq": {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,18})$"
+              },
+              "taskVersion": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": ["id", "publicId", "version", "revision", "approvedRevision", "projectSeq"],
+            "additionalProperties": {}
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "projectSeq": {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,18})$"
+              }
+            },
+            "required": ["requestId"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["data", "meta"],
+        "additionalProperties": false
+      },
+      "RequirementList": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "publicId": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "approvedRevision": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["FUNCTIONAL", "NON_FUNCTIONAL"]
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["DRAFT", "APPROVED", "SUPERSEDED"]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "publicId",
+                    "version",
+                    "revision",
+                    "approvedRevision",
+                    "title",
+                    "type",
+                    "status"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "nextCursor": {
+                "type": ["string", "null"]
+              }
+            },
+            "required": ["items", "nextCursor"],
+            "additionalProperties": false
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "projectSeq": {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,18})$"
+              }
+            },
+            "required": ["requestId"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["data", "meta"],
+        "additionalProperties": false
+      },
+      "RequirementDetail": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "publicId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "revision": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "approvedRevision": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "externalRef": {
+                "type": ["string", "null"]
+              },
+              "createdBy": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+              },
+              "revisions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["FUNCTIONAL", "NON_FUNCTIONAL"]
+                    },
+                    "title": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["DRAFT", "APPROVED", "SUPERSEDED"]
+                    },
+                    "createdBy": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    },
+                    "approvedBy": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "approvedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "revision",
+                    "type",
+                    "title",
+                    "description",
+                    "reason",
+                    "status",
+                    "createdBy",
+                    "createdAt",
+                    "approvedBy",
+                    "approvedAt"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "taskId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "publicId": {
+                      "type": "string"
+                    },
+                    "taskVersion": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "evaluatedRevision": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "impactPending": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "taskId",
+                    "publicId",
+                    "taskVersion",
+                    "evaluatedRevision",
+                    "impactPending"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
+              "impactReviews": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "taskId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "reason": {
+                      "type": "string"
+                    },
+                    "principalId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z|([+-](?:[01]\\d|2[0-3]):[0-5]\\d)))$"
+                    }
+                  },
+                  "required": ["id", "taskId", "revision", "reason", "principalId", "createdAt"],
+                  "additionalProperties": {}
+                }
+              }
+            },
+            "required": [
+              "id",
+              "publicId",
+              "version",
+              "revision",
+              "approvedRevision",
+              "externalRef",
+              "createdBy",
+              "createdAt",
+              "revisions",
+              "links",
+              "impactReviews"
+            ],
+            "additionalProperties": {}
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "requestId": {
+                "type": "string"
+              },
+              "version": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "projectSeq": {
+                "type": "string",
+                "pattern": "^(?:0|[1-9]\\d{0,18})$"
+              }
+            },
+            "required": ["requestId"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["data", "meta"],
+        "additionalProperties": false
+      },
       "Health": {
         "type": "object",
         "properties": {
@@ -3478,6 +4452,63 @@
               "impactPending": {
                 "type": "boolean"
               },
+              "requirements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "publicId": {
+                      "type": "string"
+                    },
+                    "version": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "approvedRevision": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "evaluatedRevision": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "maximum": 9007199254740991
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "impactPending": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "publicId",
+                    "version",
+                    "approvedRevision",
+                    "evaluatedRevision",
+                    "impactPending"
+                  ],
+                  "additionalProperties": {}
+                }
+              },
               "completionVersion": {
                 "anyOf": [
                   {
@@ -3699,6 +4730,7 @@
               "summary",
               "criteria",
               "impactPending",
+              "requirements",
               "completionVersion",
               "evidence",
               "approvals",
@@ -3967,7 +4999,7 @@
                         },
                         "type": {
                           "type": "string",
-                          "enum": ["TASK", "SESSION", "PRINCIPAL"]
+                          "enum": ["TASK", "SESSION", "PRINCIPAL", "REQUIREMENT"]
                         }
                       },
                       "required": ["id", "type"],
@@ -5214,6 +6246,134 @@
         },
         "required": ["data", "meta"],
         "additionalProperties": false
+      },
+      "createRequirementInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["FUNCTIONAL", "NON_FUNCTIONAL"]
+          },
+          "externalRef": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        },
+        "required": ["title", "description", "type"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
+      },
+      "reviseRequirementInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["FUNCTIONAL", "NON_FUNCTIONAL"]
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["title", "description", "type", "expectedVersion", "reason"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
+      },
+      "approveRequirementInput": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "revision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": ["expectedVersion", "revision"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
+      },
+      "linkRequirementInput": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "taskVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "operation": {
+            "type": "string",
+            "enum": ["ADD", "REMOVE"]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": ["expectedVersion", "taskId", "taskVersion", "operation", "reason"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
+      },
+      "evaluateRequirementImpactInput": {
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "taskVersion": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          },
+          "reason": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 2147483647
+          }
+        },
+        "required": ["expectedVersion", "taskId", "taskVersion", "reason", "revision"],
+        "additionalProperties": false,
+        "description": "Los contratos Zod de runtime son autoritativos: normalización NFC/espacios (título de 1 a 300 caracteres; descripción, resumen, motivo y nota de 1 a 4000 tras normalizar), unicidad de IDs/roles/scopes, límites BIGINT, pares sesión/fencing, projectId XOR projectIds, consistencia de pruebas y requisitos condicionales de evidencia se validan en servidor."
       },
       "loginInput": {
         "type": "object",

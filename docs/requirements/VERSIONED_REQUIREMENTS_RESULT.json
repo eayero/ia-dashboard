@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-04T07:36:06.563Z",
+  "task": "ACC-LOCAL-014",
+  "publicId": "TASK-15",
+  "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
+  "baselineHead": "edaf57d19e8f9c7ed83d9a63ba2ad6ad6b0134f4",
+  "branch": "feat/acc-foundation",
+  "phase": "LOCAL_VERIFIED",
+  "designApprovedByUser": true,
+  "design": "docs/requirements/VERSIONED_REQUIREMENTS_DESIGN.md",
+  "plan": "docs/superpowers/plans/2026-11-04-versioned-requirements.md",
+  "delivered": [
+    "FR-004 FUNCTIONAL/NON_FUNCTIONAL requirements with REQ public IDs and exact externalRef identity",
+    "Immutable proposal revisions, human OWNER/ADMIN/MANAGER approval, approved successor supersession and preserved provenance",
+    "Project-scoped task links and immutable motivated impact evaluations against current approved revisions",
+    "Pending impact blocks review/QA/DONE; several requirements cannot clear one another's pending review",
+    "DONE and existing human validation preserved; persistent alerts on changed approved requirements",
+    "Shared transactional authorization, optimistic versions, idempotency, graph locks, audit and outbox",
+    "Seven REST operations and four MCP tools; OpenAPI with 52 operations/46 paths",
+    "Requirement history/links/reviews/alerts in snapshot and REQUIREMENT events through delta/WS",
+    "Task detail includes linked requirements and evaluated revisions",
+    "Startup rejects missing requirement migration; HTTP integration transport uses an ephemeral port"
+  ],
+  "migration": {
+    "file": "packages/db/migrations/008_requirements.sql",
+    "appliedToIsolatedTestSchemas": true,
+    "appliedToRunningLocalService": false,
+    "previousMigrationsModified": false
+  },
+  "checks": [
+    {
+      "command": "node --experimental-strip-types --test packages/domain/src/*.test.ts packages/contracts/src/*.test.ts apps/api/src/*.test.ts apps/web/src/*.test.ts",
+      "status": "PASS",
+      "passed": 58,
+      "failed": 0
+    },
+    {
+      "command": "node --env-file=.env --import tsx --test --test-concurrency=1 tests/integration/*.test.ts",
+      "status": "PASS",
+      "passed": 101,
+      "failed": 0
+    },
+    {
+      "command": "pnpm run typecheck",
+      "status": "PASS",
+      "packages": 5
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc --noEmit -p tests/tsconfig.json",
+      "status": "PASS"
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js .",
+      "status": "PASS"
+    },
+    {
+      "command": "node node_modules/prettier/bin/prettier.cjs --check .",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm run build",
+      "status": "PASS",
+      "packages": 5,
+      "warning": "Existing web bundle exceeds Vite 500 kB warning threshold"
+    },
+    {
+      "command": "node --test tests/agents-setup.test.mjs tests/agent-protocol.test.mjs",
+      "status": "PASS",
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "command": "node --import tsx scripts/export-openapi.mjs --check",
+      "status": "PASS"
+    },
+    {
+      "command": "git -c core.autocrlf=false diff --check",
+      "status": "PASS"
+    }
+  ],
+  "debugging": [
+    "Baseline: all 56 unit tests passed; 76/92 integrations passed and 16 HTTP tests failed from EADDRINUSE on occupied 55173. HTTP harness now listens on port 0 while preserving public Origin/CSRF assertions; running service was not stopped.",
+    "New contracts and database commands were observed failing before implementation; REST/MCP tests observed missing routes/tools before implementation.",
+    "Migration count assertion advanced from 7 to 8 for the added migration; all checksum and data preservation assertions retained.",
+    "New HTTP fixture task is cancelled through API after verification to preserve existing BACKLOG pagination assertions."
+  ],
+  "review": {
+    "method": "Self-review of design, SQL lock order, transaction rollback, permissions, immutable provenance, task gates and contracts",
+    "independent": false,
+    "delegation": false
+  },
+  "mcp": {
+    "sessionId": "350fadbb-5314-46f7-96f4-13c7e01735d5",
+    "sessionVersion": 2,
+    "sessionEnded": true,
+    "claimReleased": true,
+    "status": "IN_PROGRESS",
+    "version": 8,
+    "workRevision": 3,
+    "summaryReadVerified": true,
+    "context": {
+      "pages": 2,
+      "records": 108,
+      "complete": true,
+      "projectSeq": "201"
+    },
+    "delta": {
+      "events": 9,
+      "complete": true,
+      "projectSeq": "201"
+    },
+    "synchronization": "VERIFIED_NATIVE_MCP",
+    "formalEvidence": "PENDING_UNPUBLISHED"
+  },
+  "notRun": [
+    "No UI implemented or browser review for requirement screens; visual design remains pending",
+    "No update/restart/deployment or migration of the running local service",
+    "No native Codex/Claude discovery of the new tools on the old running service; new tools verified with official MCP SDK on isolated instances",
+    "No load test or independent security/QA review"
+  ],
+  "constraintsObserved": {
+    "installations": 0,
+    "subagents": 0,
+    "commits": 0,
+    "pushes": 0,
+    "merges": 0,
+    "deployments": 0,
+    "existingProtocolChangesPreserved": true
+  },
+  "remaining": [
+    "Requirements UI visual design and implementation",
+    "Decisions, questions and their impact flows remain pending under ACC-LOCAL-014",
+    "Formal published evidence and task closure require separately authorized publication"
+  ]
+}

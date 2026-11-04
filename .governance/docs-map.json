@@ -1,0 +1,14 @@
+{
+  "constitution": "COMO-TRABAJAMOS.md",
+  "map": "docs/architecture/README.md",
+  "status": "docs/project/STATUS.md",
+  "history": "docs/DECISIONS.md",
+  "history_archive": "docs/IMPLEMENTATION_STATUS.md",
+  "agents": "AGENTS.md",
+  "context": "docs/SPECIFICATION.md",
+  "contract": "packages/contracts/src/index.ts",
+  "tests": "docs/quality/EVIDENCE.md",
+  "regression": "docs/quality/COMMANDS.md",
+  "adr_dir": "docs/adr",
+  "adr_index": "docs/adr/README.md"
+}

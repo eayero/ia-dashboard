@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 1,
+  "phase": "LOCAL_MIGRATION_VERIFIED",
+  "checkedAt": "2026-11-04T06:56:09.894Z",
+  "task": "ACC-LOCAL-019",
+  "baselineHead": "edaf57d19e8f9c7ed83d9a63ba2ad6ad6b0134f4",
+  "report": "REPORT.md",
+  "steps": [
+    {
+      "step": 1,
+      "description": "Read complete template",
+      "status": "PASS",
+      "templateFiles": 29,
+      "evidence": "TEMPLATE-MANIFEST.json"
+    },
+    {
+      "step": 2,
+      "description": "Audit current project",
+      "status": "PASS",
+      "evidence": "DIAGNOSIS.md"
+    },
+    {
+      "step": 3,
+      "description": "Classify preserved and superseded rules",
+      "status": "PASS",
+      "evidence": "DIAGNOSIS.md"
+    },
+    {
+      "step": 4,
+      "description": "Plan before instruction integration; preserve originals",
+      "status": "PASS",
+      "evidence": ["PLAN.md", "BASELINE.json", "original/"]
+    },
+    {
+      "step": 5,
+      "description": "Integrate universal protocol with ACC overrides",
+      "status": "PASS"
+    },
+    {
+      "step": 6,
+      "description": "Detect stack and available ECC skills without installing",
+      "status": "PASS",
+      "detectedProfiles": 7,
+      "availableSkillFiles": 311,
+      "selected": 22,
+      "missingSelected": 0
+    },
+    {
+      "step": 7,
+      "description": "Generate specialized agent definitions",
+      "status": "PASS",
+      "canonicalProfiles": 8,
+      "claudeAdapters": 7,
+      "agentsExecuted": 0
+    },
+    {
+      "step": 8,
+      "description": "Separate stable instructions from detail and history",
+      "status": "PASS"
+    },
+    {
+      "step": 9,
+      "description": "Trace requirements, decisions, tasks and evidence",
+      "status": "PASS",
+      "productRequirements": 20,
+      "processRequirements": 1,
+      "catalogTasks": 19,
+      "projectTasks": 25,
+      "nativeMcpSummaryReadVerified": true,
+      "contextComplete": true,
+      "deltaComplete": true
+    },
+    {
+      "step": 10,
+      "description": "Claude Code and Codex continuation",
+      "status": "PASS_STATIC_ONLY",
+      "staticChecks": "Entry points, shared authority, references, metadata, paths and generation consistency",
+      "freshRuntimeExecution": "NOT_RUN"
+    }
+  ],
+  "checks": [
+    {
+      "command": "node --test tests/agents-setup.test.mjs tests/agent-protocol.test.mjs",
+      "status": "PASS",
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "command": "node scripts/agents/setup.mjs --root . --check",
+      "status": "PASS"
+    },
+    {
+      "command": "node node_modules/eslint/bin/eslint.js scripts/agents tests/agents-setup.test.mjs tests/agent-protocol.test.mjs",
+      "status": "PASS"
+    },
+    {
+      "command": "node node_modules/prettier/bin/prettier.cjs --check .",
+      "status": "PASS"
+    },
+    {
+      "command": "node scripts/agents/verify-migration.mjs",
+      "status": "PASS",
+      "protectedBaselineFilesUnchanged": 148,
+      "totalBaselineFiles": 155,
+      "originalInstructionsExact": 3,
+      "universalSourceExact": true,
+      "oldTaskScopesPreserved": 18,
+      "headUnchanged": true,
+      "indexUnchanged": true
+    },
+    {
+      "command": "git -c core.autocrlf=false diff --check",
+      "status": "PASS"
+    }
+  ],
+  "mcp": {
+    "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+    "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
+    "publicId": "TASK-25",
+    "status": "IN_PROGRESS",
+    "version": 7,
+    "workRevision": 3,
+    "sessionId": "3bcbbee4-0f65-45ce-b975-61c8efa7e6e6",
+    "sessionVersion": 3,
+    "sessionEnded": true,
+    "claimReleased": true,
+    "summaryReadVerified": true,
+    "context": {
+      "pages": 2,
+      "complete": true,
+      "projectSeq": "192"
+    },
+    "delta": {
+      "complete": true,
+      "events": 0,
+      "projectSeq": "192"
+    },
+    "formalEvidence": "PENDING_UNPUBLISHED",
+    "humanValidation": false
+  },
+  "notRun": [
+    {
+      "check": "Fresh Claude Code/Codex agent or model execution",
+      "reason": "Definitions were generated; runtime activation was not performed. Claude CLI 2.1.317 detected; Codex CLI not on PATH."
+    },
+    {
+      "check": "ECC Python documentation auditor",
+      "reason": "Python not detected; no installation requested or performed."
+    },
+    {
+      "check": "Product unit/integration/build/deployment",
+      "reason": "No product changes. Existing 56 unit/92 integration results are historical and were not rerun."
+    }
+  ],
+  "constraintsObserved": {
+    "functionalCodeChanged": false,
+    "architectureChanged": false,
+    "documentationDeleted": false,
+    "externalTemplateChanged": false,
+    "skillsInstalled": 0,
+    "toolsInstalled": 0,
+    "agentsExecuted": 0,
+    "commits": 0,
+    "pushes": 0,
+    "merges": 0,
+    "deployments": 0
+  },
+  "pending": [
+    "Fresh harness runtime validation and actual skill loading",
+    "Formal HTTPS evidence and MCP task closure require a future authorized publication"
+  ],
+  "risks": [
+    "ECC availability is environment-specific; redetect and review after updates",
+    "Static validation does not prove fresh runtime activation",
+    "Frozen migration baseline is an adoption audit, not a permanent product regression gate"
+  ]
+}

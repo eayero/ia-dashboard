@@ -1,7 +1,10 @@
-﻿# Instrucciones para Claude
+# Entrada para Claude Code
 
-Antes de trabajar en este repositorio, lee [README.md](README.md) y aplica
-[COMO-TRABAJAMOS.md](COMO-TRABAJAMOS.md), la guía compartida con Codex.
+Aplica [AGENTS.md](AGENTS.md) y [COMO-TRABAJAMOS.md](COMO-TRABAJAMOS.md).
+El arranque incluye config/project.json y diagnóstico de stack de solo lectura.
+No presume ejecución automática de scripts, skills o agentes al abrir una carpeta.
 
-Mantén las reglas comunes en esa guía para evitar duplicarlas o contradecirlas
-entre este archivo y [AGENTS.md](AGENTS.md).
+Los adaptadores de .claude/agents remiten a perfiles canónicos en agents/generated.
+Comprueba compatibilidad del runtime y autorización antes de ejecutarlos. No copies
+sus formatos a Codex ni declares QA independiente sin una revisión distinta real.
+La continuidad compartida está en docs/handoffs/LATEST.md, no en conversaciones privadas.

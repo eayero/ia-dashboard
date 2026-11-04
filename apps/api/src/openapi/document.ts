@@ -36,9 +36,85 @@ type Definition = {
   response?: keyof typeof responseModels;
   idempotent?: boolean;
   description?: string;
-  query?: 'tasks' | 'context' | 'events';
+  query?: 'tasks' | 'context' | 'events' | 'requirements';
 };
 const definitions: Definition[] = [
+  {
+    path: '/projects/{projectId}/requirements',
+    method: 'get',
+    operationId: 'listRequirements',
+    summary: 'Listar requisitos versionados',
+    tag: 'Requisitos',
+    response: 'RequirementList',
+    query: 'requirements',
+  },
+  {
+    path: '/projects/{projectId}/requirements/{requirementId}',
+    method: 'get',
+    operationId: 'getRequirement',
+    summary: 'Consultar revisiones, vínculos y evaluaciones de impacto',
+    tag: 'Requisitos',
+    response: 'RequirementDetail',
+  },
+  {
+    path: '/projects/{projectId}/requirements',
+    method: 'post',
+    operationId: 'createRequirement',
+    summary: 'Proponer requisito o recuperar identidad externa exacta',
+    tag: 'Requisitos',
+    response: 'RequirementMutation',
+    body: contracts.createRequirementSchema,
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/requirements/{requirementId}/revise',
+    method: 'post',
+    operationId: 'reviseRequirement',
+    summary: 'Proponer una sucesora conservando la revisión aprobada',
+    tag: 'Requisitos',
+    response: 'RequirementMutation',
+    body: contracts.reviseRequirementSchema,
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/requirements/{requirementId}/approve',
+    method: 'post',
+    operationId: 'approveRequirement',
+    summary: 'Aprobar revisión y marcar impacto en tareas vinculadas',
+    tag: 'Requisitos',
+    access: 'cookie',
+    response: 'RequirementMutation',
+    body: contracts.approveRequirementSchema,
+    idempotent: true,
+    description:
+      'Solo humanos OWNER/ADMIN/MANAGER. La revisión aprobada anterior se conserva como SUPERSEDED. DONE no se reabre automáticamente.',
+  },
+  {
+    path: '/projects/{projectId}/requirements/{requirementId}/link',
+    method: 'post',
+    operationId: 'linkRequirement',
+    summary: 'Vincular o retirar tarea del mismo proyecto',
+    tag: 'Requisitos',
+    access: 'cookie',
+    response: 'RequirementMutation',
+    body: contracts.linkRequirementSchema,
+    idempotent: true,
+    description:
+      'Solo humanos OWNER/ADMIN/MANAGER. Requiere versión actual del requisito y de la tarea; vincular requiere evaluación explícita.',
+  },
+  {
+    path: '/projects/{projectId}/requirements/{requirementId}/evaluate-impact',
+    method: 'post',
+    operationId: 'evaluateRequirementImpact',
+    summary: 'Evaluar impacto contra revisión aprobada vigente',
+    tag: 'Requisitos',
+    access: 'cookie',
+    response: 'RequirementMutation',
+    body: contracts.evaluateRequirementImpactSchema,
+    idempotent: true,
+    description:
+      'Solo humanos OWNER/ADMIN/MANAGER. Conserva motivo e historial; otros requisitos pendientes mantienen el gate de impacto.',
+  },
   {
     path: '/openapi.json',
     method: 'get',

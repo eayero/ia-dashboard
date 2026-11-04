@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "template": "plantilla-universal-agentes-v1.3-ECC/agent-project-starter",
+  "files": [
+    {
+      "path": ".claude/skills/scala-akka-engineering/SKILL.md",
+      "bytes": 2415,
+      "sha256": "f2508fca918544bd7ee9735e7c9e8df3cc25e3f0ce34c2f83d18a7edf3f0d137"
+    },
+    {
+      "path": "agents/profiles/catalog.json",
+      "bytes": 5113,
+      "sha256": "56a353212c6db3c05ece2ad4b1a04e9eea408e02a881494f1a1ed63041ef40ed"
+    },
+    {
+      "path": "agents/README.md",
+      "bytes": 955,
+      "sha256": "41147d07d5a1db65dda93f963111782400caed9a8c3d98a200bca5682f4309a2"
+    },
+    {
+      "path": "agents/roles/architect.md",
+      "bytes": 999,
+      "sha256": "3ecc66ca1d368bb4b7c8fc9a47e068d81e8c8fea340b4f1f04125de87f541d29"
+    },
+    {
+      "path": "agents/roles/coordinator.md",
+      "bytes": 1039,
+      "sha256": "f15de27c2a5b48d3dadb0bb4a7662e8b2b12f44ff62488d1d9c242cefbc9ad0d"
+    },
+    {
+      "path": "agents/roles/design-reviewer.md",
+      "bytes": 1173,
+      "sha256": "78ca34951e745922cee4705a9c96b226fa054da150321b1a07b0d8d14e0a2145"
+    },
+    {
+      "path": "agents/roles/developer.md",
+      "bytes": 1031,
+      "sha256": "9530f5f947b156915c3548a88ad57c351ce723e40499f26b1964ad68ecbd6e77"
+    },
+    {
+      "path": "agents/roles/qa-engineer.md",
+      "bytes": 1143,
+      "sha256": "20cc0791f52f30cd0223f506983d786e0a08d923be91e2790c35846e95e4d7be"
+    },
+    {
+      "path": "agents/roles/requirements-analyst.md",
+      "bytes": 1080,
+      "sha256": "d98321df0bdf951e430bde082176eceabc9cab8b8b00ecf917dc346de64a707d"
+    },
+    {
+      "path": "agents/roles/security-reviewer.md",
+      "bytes": 1004,
+      "sha256": "cfbd22485214a483bec81e71c02488bc21dfbdb28f39fda7cffb18cfa850064f"
+    },
+    {
+      "path": "agents/roles/ux-designer.md",
+      "bytes": 1093,
+      "sha256": "074dd58f95711ccabe86dc7a285f9f2f0a8d6c1dd8b794b4d25449e35038ba07"
+    },
+    {
+      "path": "agents/templates/RESULT.md",
+      "bytes": 513,
+      "sha256": "22ec2a573f127f719c66abc97e08bbdedef3ca072beda9a8fead28676e88c920"
+    },
+    {
+      "path": "agents/templates/TASK-DELEGATION.md",
+      "bytes": 496,
+      "sha256": "82420e0e8b24ce86f6cc1eb0e124df58459f78a4a975cc5a92b7850d57ee4c61"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 1023,
+      "sha256": "be1ccdc84e134c789aaec1dd868e40379762d1ebb6725e2e004d64fccdb23ec4"
+    },
+    {
+      "path": "CLAUDE.md",
+      "bytes": 688,
+      "sha256": "28e1a750164f5ea3b92fe9882b13e2e996d672fcb787c883b38b3de9cbc2b15b"
+    },
+    {
+      "path": "COMO-TRABAJAMOS.md",
+      "bytes": 22289,
+      "sha256": "0a87b157640d8ef88513f5913202074d90ab8c0101c20ec0618d81cb4948c3aa"
+    },
+    {
+      "path": "config/project.json",
+      "bytes": 1826,
+      "sha256": "96efdc3f287a659a5a0eeea9d2a21611fd529e8b01f0b9818a5e430916fb93ba"
+    },
+    {
+      "path": "docs/architecture/README.md",
+      "bytes": 149,
+      "sha256": "7191140e2f5ed0b89a60004da0b61e799a7edfc2f1544d6a24bbe182ec1e4aec"
+    },
+    {
+      "path": "docs/decisions/DECISIONS.md",
+      "bytes": 328,
+      "sha256": "483c9d761de72500dffd5d6058af691e4f1ec43a12598e639c008c00df79d423"
+    },
+    {
+      "path": "docs/handoffs/LATEST.md",
+      "bytes": 380,
+      "sha256": "ee0d0ff3b0a4c43309f735cbf27511ec56455ad94d4470c35fdc2bc98440fa1c"
+    },
+    {
+      "path": "docs/process/ECC-SKILLS.md",
+      "bytes": 2279,
+      "sha256": "0ae35116796ba629cbc73f98860fdffa17f64654f674300b4d1d8dcd06024d81"
+    },
+    {
+      "path": "docs/project/CHARTER.md",
+      "bytes": 383,
+      "sha256": "23c837d43e98654b795266f1d5af62cfa79d8197a97057aedc5bb464278950da"
+    },
+    {
+      "path": "docs/project/STATUS.md",
+      "bytes": 651,
+      "sha256": "420272523ff57ba6edf83091a1f5e3361ab4c7b1763fc5612e06dcfe609071a3"
+    },
+    {
+      "path": "docs/quality/EVIDENCE.md",
+      "bytes": 297,
+      "sha256": "3084429a08eb3ae085c49bf3d9afa43878d77c5902018f8300e2d120ee601c7a"
+    },
+    {
+      "path": "docs/requirements/README.md",
+      "bytes": 151,
+      "sha256": "00c4e393590f4cd2634ece53f336d4fc555ffba0b27f32577192c15ecce906c0"
+    },
+    {
+      "path": "docs/tasks/TASKS.md",
+      "bytes": 399,
+      "sha256": "1140759b2c87d2d7b6ed75f89b45e5e59431fe3e5a6843dcd4fdc6b7f00587c9"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4085,
+      "sha256": "13225b93eab0ffbfc7b6d9e4e7ac23118d8fb2c0b4edd9c1cba799f4439e331f"
+    },
+    {
+      "path": "scripts/agents/setup.mjs",
+      "bytes": 9127,
+      "sha256": "e590b2ccda1cd98e594d9b2e435e3f0d563f1e098969a1461328f01da75d8754"
+    },
+    {
+      "path": "tests/agents-setup.test.mjs",
+      "bytes": 2397,
+      "sha256": "f56b2657cf7a233dba8b84b2d07cd16bd1f24f51d213b83668539dd53290715f"
+    }
+  ]
+}

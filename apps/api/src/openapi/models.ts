@@ -64,7 +64,65 @@ const mutation = z.looseObject({ version, projectSeq: sequenceSchema.optional() 
   description:
     'Resultado de comando. Los campos adicionales dependen de la operación (id, estado, revisión, lease o procedencia).',
 });
+const requirement = z.looseObject({
+  id,
+  publicId: z.string(),
+  version,
+  revision: version,
+  approvedRevision: version.nullable(),
+});
+const requirementRevision = z.looseObject({
+  revision: version,
+  type: z.enum(['FUNCTIONAL', 'NON_FUNCTIONAL']),
+  title: z.string(),
+  description: z.string(),
+  reason: z.string(),
+  status: z.enum(['DRAFT', 'APPROVED', 'SUPERSEDED']),
+  createdBy: id,
+  createdAt: date,
+  approvedBy: id.nullable(),
+  approvedAt: date.nullable(),
+});
 export const responseModels = {
+  RequirementMutation: requirement.extend({
+    projectSeq: sequenceSchema,
+    taskVersion: version.optional(),
+  }),
+  RequirementList: z.strictObject({
+    items: z.array(
+      requirement.extend({
+        title: z.string(),
+        type: z.enum(['FUNCTIONAL', 'NON_FUNCTIONAL']),
+        status: z.enum(['DRAFT', 'APPROVED', 'SUPERSEDED']),
+      }),
+    ),
+    nextCursor: z.string().nullable(),
+  }),
+  RequirementDetail: requirement.extend({
+    externalRef: z.string().nullable(),
+    createdBy: id,
+    createdAt: date,
+    revisions: z.array(requirementRevision),
+    links: z.array(
+      z.looseObject({
+        taskId: id,
+        publicId: z.string(),
+        taskVersion: version,
+        evaluatedRevision: version.nullable(),
+        impactPending: z.boolean(),
+      }),
+    ),
+    impactReviews: z.array(
+      z.looseObject({
+        id,
+        taskId: id,
+        revision: version,
+        reason: z.string(),
+        principalId: id,
+        createdAt: date,
+      }),
+    ),
+  }),
   Health: z.strictObject({ status: z.literal('UP') }),
   Csrf: z.strictObject({ csrfToken: z.string() }),
   Identity: z.looseObject({
@@ -87,6 +145,16 @@ export const responseModels = {
       z.looseObject({ id: z.string(), description: z.string(), required: z.boolean() }),
     ),
     impactPending: z.boolean(),
+    requirements: z.array(
+      z.looseObject({
+        id,
+        publicId: z.string(),
+        version,
+        approvedRevision: version.nullable(),
+        evaluatedRevision: version.nullable(),
+        impactPending: z.boolean(),
+      }),
+    ),
     completionVersion: version.nullable(),
     evidence: z.array(
       z.looseObject({

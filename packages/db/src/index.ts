@@ -1,6 +1,11 @@
 import { createHash, randomUUID } from 'node:crypto';
 import pg from 'pg';
 import {
+  requirementCommand,
+  requirementSchemas,
+  type RequirementOperation,
+} from './requirements.ts';
+import {
   canonicalJson,
   DomainError,
   transition,
@@ -125,7 +130,7 @@ export class CoordinationStore {
   private async counter(
     client: pg.PoolClient,
     projectId: string,
-    kind: 'TASK' | 'EVENT',
+    kind: 'TASK' | 'EVENT' | 'REQ',
   ): Promise<string> {
     const result = await client.query<{ value: string }>(
       `INSERT INTO project_counters(project_id,kind,value) VALUES ($1,$2,1)
@@ -142,7 +147,7 @@ export class CoordinationStore {
     action: string,
     payload: unknown,
     sessionId: string | null = null,
-    entityType: 'TASK' | 'SESSION' | 'PRINCIPAL' = 'TASK',
+    entityType: 'TASK' | 'SESSION' | 'PRINCIPAL' | 'REQUIREMENT' = 'TASK',
   ): Promise<string> {
     const seq = await this.counter(client, context.projectId, 'EVENT');
     const id = randomUUID();
@@ -163,6 +168,52 @@ export class CoordinationStore {
     );
     await client.query('INSERT INTO event_outbox(event_id) VALUES ($1)', [id]);
     return seq;
+  }
+
+  private requirement(
+    context: CommandContext,
+    key: string,
+    operation: RequirementOperation,
+    id: string | null,
+    payload: unknown,
+  ) {
+    const input = requirementSchemas[operation].parse(payload);
+    return this.command(
+      context,
+      `requirement.${operation}`,
+      key,
+      { id, ...input },
+      (client, actor) =>
+        requirementCommand(
+          {
+            client,
+            actor,
+            ...context,
+            counter: () => this.counter(client, context.projectId, 'REQ'),
+            event: (entityId, action, data, type = 'REQUIREMENT') =>
+              this.event(client, context, entityId, action, data, null, type),
+          },
+          operation,
+          id,
+          input,
+        ),
+      true,
+    );
+  }
+  createRequirement(context: CommandContext, key: string, payload: unknown) {
+    return this.requirement(context, key, 'create', null, payload);
+  }
+  reviseRequirement(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.requirement(context, key, 'revise', id, payload);
+  }
+  approveRequirement(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.requirement(context, key, 'approve', id, payload);
+  }
+  linkRequirement(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.requirement(context, key, 'link', id, payload);
+  }
+  evaluateRequirementImpact(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.requirement(context, key, 'evaluate', id, payload);
   }
 
   async createTask(context: CommandContext, key: string, payload: unknown): Promise<Task> {
