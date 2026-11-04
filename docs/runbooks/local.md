@@ -26,7 +26,7 @@ Desde la raíz del repositorio:
 La imagen usa Node 24 Alpine y Nginx; el primer build necesita acceso a los
 registros y repositorios de paquetes. La API interna escucha en 0.0.0.0:53000
 dentro del contenedor. En el host solo se publica en 127.0.0.1. Nginx sirve la UI
-y hace proxy de API/MCP. El proxy WS está preparado; su servidor sigue pendiente.
+y hace proxy de API/MCP y WebSocket; el servidor WS y reconexión están implementados.
 
 Migraciones y bootstrap se ejecutan antes de la API. PostgreSQL y Redis tienen
 volúmenes persistentes. Bootstrap monta `.cache` para conservar las credenciales;
@@ -95,11 +95,12 @@ pnpm format:check
 
 Las integraciones usan esquemas PostgreSQL aleatorios `acc_test_*` y los eliminan
 al finalizar; no modifican el esquema habitual ni borran volúmenes. Solo ejecutarlas
-contra la BD local. Las pruebas HTTP usan temporalmente 55173: detener UI/preview
-antes y restaurarla después. La API habitual en 53000 puede seguir funcionando.
+contra la BD local. Las pruebas HTTP usan puertos efímeros sin detener UI/preview
+ni la API habitual en 53000.
 
 La migración 005 añade usuarios locales, credenciales de agentes, límites de login
 y auditoría de identidad; las tablas OIDC históricas conservan sus referencias.
 La coordinación sigue validando identidad, membresía, versión, claim y gates
 dentro de transacciones. Redis recibe eventos después del commit mediante outbox.
-Preguntas, requisitos, decisiones y servidor WS siguen pendientes.
+Requisitos versionados y servidor WS están implementados; preguntas, decisiones
+y pantallas de gestión de requisitos siguen pendientes.

@@ -23,8 +23,8 @@ node --import tsx scripts/export-openapi.mjs --check
 ```
 
 La exportación no necesita servicios ni secretos.
-La entrega local de requisitos necesita migración 008 antes de arrancar su API;
-las pruebas la aplican a esquemas aislados. No se ha actualizado la instancia en servicio.
+La entrega de requisitos necesita migración 008 antes de arrancar su API;
+ya se aplicó a la instancia local en el despliegue de `ee55b37`.
 Ver [uso de requisitos](../requirements/VERSIONED_REQUIREMENTS_API.md).
 Las pruebas comparan el inventario de controllers Nest y comandos concretos con
 el documento, resuelven sus referencias y validan muestras reales de respuestas.

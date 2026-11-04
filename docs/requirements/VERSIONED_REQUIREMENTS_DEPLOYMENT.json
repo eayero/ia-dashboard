@@ -1,0 +1,129 @@
+{
+  "checkedAt": "2026-11-04T08:24:52.386Z",
+  "codeCommit": "ee55b37d75652bb08d9e444975071f709c431c11",
+  "branch": "feat/acc-foundation",
+  "pushed": true,
+  "target": "local Docker Compose",
+  "origin": "http://localhost:55173",
+  "deploySucceeded": true,
+  "backup": "Private local backup under ignored .cache; no database content or secrets published",
+  "services": {
+    "api": "healthy",
+    "ui": "healthy",
+    "postgres": "healthy",
+    "redis": "healthy",
+    "worker": "running",
+    "migrate": "exited 0",
+    "bootstrap": "exited 0"
+  },
+  "images": {
+    "api": "sha256:54c7eff7cda990ae30aba7e7151a3068df71bdccfa8a1b23e19d91996cfc94fb",
+    "ui": "sha256:02a4b88aa56f6d7bac132b3efeca0c71e10c8393c5bf817221d8f371d956a90f"
+  },
+  "verification": {
+    "checkedAt": "2026-11-04T08:24:52.386Z",
+    "origin": "http://localhost:55173",
+    "migrationCount": 8,
+    "existingRowsUnchanged": true,
+    "credentialFilesUnchanged": true,
+    "tables": {
+      "projects": 2,
+      "principals": 9,
+      "local_users": 4,
+      "project_members": 11,
+      "agent_profiles": 5,
+      "agent_credentials": 8,
+      "work_items": 25
+    },
+    "http": {
+      "ui": 200,
+      "readiness": 200,
+      "anonymousMe": 401,
+      "missingAsset": 404,
+      "openApiMatchesArtifact": true
+    },
+    "mcp": {
+      "tools": 19,
+      "requirementToolsPresent": true,
+      "listRequirements": true,
+      "contextPages": 2,
+      "contextComplete": true,
+      "deltaComplete": true
+    }
+  },
+  "regression": {
+    "unit": 58,
+    "integration": 101,
+    "protocol": 16,
+    "lint": true,
+    "format": true,
+    "diffCheck": true,
+    "dockerBuild": true
+  },
+  "mcp": {
+    "context": {
+      "pages": 2,
+      "records": 117,
+      "complete": true,
+      "projectSeq": "219"
+    },
+    "delta": {
+      "events": 18,
+      "complete": true,
+      "projectSeq": "219"
+    },
+    "session": {
+      "id": "0bcb6bd7-8766-443a-9508-e738e992ea4d",
+      "version": 2,
+      "ended": true,
+      "claimsReleased": true
+    },
+    "tasks": [
+      {
+        "id": "d001e794-fc3e-4b42-86a6-60a45d413180",
+        "publicId": "TASK-15",
+        "status": "IN_PROGRESS",
+        "version": 14,
+        "workRevision": 4,
+        "evidence": [
+          {
+            "id": "419e46b2-5e05-452d-8d59-20647535f3e9",
+            "kind": "OTHER",
+            "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
+            "workRevision": 4,
+            "repositoryId": null,
+            "commit": null,
+            "result": null,
+            "acceptedBy": null
+          }
+        ],
+        "humanValidated": false
+      },
+      {
+        "id": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
+        "publicId": "TASK-25",
+        "status": "DONE",
+        "version": 15,
+        "workRevision": 4,
+        "evidence": [
+          {
+            "id": "42ac45bc-69a6-4845-ae33-17d809280609",
+            "kind": "OTHER",
+            "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/process/migrations/2026-11-04-ecc/RESULT.json",
+            "workRevision": 4,
+            "repositoryId": null,
+            "commit": null,
+            "result": null,
+            "acceptedBy": null
+          }
+        ],
+        "humanValidated": false
+      }
+    ]
+  },
+  "limitations": [
+    "Local development deployment only; no production target configured",
+    "Requirements UI and other MVP entities remain pending",
+    "Protocol adoption validated statically; fresh model/agent runtime execution not performed"
+  ]
+}

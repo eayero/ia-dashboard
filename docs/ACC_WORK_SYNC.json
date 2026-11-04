@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-04T07:36:06.563Z",
+  "checkedAt": "2026-11-04T08:26:32.665Z",
   "method": "native Codex MCP tools",
   "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
   "publishedCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
@@ -8,14 +8,14 @@
   "previousTaskIdsPreserved": true,
   "context": {
     "pages": 2,
-    "records": 108,
+    "records": 117,
     "complete": true,
-    "projectSeq": "201"
+    "projectSeq": "219"
   },
   "delta": {
-    "events": 9,
+    "events": 18,
     "complete": true,
-    "projectSeq": "201"
+    "projectSeq": "219"
   },
   "publishedWorkReconciled": [
     {
@@ -179,7 +179,7 @@
     }
   ],
   "session": {
-    "id": "350fadbb-5314-46f7-96f4-13c7e01735d5",
+    "id": "0bcb6bd7-8766-443a-9508-e738e992ea4d",
     "version": 2,
     "ended": true,
     "claimsReleased": true
@@ -397,11 +397,22 @@
       "fileId": "ACC-LOCAL-014",
       "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
       "status": "IN_PROGRESS",
-      "version": 8,
-      "workRevision": 3,
-      "summary": "Diseño de requisitos versionados FR-004 aprobado expresamente por el usuario e implementado localmente. Diseño docs/requirements/VERSIONED_REQUIREMENTS_DESIGN.md, plan docs/superpowers/plans/2026-11-04-versioned-requirements.md, resultado docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json y uso VERSIONED_REQUIREMENTS_API.md. Migración008 nueva conserva001–007; REQ-n/externalRef, FUNCTIONAL/NON_FUNCTIONAL, revisiones inmutables, agentes proponen y OWNER/ADMIN/MANAGER humanos aprueban(Q23), supersesión, vínculos y evaluación motivada de revisión aprobada(Q24). Varios requisitos mantienen impactos independientes; gate review/QA/DONE, DONE/OK humano conservados y alertas persistentes. Transacción/autorización/idempotencia/locks grafo/auditoría/outbox compartidos; FK compuestas, contexto/delta y evento REQUIREMENT.7operacionesREST/4herramientasMCP nuevas; OpenAPI52operaciones/46paths y19tools en código. MCP nuevo verificado con SDKoficial en instancias aisladas, no servidor nativo anterior. Pasan58unitarias,101integracionesPG/HTTP/MCP/WS,16protocolo,tipos5paquetes+integraciones,lint,formato,build5paquetes ydiffcheck. Baseline HTTP fallabaEADDRINUSE55173: transporte pruebas usa puerto0 preservandoOrigin/CSRF; tarea sintética cancelada porAPI para no contaminarBACKLOG; contador migraciones8. Revisión propia,sin delegación. Documentación/estado/handoff/config/trazabilidad actualizados; ECCprevio preservado. Sin instalaciones,commit/push,merge,despliegue ni actualización de instancia existente;008solo en esquemas aislados. IN_PROGRESS: quedan UIrequisitos,decisiones/preguntas y evidencia formalHTTPS pendiente por no publicar. Ninguna validación humana emitida por el agente.",
+      "version": 14,
+      "workRevision": 4,
+      "summary": "Publicación y despliegue expresamente autorizados por el usuario. Código y protocolo publicados en origin/feat/acc-foundation, commit ee55b37d75652bb08d9e444975071f709c431c11. Despliegue local Compose en http://localhost:55173 completado: migración008 aplicada, API/UI/PG/Redis saludables, worker activo y migrate/bootstrap salida0. Comprobados OpenAPI52operaciones/46paths idéntico al artefacto, readiness200, anónimo401 y asset inexistente404. SDKMCP oficial sobre proxy real confirma19tools incluidas4requisitos, listado de requisitos, contexto2páginas y delta completos. Snapshot privado antes/después confirma preservación exacta de2proyectos,9principals,4usuarios,11membresías,5perfilesagente,8credenciales y25tareas, además de archivos de credenciales. Copia privada deBD en.cache excluida deGit. Repetidas58unitarias,101integraciones y16protocolo; lint/formato/diffcheck pasan; imágenes Docker construidas. Informe docs/requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json. La implementación queda publicada y desplegada, pero ACC-LOCAL-014 sigueIN_PROGRESS porque agrupaUIrequisitos,decisiones/preguntas eimpacto correspondiente pendientes. Revisión propia; sin subagentes,merge ni validación humana atribuida al agente.",
       "source": "docs/SPECIFICATION.md",
-      "evidence": [],
+      "evidence": [
+        {
+          "id": "419e46b2-5e05-452d-8d59-20647535f3e9",
+          "kind": "OTHER",
+          "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
+          "workRevision": 4,
+          "repositoryId": null,
+          "commit": null,
+          "result": null,
+          "acceptedBy": null
+        }
+      ],
       "humanValidated": false,
       "humanValidationsObserved": []
     },
@@ -475,12 +486,23 @@
     {
       "fileId": "ACC-LOCAL-019",
       "taskId": "bfa5b03c-955b-46e5-8c21-dd6e22e12bde",
-      "status": "IN_PROGRESS",
-      "version": 7,
-      "workRevision": 3,
-      "summary": "Migración local implementada tras diagnóstico/plan previos. Informe: docs/process/migrations/2026-11-04-ecc/REPORT.md y RESULT.json. Leídos/hasheados29 archivos de plantilla; protocolo original exacto y3 instrucciones previas archivadas byte por byte. Entradas breves AGENTS/CLAUDE/COMO, PROJECT-RULES, config/mapa documental e índices sin reemplazar requisitos/decisiones/historial. Trazabilidad20FR+proceso;18alcances previos preservados.8perfiles: coordinación,requisitos,arquitectura,UX,evaluación de diseño,desarrollo,QA,seguridad;7adaptadoresClaude. Detector7perfiles stack Node/Nest/React/PG/Redis/MCP/Docker;311skillsECC2.2.3 verificadas en disco,22seleccionadas disponibles,0faltantes,0instaladas. Generador adaptado para excluir.tools, hallar cachéECC, reportar ausencias y proteger personalizaciones/rutas/junctions; check readonly.16/16pruebas pasan; ESLint tooling pasa. Auditoría155archivosbase:148fuera del alcance idénticos,3originales exactos,código/arquitectura/historia intactos,HEAD e índice sin cambios. Se preservan MCPobligatorio,archivosprimarios,IN_REVIEW/IN_QA,autonomía y OKhumano posteriorDONE,propiedad multi-proyecto. Sin subagentes/modelos,instalaciones,commit/push/merge/despliegue ni cambio funcional. CompatibilidadClaude/Codex estática verificada; sesión nueva/carga real de agentes NOT_RUN, CodexCLI noPATH, auditorPython NOT_RUN; suites/build producto no repetidas(históricas). EstadoIN_PROGRESS: falta evidenciaformalHTTPS porque publicar está prohibido; no URLinventada ni validaciónhumana. Snapshotfinal incluye comprobaciónformato/hashes y conciliación completa tras cerrar sesión.",
+      "status": "DONE",
+      "version": 15,
+      "workRevision": 4,
+      "summary": "Migración deprotocoloECC local implementada y estáticamente verificada; diagnóstico/plan/informes y16pruebas publicados por nueva autorización expresa del usuario en commit ee55b37d75652bb08d9e444975071f709c431c11, origin/feat/acc-foundation. Evidencia formalHTTPS real del informe yresultado en esecommit. Se preserva auditoría histórica de adopción:29fuentes,3originales exactos,8perfiles/7adaptadores y7tecnologías; sin instalación de skills ni agentes ejecutados. Los cambios funcionales posteriores deFR-004 fueron aprobados y no invalidan la auditoría histórica del instante de adopción. Las16pruebas actuales del protocolo pasan. No se atribuye ejecución real deClaude/Codex, carga efectiva de skills ni revisión independiente. Publicación resuelve el pendiente de evidencia; se cierra la adopción estática dentro del alcance original. No validación humana emitida por el agente.",
       "source": "docs/process/migrations/2026-11-04-ecc/PLAN.md",
-      "evidence": [],
+      "evidence": [
+        {
+          "id": "42ac45bc-69a6-4845-ae33-17d809280609",
+          "kind": "OTHER",
+          "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/process/migrations/2026-11-04-ecc/RESULT.json",
+          "workRevision": 4,
+          "repositoryId": null,
+          "commit": null,
+          "result": null,
+          "acceptedBy": null
+        }
+      ],
       "humanValidated": false,
       "humanValidationsObserved": []
     }
@@ -495,7 +517,8 @@
     "The six completed blocks have published immutable evidence and are DONE. Remaining MVP work is still pending; DONE does not imply human validation.",
     "Synthetic UI validation does not represent human acceptance of the development.",
     "ACC-LOCAL-019 is locally implemented and statically verified; remains IN_PROGRESS pending formal HTTPS evidence because this task forbids publication. Fresh Claude/Codex agent execution was not performed.",
-    "ACC-LOCAL-014 now includes locally verified versioned requirements FR-004 by REST/MCP. Requirements UI, decisions/questions and formal published evidence remain pending. Running local service was not upgraded."
+    "ACC-LOCAL-014 now includes locally verified versioned requirements FR-004 by REST/MCP. Requirements UI, decisions/questions and formal published evidence remain pending. Running local service was not upgraded.",
+    "Previous unpublished/old-service limitations are historical. New authorization published commit ee55b37d75652bb08d9e444975071f709c431c11 and deployed requirements locally; static ECC adoption is DONE. Broader entity task remains IN_PROGRESS."
   ],
   "ownershipVerification": {
     "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
@@ -531,16 +554,18 @@
     "sessionEnded": true,
     "claimReleased": true,
     "summaryReadVerified": true,
-    "formalEvidencePending": true,
-    "publicationAuthorized": false
+    "formalEvidencePending": false,
+    "publicationAuthorized": true,
+    "status": "DONE"
   },
   "requirementsVerification": {
     "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
     "result": "docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
+    "deployment": "docs/requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json",
     "sessionEnded": true,
     "claimReleased": true,
     "summaryReadVerified": true,
-    "formalEvidencePending": true,
-    "publicationAuthorized": false
+    "formalEvidencePending": false,
+    "publicationAuthorized": true
   }
 }

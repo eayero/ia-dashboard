@@ -4,10 +4,11 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
-Entrega local nueva: requisitos versionados por REST/MCP, aprobación humana,
+Entrega publicada y desplegada localmente: requisitos versionados por REST/MCP, aprobación humana,
 supersesión, vínculos a tareas e impacto. Ver [uso](docs/requirements/VERSIONED_REQUIREMENTS_API.md)
-y [resultado](docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json). Sin publicar;
-la instancia en servicio conserva la versión anterior y la UI de requisitos queda pendiente.
+y [resultado](docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json).
+[Despliegue verificado](docs/requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json)
+en http://localhost:55173 desde el commit `ee55b37`; la UI de requisitos queda pendiente.
 
 La entrega de administración web/móvil, flujo autónomo, agentes por usuario,
 WebSocket y OpenAPI está publicada en `feat/acc-foundation` mediante el commit
@@ -54,5 +55,5 @@ Entradas compartidas: [AGENTS](AGENTS.md), [Claude](CLAUDE.md) y
 [skills ECC verificadas](docs/process/ECC-SKILLS.md),
 [diagnóstico y plan](docs/process/migrations/2026-11-04-ecc/DIAGNOSIS.md) y
 [resultado de migración](docs/process/migrations/2026-11-04-ecc/RESULT.json).
-La adopción es local, sin cambios del producto ni publicaciones; no instala ni
-ejecuta agentes automáticamente.
+La adopción estática del protocolo se publicó con autorización posterior en
+`ee55b37`; no instala ni ejecuta agentes automáticamente.

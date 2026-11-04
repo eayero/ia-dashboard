@@ -165,13 +165,17 @@
     "merges": 0,
     "deployments": 0
   },
-  "pending": [
-    "Fresh harness runtime validation and actual skill loading",
-    "Formal HTTPS evidence and MCP task closure require a future authorized publication"
-  ],
+  "pending": ["Fresh harness runtime validation and actual skill loading"],
   "risks": [
     "ECC availability is environment-specific; redetect and review after updates",
     "Static validation does not prove fresh runtime activation",
     "Frozen migration baseline is an adoption audit, not a permanent product regression gate"
-  ]
+  ],
+  "publication": {
+    "codeCommit": "ee55b37d75652bb08d9e444975071f709c431c11",
+    "pushed": true,
+    "authorizedAfterLocalMigration": true,
+    "staticAdoptionTaskStatus": "DONE",
+    "freshRuntimeExecution": "NOT_RUN"
+  }
 }

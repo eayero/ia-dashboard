@@ -11,15 +11,20 @@ Código base publicado: `0c347e0`; seguimiento publicado: `edaf57d`, rama observ
 `feat/acc-foundation`. [Publicación verificable](../PUBLICATION_RESULT.json).
 La base publicada acreditó 56 unitarias/92 integraciones. Las comprobaciones del
 bloque actual y sus límites están en [el resultado](../requirements/VERSIONED_REQUIREMENTS_RESULT.json).
-Cambios de producto y protocolo siguen locales, sin commit/push ni despliegue.
+Requisitos y protocolo publicados en `ee55b37` en origin/feat/acc-foundation;
+despliegue local verificado en http://localhost:55173. Ver
+[resultado del despliegue](../requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json).
 
 Disponible en código: tareas/claims/idempotencia, autenticación propia y agentes por
 usuario/proyectos múltiples, contexto/delta, outbox/WS, dashboard, requisitos por
 API/MCP y OpenAPI. Pendiente: UI de requisitos, entidades de decisiones/preguntas e
 impacto correspondiente, iteraciones, creación general de proyectos, revalidación
 de Claude MCP y restantes métricas/operación/CI del MVP. [Tareas](../tasks/TASKS.md).
-La migración 008 solo se ejecutó en esquemas aislados de prueba; la instancia local
-en servicio conserva su versión previa hasta una actualización autorizada.
+Migración 008 aplicada a la instancia local. API/UI/PG/Redis saludables, worker activo;
+19 herramientas MCP, contexto/delta y conservación de datos/credenciales verificados.
+ACC-LOCAL-019 está DONE con evidencia publicada; su validación de runtimes sigue
+siendo estática, sin ejecución de agentes. ACC-LOCAL-014 continúa IN_PROGRESS por
+las otras entidades y UI pendientes.
 
 ## Restricciones y sustituciones vigentes
 
@@ -27,9 +32,10 @@ en servicio conserva su versión previa hasta una actualización autorizada.
 - No reinstalar gates humanos previos: agente recorre estados válidos; OK humano
   después de DONE. No recrear apps/mcp o paquetes propuestos solo porque figuren
   en la especificación: el gateway actual está en apps/api.
-- No editar migraciones aplicadas ni borrar volúmenes. El desarrollo funcional de
-  requisitos está autorizado; no hay autorización para instalaciones, publicación
-  ni despliegue. La restricción anterior de solo protocolo pertenecía a ACC-LOCAL-019.
+- No editar migraciones aplicadas ni borrar volúmenes. El usuario autorizó commit,
+  push y despliegue local de esta entrega; realizados sin merge ni instalaciones.
+  Producción no está configurada. La restricción anterior de solo protocolo
+  pertenecía a ACC-LOCAL-019.
 - Roles generados no acreditan subagentes ejecutados ni skills cargadas por Claude.
 
 Continuidad: [handoff](../handoffs/LATEST.md), [decisiones](../decisions/DECISIONS.md),

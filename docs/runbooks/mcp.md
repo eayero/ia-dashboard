@@ -104,7 +104,7 @@ sesión. Al retomar, consultar delta y reconciliar detalles; un cursor inválido
 expirado requiere snapshot nuevo. [Semántica de contexto y eventos](events.md).
 
 Hay 19 herramientas en el código actual. Las cuatro de requisitos se probaron con
-el SDK oficial en instancias aisladas; el servidor local anterior no se reinició.
+el SDK oficial en instancias aisladas y en el proxy local desplegado desde `ee55b37`.
 [Contrato y uso](../requirements/VERSIONED_REQUIREMENTS_API.md).
 Herramientas de decisiones y preguntas, `acc_request_approval` separado,
 skill portable y adaptador ECC siguen pendientes. No se anuncian herramientas

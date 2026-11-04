@@ -6,7 +6,7 @@
   "taskId": "d001e794-fc3e-4b42-86a6-60a45d413180",
   "baselineHead": "edaf57d19e8f9c7ed83d9a63ba2ad6ad6b0134f4",
   "branch": "feat/acc-foundation",
-  "phase": "LOCAL_VERIFIED",
+  "phase": "PUBLISHED_AND_DEPLOYED_LOCAL",
   "designApprovedByUser": true,
   "design": "docs/requirements/VERSIONED_REQUIREMENTS_DESIGN.md",
   "plan": "docs/superpowers/plans/2026-11-04-versioned-requirements.md",
@@ -25,7 +25,7 @@
   "migration": {
     "file": "packages/db/migrations/008_requirements.sql",
     "appliedToIsolatedTestSchemas": true,
-    "appliedToRunningLocalService": false,
+    "appliedToRunningLocalService": true,
     "previousMigrationsModified": false
   },
   "checks": [
@@ -91,33 +91,44 @@
     "delegation": false
   },
   "mcp": {
-    "sessionId": "350fadbb-5314-46f7-96f4-13c7e01735d5",
+    "sessionId": "0bcb6bd7-8766-443a-9508-e738e992ea4d",
     "sessionVersion": 2,
     "sessionEnded": true,
     "claimReleased": true,
     "status": "IN_PROGRESS",
-    "version": 8,
-    "workRevision": 3,
+    "version": 14,
+    "workRevision": 4,
     "summaryReadVerified": true,
     "context": {
       "pages": 2,
-      "records": 108,
+      "records": 117,
       "complete": true,
-      "projectSeq": "201"
+      "projectSeq": "219"
     },
     "delta": {
-      "events": 9,
+      "events": 18,
       "complete": true,
-      "projectSeq": "201"
+      "projectSeq": "219"
     },
     "synchronization": "VERIFIED_NATIVE_MCP",
-    "formalEvidence": "PENDING_UNPUBLISHED"
+    "formalEvidence": "PUBLISHED",
+    "evidence": [
+      {
+        "id": "419e46b2-5e05-452d-8d59-20647535f3e9",
+        "kind": "OTHER",
+        "url": "https://github.com/eayero/ia-dashboard/blob/ee55b37d75652bb08d9e444975071f709c431c11/docs/requirements/VERSIONED_REQUIREMENTS_RESULT.json",
+        "workRevision": 4,
+        "repositoryId": null,
+        "commit": null,
+        "result": null,
+        "acceptedBy": null
+      }
+    ]
   },
   "notRun": [
-    "No UI implemented or browser review for requirement screens; visual design remains pending",
-    "No update/restart/deployment or migration of the running local service",
-    "No native Codex/Claude discovery of the new tools on the old running service; new tools verified with official MCP SDK on isolated instances",
-    "No load test or independent security/QA review"
+    "Requirements UI and browser review remain pending",
+    "Fresh Claude/Codex model execution and independent review not performed",
+    "Production deployment and load tests not performed"
   ],
   "constraintsObserved": {
     "installations": 0,
@@ -130,7 +141,13 @@
   },
   "remaining": [
     "Requirements UI visual design and implementation",
-    "Decisions, questions and their impact flows remain pending under ACC-LOCAL-014",
-    "Formal published evidence and task closure require separately authorized publication"
-  ]
+    "Decisions, questions and their impact flows remain pending under ACC-LOCAL-014"
+  ],
+  "constraintsObservedScope": "Implementation phase before separately authorized commit, push and deployment",
+  "publication": {
+    "codeCommit": "ee55b37d75652bb08d9e444975071f709c431c11",
+    "pushed": true,
+    "deployed": true,
+    "result": "docs/requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json"
+  }
 }

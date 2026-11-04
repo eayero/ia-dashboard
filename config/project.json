@@ -5,7 +5,13 @@
   "lifecycle": "IMPLEMENTING",
   "language": "es",
   "structure": "monorepo",
-  "repositories": [{ "id": "dashboard", "path": ".", "remote": "origin" }],
+  "repositories": [
+    {
+      "id": "dashboard",
+      "path": ".",
+      "remote": "origin"
+    }
+  ],
   "stack": {
     "backend": "Node.js >=22.18 / TypeScript / NestJS / Express",
     "frontend": "React / Vite / TanStack Router and Query",
@@ -99,9 +105,17 @@
     "functionalCodeChanges": true,
     "architectureChanges": false,
     "installations": false,
-    "publication": false,
+    "publication": true,
     "delegationsLaunched": false,
-    "previousPushAuthorizationApplies": false
+    "previousPushAuthorizationApplies": false,
+    "authorizedActions": {
+      "commit": true,
+      "push": true,
+      "deploy": "local Docker Compose at http://localhost:55173",
+      "merge": false,
+      "installations": false,
+      "source": "Explicit user instruction: haz el commit sube el push despliega"
+    }
   },
   "quality": {
     "requireApplicableFullSuite": true,
@@ -143,5 +157,7 @@
     "universalProtocol": "docs/process/UNIVERSAL-PROTOCOL.md",
     "projectRules": "docs/process/PROJECT-RULES.md"
   },
-  "environment": { "productionAccess": "not-configured-or-authorized" }
+  "environment": {
+    "productionAccess": "not-configured-or-authorized"
+  }
 }
