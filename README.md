@@ -4,11 +4,12 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
-**Desarrollo reanudado por petición del usuario.** La autenticación propia de ACC y
-el Compose completo se publicaron en la rama de trabajo mediante el commit
-`c273f4d`. Administración web/móvil, flujo autónomo, agentes por usuario,
-WebSocket y OpenAPI están comprobados. El usuario autorizó publicar estos cambios
-en `feat/acc-foundation`; la publicación y su conciliación MCP están en curso. Antes de continuar,
+La entrega de administración web/móvil, flujo autónomo, agentes por usuario,
+WebSocket y OpenAPI está publicada en `feat/acc-foundation` mediante el commit
+[`0c347e0`](https://github.com/eayero/ia-dashboard/commit/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26).
+Las seis tareas completadas tienen evidencia publicada y estado DONE en ACC;
+la validación humana sigue siendo un OK separado. Ver el
+[registro de publicación](docs/PUBLICATION_RESULT.json). Antes de continuar,
 leer el [estado actual](docs/IMPLEMENTATION_STATUS.md). Las guías operativas ya
 describen autenticación propia; las [notas de pausa](docs/RESUME_LOCAL_AUTH.md)
 conservan el contexto histórico anterior.

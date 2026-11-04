@@ -103,9 +103,16 @@
     }
   },
   "publication": {
-    "newCommit": false,
-    "pushed": false,
-    "formalEvidencePending": true,
-    "reason": "La evidencia nueva está local y aún no tiene URL HTTPS publicada; la tarea permanece IN_PROGRESS."
+    "newCommit": true,
+    "pushed": true,
+    "formalEvidencePending": false,
+    "reason": "Commit publicado y evidencia formal adjunta por MCP; cierre del agente, sin OK humano.",
+    "codeCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
+    "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_OWNERSHIP_RESULT.json",
+    "taskStatus": "DONE",
+    "taskVersion": 14,
+    "humanValidated": false,
+    "verificationCapturedBeforePublication": true,
+    "publicationRecord": "docs/PUBLICATION_RESULT.json"
   }
 }

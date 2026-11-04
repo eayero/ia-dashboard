@@ -1,14 +1,20 @@
 # Estado de implementación — bootstrap
 
-## Publicación autorizada de los bloques comprobados
+## Publicación y conciliación confirmadas
 
-El usuario pidió «haz el push». Se publican los cambios acumulados en
-`feat/acc-foundation`: flujo autónomo/validación posterior, agentes de usuarios con
-varios proyectos, transporte WebSocket, OpenAPI y revisión de administración.
-Las comprobaciones vigentes son 56 unitarias, 92 integraciones, tipos, lint,
-formato y build. Tras el push se adjuntarán las URLs inmutables de los informes
-a las tareas terminadas y se comprobará el resultado por contexto/delta MCP.
-Los apartados siguientes conservan la evidencia y el estado previo a publicación.
+Por petición «haz el push», publicado `0c347e0df945e8db02dea8adc2a20fd8aa9aaa26`
+en `origin/feat/acc-foundation`: flujo autónomo/validación posterior, agentes de
+usuarios con varios proyectos, WebSocket, OpenAPI y revisión de administración.
+Comprobaciones: 56 unitarias, 92 integraciones, tipos, lint, formato y build.
+
+BOOT-006 y ACC-LOCAL-011/013/016/017/018 están en DONE con evidencia HTTPS del
+commit, conservando IDs/criterios. Se verificaron seis detalles, dos páginas de
+contexto y delta completo en secuencia 180. Sesión finalizada y claims liberados.
+El agente no emitió validación humana; se conserva la validación previa de Compose.
+[Registro](PUBLICATION_RESULT.json) y [copia MCP](ACC_WORK_SYNC.json).
+El resto del MVP sigue pendiente. Los apartados siguientes y los snapshots de
+los informes conservan la comprobación previa a publicar; la sección publication
+de cada informe refleja la publicación y el cierre actuales.
 
 ## OpenAPI de las rutas REST implementadas
 

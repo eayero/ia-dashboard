@@ -73,5 +73,18 @@
     "No commit or push of this change; formal evidence URL for ACC-LOCAL-017 remains pending publication, so its workflow state is IN_PROGRESS.",
     "Synthetic UI acknowledgement is not human acceptance of this implementation.",
     "One full integration run under load failed the exact rejection count in the existing 100-claim race; its isolated repeat and the final full 77-test run passed without weakening assertions."
-  ]
+  ],
+  "publication": {
+    "newCommit": true,
+    "pushed": true,
+    "codeCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
+    "formalEvidencePending": false,
+    "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_WORKFLOW_RESULT.json",
+    "taskStatus": "DONE",
+    "taskVersion": 13,
+    "humanValidated": false,
+    "verificationCapturedBeforePublication": true,
+    "publicationRecord": "docs/PUBLICATION_RESULT.json",
+    "reason": "Commit publicado y evidencia formal adjunta por MCP; cierre del agente, sin OK humano."
+  }
 }

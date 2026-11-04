@@ -100,5 +100,18 @@
     "No complete WCAG audit, permanent browser CI suite or production validation is claimed.",
     "No new commit or push. Formal evidence attachment and closure of ACC-LOCAL-011 await publication of this local report.",
     "Initial selectors for implicit select/textarea labels were corrected in the test helper; no product authentication failure was found."
-  ]
+  ],
+  "publication": {
+    "newCommit": true,
+    "pushed": true,
+    "codeCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
+    "formalEvidencePending": false,
+    "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/ADMIN_BROWSER_RESULT.json",
+    "taskStatus": "DONE",
+    "taskVersion": 14,
+    "humanValidated": false,
+    "verificationCapturedBeforePublication": true,
+    "publicationRecord": "docs/PUBLICATION_RESULT.json",
+    "reason": "Commit publicado y evidencia formal adjunta por MCP; cierre del agente, sin OK humano."
+  }
 }

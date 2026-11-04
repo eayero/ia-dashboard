@@ -1,0 +1,165 @@
+{
+  "checkedAt": "2026-11-04T06:25:34Z",
+  "authorization": "Petición del usuario: haz el push.",
+  "branch": "feat/acc-foundation",
+  "remote": "origin",
+  "repository": "https://github.com/eayero/ia-dashboard",
+  "codeCommit": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
+  "codeCommitUrl": "https://github.com/eayero/ia-dashboard/commit/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
+  "codePushConfirmed": true,
+  "remoteCodeHeadVerified": "0c347e0df945e8db02dea8adc2a20fd8aa9aaa26",
+  "included": [
+    "Flujo autónomo y validación humana posterior a DONE.",
+    "Agentes vinculados a usuarios y proyectos múltiples con la misma identidad MCP.",
+    "WebSocket autorizado, revocación y recuperación por contexto/delta.",
+    "OpenAPI de las 45 operaciones REST existentes.",
+    "Revisión de administración web/móvil, pruebas y documentación."
+  ],
+  "verification": {
+    "unitTests": {
+      "passed": 56,
+      "failed": 0
+    },
+    "integrationTests": {
+      "passed": 92,
+      "failed": 0
+    },
+    "types": true,
+    "lint": true,
+    "format": true,
+    "buildSuccessfulPackages": 5,
+    "stagedFiles": 74,
+    "privateValuesChecked": 12,
+    "secretsAbsentFromStagedContent": true,
+    "privatePathsExcluded": true,
+    "previousRemoteWasAligned": true
+  },
+  "nativeMcp": {
+    "projectId": "3268b4d2-cd9d-4afc-bc76-ea631997cd73",
+    "sessionId": "a6289e40-9859-42a1-b12c-86f2b201e1af",
+    "sessionEnded": true,
+    "claimsReleased": true,
+    "completedTasks": [
+      {
+        "fileId": "ACC-LOCAL-011",
+        "taskId": "d881a547-8ede-408c-a5f6-76b2c2f77b85",
+        "status": "DONE",
+        "version": 14,
+        "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/ADMIN_BROWSER_RESULT.json",
+        "workRevision": 4,
+        "humanValidated": false,
+        "evidence": [
+          {
+            "id": "9e78147d-aa72-434d-bd20-61c8dc46350a",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/ADMIN_BROWSER_RESULT.json"
+          }
+        ]
+      },
+      {
+        "fileId": "ACC-LOCAL-017",
+        "taskId": "941cae66-75fa-49db-982e-f4a453d6203f",
+        "status": "DONE",
+        "version": 13,
+        "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_WORKFLOW_RESULT.json",
+        "workRevision": 4,
+        "humanValidated": false,
+        "evidence": [
+          {
+            "id": "6b4dc8e0-0c85-4b97-8dc2-986ecfe92e28",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_WORKFLOW_RESULT.json"
+          }
+        ]
+      },
+      {
+        "fileId": "ACC-LOCAL-018",
+        "taskId": "6ce44bec-026d-463f-86ac-7a8dbca0034a",
+        "status": "DONE",
+        "version": 14,
+        "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_OWNERSHIP_RESULT.json",
+        "workRevision": 4,
+        "humanValidated": false,
+        "evidence": [
+          {
+            "id": "192106c4-42e0-4bd0-ae7d-7e88a07174d9",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/AGENT_OWNERSHIP_RESULT.json"
+          }
+        ]
+      },
+      {
+        "fileId": "ACC-LOCAL-013",
+        "taskId": "41129ed0-332b-4e32-9592-97f670b6ba0a",
+        "status": "DONE",
+        "version": 15,
+        "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/WEBSOCKET_RESULT.json",
+        "workRevision": 4,
+        "humanValidated": false,
+        "evidence": [
+          {
+            "id": "44f7c284-ecc5-461e-a339-4e353c9a737b",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/WEBSOCKET_RESULT.json"
+          }
+        ]
+      },
+      {
+        "fileId": "BOOT-006",
+        "taskId": "42919d4c-3033-4bb5-9f0e-a083a423763c",
+        "status": "DONE",
+        "version": 13,
+        "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/OPENAPI_RESULT.json",
+        "workRevision": 4,
+        "humanValidated": false,
+        "evidence": [
+          {
+            "id": "95a7642a-b216-42d5-a002-221d2e87cc70",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/OPENAPI_RESULT.json"
+          }
+        ]
+      },
+      {
+        "fileId": "ACC-LOCAL-016",
+        "taskId": "f6302302-4331-4b13-a518-c8546363b60c",
+        "status": "DONE",
+        "version": 9,
+        "evidenceUrl": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/COMO-TRABAJAMOS.md",
+        "workRevision": 2,
+        "humanValidated": false,
+        "evidence": [
+          {
+            "id": "d4f919b7-62e6-4c62-ba16-e7b404f4905b",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/COMO-TRABAJAMOS.md"
+          },
+          {
+            "id": "41e0146e-44da-4668-abb5-1f3cb8a7ec83",
+            "url": "https://github.com/eayero/ia-dashboard/blob/0c347e0df945e8db02dea8adc2a20fd8aa9aaa26/docs/ACC_WORK_SYNC.json"
+          }
+        ]
+      }
+    ],
+    "context": {
+      "pages": 2,
+      "complete": true,
+      "projectSeq": "180"
+    },
+    "delta": {
+      "complete": true,
+      "events": 0
+    },
+    "noHumanAcknowledgementIssued": true,
+    "existingHumanValidationPreserved": true
+  },
+  "trackingReport": {
+    "path": "docs/PUBLICATION_RESULT.json",
+    "codeEvidenceUsesImmutableCommit": true,
+    "verificationReportsCapturedBeforePublication": true
+  },
+  "remainingWork": [
+    "Requisitos, decisiones, preguntas e impacto como entidades de producto.",
+    "Creación general de proyectos.",
+    "Revalidación del cliente Claude con autenticación propia y pendientes del resto del MVP."
+  ],
+  "limitations": [
+    "DONE fue alcanzado por el agente con evidencia publicada y transiciones válidas; no equivale a validación humana.",
+    "Los informes originales conservan fechas y snapshots de verificación anteriores al push; su sección publication refleja ahora la publicación y el cierre.",
+    "Este registro de seguimiento acompaña al commit de código en un commit documental posterior."
+  ]
+}
