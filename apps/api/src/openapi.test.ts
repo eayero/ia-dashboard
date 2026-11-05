@@ -60,6 +60,14 @@ test('OpenAPI distingue POST humano, bearer, CSRF e idempotencia real', () => {
   ]);
   assert.equal(document.components.schemas.transitionTaskInput!.additionalProperties, false);
 });
+
+test('OpenAPI describes human repository writes and paginated reads', () => {
+  const path = document.paths['/api/v1/projects/{projectId}/repositories']!;
+  assert.deepEqual(path.post!.security, [{ cookieAuth: [], csrfToken: [] }]);
+  assert.ok(path.post!.parameters.some((p) => p.name === 'Idempotency-Key' && p.required));
+  assert.ok(path.get!.parameters.some((p) => p.name === 'limit' && p.in === 'query'));
+  assert.equal(document.components.schemas.registerRepositoryInput!.additionalProperties, false);
+});
 test('artefacto OpenAPI versionable coincide con el generador y no refleja hosts privados', async () => {
   assert.deepEqual(
     JSON.parse(await readFile(new URL('../../../docs/openapi.json', import.meta.url), 'utf8')),

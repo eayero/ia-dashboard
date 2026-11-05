@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "phase": "LOCAL_IMPLEMENTED_VERIFIED",
+  "task": "ACC-LOCAL-023",
+  "taskId": "6084597e-53ac-48c1-8438-465fe3b49937",
+  "publicId": "TASK-29",
+  "design": "docs/requirements/REPOSITORY_REGISTRY_DESIGN.md",
+  "plan": "docs/superpowers/plans/2026-11-05-repository-registry.md",
+  "designApprovedByUser": true,
+  "implemented": [
+    "Human OWNER/ADMIN/MANAGER cookie/CSRF registration; agents, VIEWER and REVIEWER cannot write",
+    "Strict normalized metadata contract; HTTPS URL without credentials/query/fragment/whitespace; no network fetch",
+    "Exact normalized project/URL uniqueness, idempotent replay and concurrent registration returning one immutable ID",
+    "Current management role checked before replay, including downgrade to REVIEWER",
+    "Atomic entity/audit/outbox with rollback and cross-project audit validation",
+    "Signed UUID pagination bound to resource/project/principal and project read authorization",
+    "Existing MCP context/delta exposes REPOSITORY; no new write tool",
+    "Paired CODE/TEST evidence can use the registered repository; foreign repository rejected",
+    "OpenAPI models and runtime migration preflight"
+  ],
+  "migration": {
+    "file": "packages/db/migrations/011_repository_registry.sql",
+    "appliedToIsolatedTestSchemas": true,
+    "appliedToDeployedInstance": false,
+    "previousMigrations001Through010Modified": false,
+    "duplicateLegacyUrls": "Migration aborts transactionally; no automatic identity merge or evidence reassignment"
+  },
+  "verification": {
+    "unitSuite": {
+      "command": "pnpm test",
+      "passed": 70,
+      "total": 70
+    },
+    "integrationSuite": {
+      "command": "pnpm test:integration",
+      "passed": 127,
+      "total": 127,
+      "database": "Real local PostgreSQL, random isolated schemas and ephemeral API ports"
+    },
+    "focusedRepositoryIntegration": {
+      "passed": 9,
+      "total": 9
+    },
+    "protocolSuite": {
+      "command": "node --test tests/agents-setup.test.mjs tests/agent-protocol.test.mjs",
+      "passed": 16,
+      "total": 16
+    },
+    "types": "PASS: pnpm typecheck and pnpm typecheck:foundation (includes integration tests)",
+    "lint": "PASS: pnpm lint",
+    "build": "PASS: five packages; Vite chunk-size advisory remains",
+    "openApi": "PASS: generated artifact equality and unit/integration contract assertions",
+    "format": "PASS: pnpm format:check",
+    "requirementsCoverage": {
+      "command": "pnpm requirements:check",
+      "tasks": 29,
+      "covered": 29,
+      "orphans": 0,
+      "requirements": 23,
+      "links": 44
+    },
+    "redGreen": [
+      "Missing registration/query schema contract tests RED to GREEN",
+      "Missing store operation and REST 404 tests RED to GREEN",
+      "Downgraded manager replay test RED before role enforcement moved before idempotency recovery; GREEN afterward"
+    ],
+    "firstFullIntegrationRun": "126/127: migration count expectation still 10; updated to 11 preserving data/checksum checks; repeated full suite 127/127",
+    "packageManager": "Installed .tools/node_modules/pnpm/pnpm.exe; directory added to command-local PATH; no installation"
+  },
+  "review": {
+    "independent": false,
+    "method": "Self-review of permission replay, URL validation, concurrency locks, transaction rollback, project isolation, cursor binding and event consumers",
+    "subagents": 0,
+    "uiChanged": false,
+    "humanApprovalsIssuedByAgent": 0
+  },
+  "publication": {
+    "committed": false,
+    "pushed": false,
+    "deployed": false,
+    "formalEvidence": "PENDING_UNPUBLISHED"
+  },
+  "task26EvidencePreparation": "docs/requirements/TASK_WORK_TIME_EVIDENCE_READY.json",
+  "notRun": [
+    "New commit, push or deployment; current authorization covers implementation",
+    "Migration 011 or live repository registration in the existing service",
+    "Live TASK-26 CODE/TEST attachment before real repository ID exists",
+    "Human requirement approval, impact evaluation or post-DONE acknowledgement",
+    "Independent review, load testing or a new visual browser review (no UI flow changed)"
+  ],
+  "installations": 0,
+  "accMirror": {
+    "status": "IN_PROGRESS",
+    "taskVersion": 7,
+    "workRevision": 2,
+    "summaryReadVerified": true,
+    "sessionId": "b416e7c1-1c43-4ff5-8a02-f682f445ed6a",
+    "sessionVersion": 3,
+    "sessionEnded": true,
+    "claimsReleased": true,
+    "reconciled": true,
+    "context": {
+      "pages": 3,
+      "complete": true,
+      "projectSeq": "413"
+    },
+    "delta": {
+      "events": 10,
+      "complete": true,
+      "projectSeq": "413"
+    },
+    "explicitPauseResult": "SESSION_INACTIVE after expiry; effective duration remained bounded by claim validity",
+    "effectiveWorkEnd": "2026-11-05T17:02:50.751Z",
+    "workMilliseconds": "769256"
+  },
+  "checkedAt": "2026-11-05T17:32:37Z"
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "phase": "PREPARED_NOT_SUBMITTED",
+  "task": "ACC-LOCAL-020",
+  "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+  "publicId": "TASK-26",
+  "workRevisionObserved": 4,
+  "repository": {
+    "name": "dashboard",
+    "url": "https://github.com/eayero/ia-dashboard",
+    "registeredId": null
+  },
+  "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+  "criteria": ["c1", "c2", "c3", "c4"],
+  "evidence": [
+    {
+      "kind": "CODE",
+      "url": "https://github.com/eayero/ia-dashboard/commit/02e232f8570139cd57bd2c6271e1d1f70efb7af0"
+    },
+    {
+      "kind": "TEST",
+      "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+      "result": { "outcome": "PASS", "total": 178, "passed": 178 },
+      "countBasis": "66 unit + 112 integration tests recorded in that published commit; protocol and browser checks are separate. These are historical results, not new tests attributed to an old commit."
+    }
+  ],
+  "preconditions": [
+    "Deploy approved repository registry after authorization, preserving data and credentials",
+    "Register repository through the authenticated human REST management operation and read its real ID through native MCP context",
+    "Read TASK-26 current version/revision and evidence; avoid duplicates and retain existing c1-c4",
+    "Acquire live ACC session and claim before attaching CODE/TEST with matching repository ID and commit",
+    "Do not approve requirements or evaluate impact using agent identity; REQ-19 human decision remains separate"
+  ],
+  "publicationProvenance": {
+    "remoteBranchPreviouslyVerified": "feat/acc-foundation",
+    "remoteHeadPreviouslyVerified": "c241322863987cd6656269e37977c027c5dfe158",
+    "reportInspectedBy": "git show 02e232f:docs/requirements/TASK_WORK_TIME_RESULT.json",
+    "reportPhaseAtCommit": "LOCAL_IMPLEMENTED_VERIFIED",
+    "reportPublicationFlagsAtCommit": false,
+    "laterDeploymentRecord": "docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json",
+    "interpretation": "The report preserves the pre-publication verification instant. Later publication/deployment is recorded separately; original tests and code share the same immutable commit."
+  }
+}

@@ -2,6 +2,8 @@ import { createHash, randomUUID } from 'node:crypto';
 import pg from 'pg';
 import { startWorkSchema, pauseWorkSchema } from '@acc/contracts';
 import { startWorkInterval, pauseWorkInterval } from './work-time.ts';
+import { registerRepository } from './repositories.ts';
+import { registerRepositorySchema } from '@acc/contracts';
 export { readTaskWorkTime } from './work-time.ts';
 import {
   requirementCommand,
@@ -71,6 +73,7 @@ export class CoordinationStore {
     payload: unknown,
     effect: (client: pg.PoolClient, actor: Actor) => Promise<T>,
     exclusiveGraph = false,
+    requiredHumanRoles?: string[],
   ): Promise<T> {
     if (typeof key !== 'string' || !key.trim() || key.length > 200)
       throw new DomainError('IDEMPOTENCY_KEY_REQUIRED');
@@ -99,6 +102,7 @@ export class CoordinationStore {
           ? actor.roles.some((role) => ['OWNER', 'ADMIN', 'MANAGER', 'REVIEWER'].includes(role))
           : actor.scopes.includes('task:write');
       if (!canWrite) throw new DomainError('FORBIDDEN');
+      if (requiredHumanRoles) this.requireRole(actor, requiredHumanRoles);
       const scope = [context.projectId, context.principalId, command, key];
       await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))', [
         canonicalJson(scope),
@@ -150,7 +154,7 @@ export class CoordinationStore {
     action: string,
     payload: unknown,
     sessionId: string | null = null,
-    entityType: 'TASK' | 'SESSION' | 'PRINCIPAL' | 'REQUIREMENT' = 'TASK',
+    entityType: 'TASK' | 'SESSION' | 'PRINCIPAL' | 'REQUIREMENT' | 'REPOSITORY' = 'TASK',
   ): Promise<string> {
     const seq = await this.counter(client, context.projectId, 'EVENT');
     const id = randomUUID();
@@ -171,6 +175,22 @@ export class CoordinationStore {
     );
     await client.query('INSERT INTO event_outbox(event_id) VALUES ($1)', [id]);
     return seq;
+  }
+
+  async registerRepository(context: CommandContext, key: string, payload: unknown) {
+    const input = registerRepositorySchema.parse(payload);
+    return this.command(
+      context,
+      'repository.register',
+      key,
+      input,
+      (client, actor) =>
+        registerRepository(client, context.projectId, actor, input, (id, data) =>
+          this.event(client, context, id, 'repository.registered', data, null, 'REPOSITORY'),
+        ),
+      true,
+      ['OWNER', 'ADMIN', 'MANAGER'],
+    );
   }
 
   private requirement(

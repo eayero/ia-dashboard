@@ -100,8 +100,8 @@
     "accTaskTracking": "required-by-existing-project-instruction"
   },
   "currentTaskConstraints": {
-    "taskId": "ACC-LOCAL-015",
-    "scope": "Enforce mandatory task requirements in REST/MCP creation, protect final link in API/PostgreSQL, update web and MCP workflow",
+    "taskId": "ACC-LOCAL-023",
+    "scope": "Approved design A: immutable repository registration and paginated REST queries, human management permissions, transactional audit/outbox and context/MCP evidence discovery",
     "functionalCodeChanges": true,
     "architectureChanges": false,
     "installations": false,
@@ -116,7 +116,9 @@
       "merge": false,
       "installations": false,
       "delegation": false,
-      "source": "User continua after pending commit/push/deployment notice; continuation of prior publication instruction"
+      "source": "User si explicitly authorizes commit, push, local deployment, repository registration and CODE/TEST evidence attachment after implementation report",
+      "registerRepository": true,
+      "attachTask26Evidence": true
     },
     "previousDeliveryAuthorization": {
       "implementation": true,
@@ -128,7 +130,7 @@
       "delegation": false,
       "source": "Explicit user instruction: haz los coomit el push y despliega"
     },
-    "relatedTaskIds": ["ACC-LOCAL-014", "ACC-LOCAL-021", "ACC-LOCAL-022"]
+    "relatedTaskIds": ["ACC-LOCAL-015", "ACC-LOCAL-020"]
   },
   "quality": {
     "requireApplicableFullSuite": true,

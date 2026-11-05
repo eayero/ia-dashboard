@@ -4,6 +4,12 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
+Implementación local verificada, pendiente de publicación/despliegue:
+[catálogo REST de repositorios para evidencias](docs/requirements/REPOSITORY_REGISTRY_RESULT.json).
+Diseño A aprobado; migración nueva 011 y dos operaciones REST. Los agentes
+consultan el catálogo mediante el contexto MCP existente; el registro exige
+permisos humanos de gestión. La instancia habitual sigue en migración 010.
+
 Entrega publicada y desplegada localmente: [requisitos obligatorios al
 crear tareas por API/MCP](docs/requirements/TASK_REQUIREMENT_API.md). Incluye
 asociación atómica y protección PostgreSQL. Migración 010 aplicada, 28 tareas

@@ -36,10 +36,32 @@ type Definition = {
   response?: keyof typeof responseModels;
   idempotent?: boolean;
   description?: string;
-  query?: 'tasks' | 'context' | 'events' | 'requirements';
+  query?: 'tasks' | 'context' | 'events' | 'requirements' | 'repositories';
   timeZoneQuery?: boolean;
 };
 const definitions: Definition[] = [
+  {
+    path: '/projects/{projectId}/repositories',
+    method: 'get',
+    operationId: 'listRepositories',
+    summary: 'Consultar repositorios registrados del proyecto',
+    tag: 'Repositorios',
+    response: 'RepositoryList',
+    query: 'repositories',
+  },
+  {
+    path: '/projects/{projectId}/repositories',
+    method: 'post',
+    operationId: 'registerRepository',
+    summary: 'Registrar o recuperar un repositorio por URL exacta',
+    tag: 'Repositorios',
+    access: 'cookie',
+    body: contracts.registerRepositorySchema,
+    response: 'RepositoryMutation',
+    idempotent: true,
+    description:
+      'Solo humanos OWNER/ADMIN/MANAGER. URL HTTPS sin credenciales, consulta ni fragmento. Solo metadatos: no clona ni consulta la URL. Conserva el nombre inicial al recuperar una URL existente; no modifica repositorios ni evidencias.',
+  },
   {
     path: '/projects/{projectId}/tasks/{taskId}/time',
     method: 'get',

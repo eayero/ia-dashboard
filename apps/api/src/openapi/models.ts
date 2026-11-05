@@ -84,6 +84,16 @@ const requirementRevision = z.looseObject({
   approvedAt: date.nullable(),
 });
 export const responseModels = {
+  RepositoryList: z.strictObject({
+    items: z.array(z.strictObject({ id, name: z.string(), url: z.url() })),
+    nextCursor: z.string().nullable(),
+  }),
+  RepositoryMutation: z.strictObject({
+    id,
+    name: z.string(),
+    url: z.url(),
+    projectSeq: sequenceSchema,
+  }),
   TaskTime: z.strictObject({
     asOf: date,
     timeZone: z.string(),

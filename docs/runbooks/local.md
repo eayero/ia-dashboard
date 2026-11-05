@@ -102,8 +102,13 @@ La migración 005 añade usuarios locales, credenciales de agentes, límites de 
 y auditoría de identidad; las tablas OIDC históricas conservan sus referencias.
 La coordinación sigue validando identidad, membresía, versión, claim y gates
 dentro de transacciones. Redis recibe eventos después del commit mediante outbox.
-Requisitos versionados y servidor WS están implementados; preguntas, decisiones
-y pantallas de gestión de requisitos siguen pendientes.
+Requisitos versionados, su UI y servidor WS están implementados; preguntas y
+decisiones siguen pendientes.
 
-Instancia local actualizada: UI de requisitos y tiempo explícito desplegados con
-migración 009 y 22 herramientas MCP. Ver [despliegue](../requirements/TASK_WORK_TIME_DEPLOYMENT.json).
+Instancia local actualizada: UI de requisitos, tiempo explícito y requisitos
+obligatorios desplegados con migración 010 y 22 herramientas MCP.
+Ver [despliegue](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json).
+El catálogo REST de repositorios está verificado en código con migración 011,
+pendiente de despliegue autorizado. La API nueva exige 011 al arrancar; conservar
+001–010 y actualizar API/worker/UI juntos por el nuevo tipo de evento REPOSITORY.
+No ejecutar migración/despliegue por leer esta guía.

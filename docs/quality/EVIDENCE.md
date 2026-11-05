@@ -2,12 +2,12 @@
 
 Continuación local: [UI de requisitos](../requirements/REQUIREMENTS_UI_RESULT.json)
 y [tiempo por tarea/agente/día](../requirements/TASK_WORK_TIME_RESULT.json).
-Incluyen navegador real con datos aislados y suites actuales; no acreditan publicación
-ni despliegue de esta continuación.
+Incluyen navegador real con datos aislados y suites de esa entrega. La publicación
+y el despliegue posteriores constan en TASK_WORK_TIME_DEPLOYMENT.json.
 
 Requisitos FR-004: [resultado local](../requirements/VERSIONED_REQUIREMENTS_RESULT.json)
 incluye pruebas PostgreSQL/REST/MCP, historial, impacto, tipos/lint/build y límites.
-No atribuye revisión independiente ni publicación a esta implementación.
+No atribuye revisión independiente; publicación y despliegue constan en su informe.
 
 Publicación y despliegue posteriores autorizados:
 [VERSIONED_REQUIREMENTS_DEPLOYMENT.json](../requirements/VERSIONED_REQUIREMENTS_DEPLOYMENT.json).
@@ -30,6 +30,12 @@ instrucciones. [Comandos pertinentes](COMMANDS.md).
 
 - [Cobertura completa tarea-requisito](../requirements/TASK_REQUIREMENT_COVERAGE.json): 28/28 tareas y cero huérfanas, incluidas pruebas canceladas; segunda pasada sin mutaciones.
 
-- [Requisito obligatorio en API/MCP/DB](../requirements/TASK_REQUIREMENT_API_RESULT.json): 67 unitarias, 118 integraciones, transacciones/concurrencia y creación web real. Código local pendiente de desplegar con migración 010.
+- [Requisito obligatorio en API/MCP/DB](../requirements/TASK_REQUIREMENT_API_RESULT.json): 67 unitarias, 118 integraciones, transacciones/concurrencia y creación web real. Publicado y desplegado con migración 010 según el informe siguiente.
 
 - [Despliegue de requisitos obligatorios](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json): migración 010, contrato MCP, rechazos 400/409, persistencia y activos compilados verificados.
+
+- [Revisión de cierres pendientes](../requirements/PENDING_CLOSURE_REVIEW.md): alcance y evidencia preparados para REQ-19/REQ-23; no constituye aprobación humana.
+
+- [Catálogo REST de repositorios](../requirements/REPOSITORY_REGISTRY_RESULT.json): diseño A aprobado, implementación local verificada con PostgreSQL real; no publicado/desplegado.
+
+- [Evidencia CODE/TEST de TASK-26 preparada](../requirements/TASK_WORK_TIME_EVIDENCE_READY.json): commit y resultados históricos coincidentes; no enviada sin ID de repositorio real.

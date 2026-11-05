@@ -1,9 +1,26 @@
 # Continuidad de sesión
 
+Encargo vigente del 2026-11-05: resolver primero los pendientes de las entregas
+ya implementadas. Seguimiento y evidencias reconciliados sin perder historial;
+[revisión humana](../requirements/PENDING_CLOSURE_REVIEW.md) preparada y
+[diseño de catálogo](../requirements/REPOSITORY_REGISTRY_DESIGN.md) propuesto.
+El usuario aprobó A y la implementación está verificada: catálogo REST con
+migración 011, 70 unitarias/127 integraciones/16 protocolo, tipos/lint/build y
+OpenAPI pasan. [Resultado](../requirements/REPOSITORY_REGISTRY_RESULT.json).
+TASK-29 enlaza FR-001 y FR-016; no se emitieron aprobaciones/impactos humanos.
+El usuario autorizó commit/push/despliegue local, registro de dashboard y
+evidencias CODE/TEST para TASK-26. Al inicio de esta publicación la instancia
+habitual está en 010, catálogo vacío. Registrar dashboard mediante REST desplegado;
+después adjuntar [CODE/TEST preparados](../requirements/TASK_WORK_TIME_EVIDENCE_READY.json)
+a TASK-26 bajo sesión/claim y versiones actuales. Preservar evidencia del mismo
+repositorio/commit y no atribuir pruebas nuevas al commit histórico.
+Leer TASKS para el estado vigente; los párrafos siguientes conservan el contexto
+de la entrega anterior.
+
 Entrega completada y desplegada localmente: `94d7a34`, rama
 `feat/acc-foundation`, http://localhost:55173. El usuario indicó continuar tras
 el pendiente de commit/push/despliegue, dentro de la instrucción de publicación
-previa. Código subido; informe documental se publica después. No merge,
+previa. Código e informe documental subidos, HEAD `c241322`. No merge,
 instalaciones ni delegación. [Estado](../project/STATUS.md).
 
 Leer entradas/guía/config y ejecutar diagnóstico antes de continuar. Migración

@@ -28,6 +28,7 @@ import { mountRealtime } from './realtime/gateway.ts';
 import { OpenApiController } from './openapi/controller.ts';
 import { RequirementsController } from './requirements/controller.ts';
 import { RequirementQueries } from './requirements/queries.ts';
+import { RepositoryQueries } from './projects/repository-queries.ts';
 
 export const API_CONTROLLERS = [
   AuthController,
@@ -54,6 +55,11 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
   if (!invariant.rowCount)
     throw new Error('Apply migration 010_task_requirement_required.sql before starting the API');
   const queries = new ProjectQueries(pool, config.sessionSecret);
+  const repositoryInvariant = await pool.query(
+    "SELECT 1 FROM pg_constraint WHERE conrelid='repositories'::regclass AND conname='repositories_project_url_key'",
+  );
+  if (!repositoryInvariant.rowCount)
+    throw new Error('Apply migration 011_repository_registry.sql before starting the API');
   const runtime: ApiRuntime = {
     config,
     pool,
@@ -63,6 +69,7 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     context: new ProjectContext(queries, config.sessionSecret),
     accounts: new AccountAdministration(pool),
     requirements: new RequirementQueries(queries, config.sessionSecret),
+    repositories: new RepositoryQueries(queries, config.sessionSecret),
   };
   @Module({
     controllers: API_CONTROLLERS,

@@ -35,6 +35,10 @@ Envelope: `eventId`, `projectId`, `seq`, `schemaVersion:1`, `type`, `occurredAt`
 Los eventos nuevos atribuyen acciones del agente a su propietario; los anteriores
 pueden conservar `actorUserId:null`.
 Los payloads son señales auditables, no reemplazos completos de entidades.
+Desde migración 011, `repository.registered` usa `entity.type=REPOSITORY` y
+payload `{id,name,url}`. API, worker y clientes deben reconocer ese discriminador;
+consultar GET de repositorios o recargar contexto para reconciliarlo. No hay
+comando MCP de escritura de repositorios.
 Reconciliar tareas con su detalle REST, sesiones con el listado y miembros con un
 contexto actualizado. Comparar versiones antes de reemplazar datos ya cargados.
 Permisos, gates, versión y lease se validan otra vez al mutar, aunque el snapshot

@@ -150,6 +150,48 @@ Las listas no devuelven hashes ni secretos; una credencial perdida debe sustitui
 
 ## Coordinación y consultas
 
+### Catálogo de repositorios (código desde migración 011)
+
+`GET /api/v1/projects/:projectId/repositories` acepta `limit` (20 inicial,
+máximo 100) y cursor firmado vinculado al recurso, proyecto y principal. Devuelve
+`{data:{items:[{id,name,url}],nextCursor},meta}` en orden UUID. Accesible con
+cookie humana o bearer de agente con acceso de lectura al proyecto.
+
+`POST` en la misma ruta exige cookie/CSRF, Idempotency-Key y humano
+OWNER/ADMIN/MANAGER del proyecto. Entrada estricta:
+
+```json
+{
+  "name": "dashboard",
+  "url": "https://github.com/eayero/ia-dashboard"
+}
+```
+
+Nombre NFC/espacios normalizados (1–120 caracteres); URL HTTPS absoluta de hasta
+2048 caracteres sin credenciales, query, fragmento, whitespace o barras invertidas.
+Se normaliza mediante URL estándar conservando mayúsculas del path y `.git`.
+Solo registra metadatos; no clona ni solicita el recurso remoto.
+
+La URL normalizada identifica el repositorio dentro del proyecto. Si existe,
+devuelve su ID y nombre original sin modificarlo ni generar otro evento; la misma
+clave y payload devuelve la respuesta original. Otra intención con la misma clave
+devuelve 409. El rol vigente se valida antes de recuperar respuestas anteriores.
+Una alta nueva devuelve 201 con `{data:{id,name,url,projectSeq},meta}` y confirma
+repositorio, auditoría `repository.registered` y outbox en la misma transacción.
+
+Los agentes no registran repositorios mediante sus permisos `task:write`; los
+descubren por GET o por registros REPOSITORY del contexto MCP ya existente. Usar
+el ID para evidencias CODE/TEST con el mismo commit publicado completo. No hay
+edición/borrado ni herramienta MCP nueva. Migración 011 y API/worker/UI deben
+actualizarse juntos para reconocer el discriminador de eventos REPOSITORY; las
+migraciones anteriores se conservan. Una duplicidad histórica de URL detiene la
+migración para revisión explícita, sin fusionar IDs ni perder evidencias.
+
+Estado de entrega y verificación:
+[REPOSITORY_REGISTRY_RESULT.json](../requirements/REPOSITORY_REGISTRY_RESULT.json).
+
+### Tareas y sesiones
+
 | Método   | Ruta bajo /api/v1                                             | Operación                             |
 | -------- | ------------------------------------------------------------- | ------------------------------------- |
 | GET      | `/health/live`, `/health/ready`                               | Probes sin autenticación              |

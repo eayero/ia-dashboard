@@ -198,5 +198,17 @@
       "Exportar información del proyecto en Markdown y JSON con autorización por proyecto.",
       "Programar backups cifrados y comprobar restauración conforme a decisiones Q28."
     ]
+  },
+  {
+    "id": "ACC-LOCAL-023",
+    "title": "Registrar repositorios por REST para evidencias trazables",
+    "source": "docs/requirements/REPOSITORY_REGISTRY_DESIGN.md",
+    "context": "Alternativa A aprobada por el usuario el 2026-11-05. Implementar registro inmutable y consulta REST; lectura mediante contexto MCP existente. FR-001 y FR-016, alcance parcial; no administración web completa ni aprobación humana por el agente.",
+    "criteria": [
+      "Registrar y consultar repositorios por REST con contrato estricto, paginación y acceso humano OWNER/ADMIN/MANAGER para mutación.",
+      "Idempotencia y concurrencia sin duplicados por proyecto/URL; entidad, auditoría y outbox atómicos con nueva migración conservando 001–010.",
+      "Consultar repositorios por contexto/delta MCP y adjuntar evidencia CODE/TEST del mismo repositorio/commit sin eludir gates.",
+      "Verificar PostgreSQL real, REST/CSRF, permisos y aislamiento; OpenAPI, tipos, lint, build y documentación coherentes."
+    ]
   }
 ]

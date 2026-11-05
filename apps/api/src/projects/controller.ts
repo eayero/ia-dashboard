@@ -22,6 +22,29 @@ export class ProjectsController {
       await this.runtime.context.snapshot(projectId, req.identity!.id, req.query),
     );
   }
+  @Get(':projectId/repositories') async repositories(
+    @Req() req: ApiRequest,
+    @Param('projectId') projectId: string,
+  ) {
+    return success(
+      req,
+      await this.runtime.repositories.list(projectId, req.identity!.id, req.query),
+    );
+  }
+  @Post(':projectId/repositories') async registerRepository(
+    @Req() req: ApiRequest,
+    @Param('projectId') projectId: string,
+  ) {
+    if (req.identity!.mode !== 'COOKIE') throw new ApiError(403, 'FORBIDDEN');
+    return success(
+      req,
+      await this.runtime.store.registerRepository(
+        this.context(req, projectId),
+        req.get('idempotency-key') ?? '',
+        req.body,
+      ),
+    );
+  }
   @Get(':projectId/events') async changes(
     @Req() req: ApiRequest,
     @Param('projectId') projectId: string,
