@@ -852,5 +852,95 @@
     "explicitPauseResult": "SESSION_INACTIVE after expiry",
     "effectiveWorkEnd": "2026-11-05T17:02:50.751Z",
     "workMilliseconds": "769256"
+  },
+  "repositoryRegistryDeployment": {
+    "checkedAt": "2026-11-05T22:54:09.821Z",
+    "codeCommit": "8cb94178e51a76580c83fb60ed154659449e0929",
+    "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+    "context": {
+      "pages": 3,
+      "complete": true,
+      "projectSeq": "432"
+    },
+    "delta": {
+      "events": 12,
+      "complete": true,
+      "projectSeq": "432"
+    },
+    "session": {
+      "id": "4f38579e-a343-482a-b891-35f5d884c1c5",
+      "ended": true,
+      "claimsReleased": true
+    },
+    "tasks": [
+      {
+        "id": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+        "publicId": "TASK-26",
+        "status": "IN_PROGRESS",
+        "version": 19,
+        "workRevision": 5,
+        "impactPending": true,
+        "evidence": [
+          {
+            "id": "6cdb38dd-8d74-4ef3-a85d-33012beb1ac2",
+            "kind": "CODE",
+            "url": "https://github.com/eayero/ia-dashboard/commit/02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+            "workRevision": 5,
+            "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+            "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+            "result": null,
+            "acceptedBy": null
+          },
+          {
+            "id": "32354bc5-3d78-4a9a-b6ab-e6d7f6e77951",
+            "kind": "TEST",
+            "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+            "workRevision": 5,
+            "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+            "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+            "result": {
+              "total": 178,
+              "passed": 178,
+              "outcome": "PASS"
+            },
+            "acceptedBy": null
+          }
+        ]
+      },
+      {
+        "id": "6084597e-53ac-48c1-8438-465fe3b49937",
+        "publicId": "TASK-29",
+        "status": "IN_PROGRESS",
+        "version": 13,
+        "workRevision": 3,
+        "impactPending": true,
+        "evidence": [
+          {
+            "id": "cef7e6a7-09e5-46a1-8115-5d2a92db7bf9",
+            "kind": "CODE",
+            "url": "https://github.com/eayero/ia-dashboard/commit/8cb94178e51a76580c83fb60ed154659449e0929",
+            "workRevision": 3,
+            "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+            "commit": "8cb94178e51a76580c83fb60ed154659449e0929",
+            "result": null,
+            "acceptedBy": null
+          },
+          {
+            "id": "06cfa222-3c52-41e9-973b-c34e76cda81c",
+            "kind": "TEST",
+            "url": "https://github.com/eayero/ia-dashboard/blob/8cb94178e51a76580c83fb60ed154659449e0929/docs/requirements/REPOSITORY_REGISTRY_RESULT.json",
+            "workRevision": 3,
+            "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+            "commit": "8cb94178e51a76580c83fb60ed154659449e0929",
+            "result": {
+              "total": 197,
+              "passed": 197,
+              "outcome": "PASS"
+            },
+            "acceptedBy": null
+          }
+        ]
+      }
+    ]
   }
 }

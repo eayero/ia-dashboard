@@ -4,11 +4,11 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
-Implementación local verificada, pendiente de publicación/despliegue:
+Entrega publicada y desplegada localmente desde `8cb9417`, migración 011:
 [catálogo REST de repositorios para evidencias](docs/requirements/REPOSITORY_REGISTRY_RESULT.json).
 Diseño A aprobado; migración nueva 011 y dos operaciones REST. Los agentes
 consultan el catálogo mediante el contexto MCP existente; el registro exige
-permisos humanos de gestión. La instancia habitual sigue en migración 010.
+permisos humanos de gestión. La instancia habitual tiene migración 011. Ver [despliegue y pendientes humanos](docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json).
 
 Entrega publicada y desplegada localmente: [requisitos obligatorios al
 crear tareas por API/MCP](docs/requirements/TASK_REQUIREMENT_API.md). Incluye
@@ -51,12 +51,12 @@ conservan el contexto histórico anterior.
 - [Arquitectura](docs/adr/0001-foundation.md)
 - [Entorno local](docs/runbooks/local.md)
 - [Comprobación de reinicio y persistencia de Compose](docs/COMPOSE_VERIFICATION.json)
-- [API local: autenticación, rutas y comprobaciones](docs/runbooks/api.md)
+- [API local: autenticación, rutas y comprobaciónes](docs/runbooks/api.md)
 - [Contrato OpenAPI REST](docs/openapi.json)
 - [Verificación del contrato OpenAPI](docs/OPENAPI_RESULT.json)
 - [Contexto, delta y publicador de eventos](docs/runbooks/events.md)
 - [Verificación de WebSocket y recuperación tras desconexión](docs/WEBSOCKET_RESULT.json)
-- [Gateway MCP: herramientas, autenticación y comprobaciones](docs/runbooks/mcp.md)
+- [Gateway MCP: herramientas, autenticación y comprobaciónes](docs/runbooks/mcp.md)
 - [Dashboard: ejecución, acciones y revisión visual](docs/runbooks/web.md)
 - [Revisión de administración en escritorio y móvil](docs/ADMIN_BROWSER_RESULT.json)
 - [Dirección visual aprobada](docs/design/README.md)

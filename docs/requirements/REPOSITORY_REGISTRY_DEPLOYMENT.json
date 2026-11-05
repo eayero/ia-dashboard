@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-05T22:54:09.821Z",
+  "codeCommit": "8cb94178e51a76580c83fb60ed154659449e0929",
+  "branch": "feat/acc-foundation",
+  "pushed": true,
+  "target": "local Docker Compose",
+  "origin": "http://localhost:55173",
+  "deploySucceeded": true,
+  "backup": "Private custom-format PostgreSQL backup in ignored .cache; not published",
+  "services": {
+    "api": "healthy",
+    "ui": "healthy",
+    "postgres": "healthy",
+    "redis": "healthy",
+    "worker": "running",
+    "migrate": "exited 0",
+    "bootstrap": "exited 0"
+  },
+  "images": {
+    "api": "sha256:4fc88956e523384db61e768860c3591bbf4c351656f63cb7e296f9bf48787148",
+    "ui": "sha256:a354436f75ee81764093cdb25bdc842d625a20044269a70414d53d4d432d3e6d"
+  },
+  "build": {
+    "method": "Verified local runtimes with current package source exports, dist and migrations",
+    "standardBuildFailure": "DockerHub nginx TLS handshake timeout",
+    "dependenciesUnchanged": true,
+    "manifestsVerified": 6,
+    "lockfileAndPoliciesUnchanged": true,
+    "newPackagesDownloaded": 0,
+    "nativeBuild": "PASS five packages"
+  },
+  "verification": {
+    "checkedAt": "2026-11-05T22:52:03.196Z",
+    "migrationCount": 11,
+    "existingRowsUnchanged": true,
+    "credentialFilesUnchanged": true,
+    "openApiMatchesArtifact": true,
+    "ui": 200,
+    "readiness": 200,
+    "tables": {
+      "projects": 2,
+      "principals": 9,
+      "local_users": 4,
+      "project_members": 11,
+      "agent_profiles": 5,
+      "agent_credentials": 8,
+      "work_items": 29,
+      "requirements": 23,
+      "requirement_revisions": 23,
+      "requirement_task_links": 44,
+      "requirement_impact_reviews": 0,
+      "requirement_impact_alerts": 0,
+      "task_validations": 3,
+      "task_work_intervals": 1
+    }
+  },
+  "registration": {
+    "checkedAt": "2026-11-05T22:53:12.702Z",
+    "repository": {
+      "id": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+      "url": "https://github.com/eayero/ia-dashboard",
+      "name": "dashboard",
+      "projectSeq": "420"
+    },
+    "idempotentReplay": true
+  },
+  "newRegression": {
+    "command": "node --env-file=.env --import tsx --test tests/integration/repositories.test.ts",
+    "passed": 9,
+    "total": 9,
+    "requirementsCoverage": {
+      "tasks": 29,
+      "covered": 29,
+      "orphans": 0
+    }
+  },
+  "historicalRegression": {
+    "source": "REPOSITORY_REGISTRY_RESULT.json at codeCommit",
+    "unit": 70,
+    "integration": 127,
+    "protocol": 16
+  },
+  "acc": {
+    "pages": 3,
+    "seq": "432",
+    "events": 12,
+    "contextComplete": true,
+    "deltaComplete": true,
+    "ended": {
+      "id": "4f38579e-a343-482a-b891-35f5d884c1c5",
+      "version": 2,
+      "projectSeq": "432"
+    },
+    "sessionId": "4f38579e-a343-482a-b891-35f5d884c1c5",
+    "task26": {
+      "id": "f3c2ee73-1716-403e-86a8-1762290f9a60",
+      "title": "[ACC-LOCAL-020] Registrar tiempo de trabajo por tarea, día y agente",
+      "publicId": "TASK-26",
+      "status": "IN_PROGRESS",
+      "version": 19,
+      "workRevision": 5,
+      "workType": "CODE",
+      "summary": "Tiempo explícito publicado/desplegado desde 02e232f8570139cd57bd2c6271e1d1f70efb7af0; conserva 66 unitarias/112 integraciones históricas y navegador escritorio/móvil del mismo commit. El 2026-11-05 se desplegó catálogo REST de repositorios 8cb94178e51a76580c83fb60ed154659449e0929 y migración 011, preservando datos/credenciales. Dashboard registrado mediante REST humano autorizado con ID ce3490c4-a6cf-44f7-a223-933d369c031d y confirmado mediante contexto MCP nativo. Adjuntadas evidencias CODE y TEST PASS 178/178, criterios c1-c4, mismo repositorio/commit publicado; no se atribuyen pruebas nuevas al commit histórico. Pendiente aprobación/evaluación humana de REQ-19 e impacto; no se emite validación humana ni se eluden gates.",
+      "criteria": [
+        {
+          "id": "c1",
+          "required": true,
+          "description": "Inicio y pausa explícitos por agente, con acumulación por tarea y conservación de intervalos e identidad."
+        },
+        {
+          "id": "c2",
+          "required": true,
+          "description": "Desglosar tiempo por día y agente, repartir tramos que cruzan medianoche y conservar totales exactos."
+        },
+        {
+          "id": "c3",
+          "required": true,
+          "description": "Validar autorización, claim/sesión/fencing, idempotencia y cierres por expiración/revocación mediante API/MCP y PostgreSQL real."
+        },
+        {
+          "id": "c4",
+          "required": true,
+          "description": "Mostrar total y desglose en la tarea, documentar contratos y verificar escritorio/móvil sin inventar tiempos históricos."
+        }
+      ],
+      "impactPending": true,
+      "completionVersion": null,
+      "evidence": [
+        {
+          "id": "4fba321e-b518-4f78-855b-afd6d23b2be6",
+          "kind": "OTHER",
+          "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+          "workRevision": 4,
+          "repositoryId": null,
+          "commit": null,
+          "result": null,
+          "acceptedBy": null
+        },
+        {
+          "id": "6158589b-e80a-4abd-b5a4-05dd226cc653",
+          "kind": "CODE",
+          "url": "https://github.com/eayero/ia-dashboard/commit/02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+          "workRevision": 4,
+          "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+          "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+          "result": null,
+          "acceptedBy": null
+        },
+        {
+          "id": "b273fbfd-0797-45ef-ab8e-3127bb2e1a43",
+          "kind": "TEST",
+          "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+          "workRevision": 4,
+          "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+          "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+          "result": {
+            "total": 178,
+            "passed": 178,
+            "outcome": "PASS"
+          },
+          "acceptedBy": null
+        },
+        {
+          "id": "6cdb38dd-8d74-4ef3-a85d-33012beb1ac2",
+          "kind": "CODE",
+          "url": "https://github.com/eayero/ia-dashboard/commit/02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+          "workRevision": 5,
+          "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+          "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+          "result": null,
+          "acceptedBy": null
+        },
+        {
+          "id": "32354bc5-3d78-4a9a-b6ab-e6d7f6e77951",
+          "kind": "TEST",
+          "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+          "workRevision": 5,
+          "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+          "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+          "result": {
+            "total": 178,
+            "passed": 178,
+            "outcome": "PASS"
+          },
+          "acceptedBy": null
+        }
+      ],
+      "approvals": [],
+      "validations": [],
+      "claim": {
+        "principalId": "e5ea545f-c5c0-4c5e-875e-088950fd8288",
+        "sessionId": "4f38579e-a343-482a-b891-35f5d884c1c5",
+        "expiresAt": "2026-11-05T23:02:21.851Z",
+        "fencingToken": "7"
+      },
+      "dependencies": [],
+      "requirements": [
+        {
+          "id": "e94f7129-0242-48af-883a-d7faac907653",
+          "publicId": "REQ-19",
+          "version": 2,
+          "approvedRevision": null,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ],
+      "projectSeq": "429"
+    },
+    "task29": {
+      "id": "6084597e-53ac-48c1-8438-465fe3b49937",
+      "title": "[ACC-LOCAL-023] Registrar repositorios por REST para evidencias trazables",
+      "publicId": "TASK-29",
+      "status": "IN_PROGRESS",
+      "version": 13,
+      "workRevision": 3,
+      "workType": "CODE",
+      "summary": "Catalogo REST de repositorios publicado en origin/feat/acc-foundation commit 8cb94178e51a76580c83fb60ed154659449e0929 y desplegado localmente el 2026-11-05. Migracion 011 aplicada; API/UI/PG/Redis saludables, worker activo y migrate/bootstrap salida 0. Comparacion pre/post preserva filas completas de 14 tablas, migraciones 001-010 y archivos de credenciales. OpenAPI desplegado coincide con artefacto; UI/readiness HTTP 200. Build de cinco paquetes PASS, seis manifiestos/dependencias/lockfile/politicas sin cambios. Build estandar fallo TLS DockerHub; reutilizados runtimes locales verificados con fuentes exportadas, dist y migraciones actuales. Backup PostgreSQL privado previo. Registro humano REST autorizado de dashboard: ce3490c4-a6cf-44f7-a223-933d369c031d, repeticion idempotente y contexto MCP nativo completo confirman mismo ID. TASK-26 tiene CODE/TEST pareadas del commit historico publicado 02e232f (178 pruebas historicas), sin atribuirle pruebas nuevas. Verificacion nueva: 9/9 integraciones PostgreSQL de repositorios PASS; auditoria 29/29 tareas cubiertas, cero huerfanas. Resultado de implementacion publicado conserva 70 unitarias/127 integraciones/16 protocolo historicos. Sin instalaciones, subagentes o aprobaciones humanas. TASK-29 conserva IN_PROGRESS por impacto humano pendiente en REQ-1/REQ-16; TASK-26 rechaza IN_REVIEW con IMPACT_REVIEW_REQUIRED para REQ-19. Documentacion de despliegue en docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json.",
+      "criteria": [
+        {
+          "id": "c1",
+          "required": true,
+          "description": "Registrar y consultar repositorios por REST con contrato estricto, paginación y acceso humano OWNER/ADMIN/MANAGER para mutación."
+        },
+        {
+          "id": "c2",
+          "required": true,
+          "description": "Idempotencia y concurrencia sin duplicados por proyecto/URL; entidad, auditoría y outbox atómicos con nueva migración conservando 001–010."
+        },
+        {
+          "id": "c3",
+          "required": true,
+          "description": "Consultar repositorios por contexto/delta MCP y adjuntar evidencia CODE/TEST del mismo repositorio/commit sin eludir gates."
+        },
+        {
+          "id": "c4",
+          "required": true,
+          "description": "Verificar PostgreSQL real, REST/CSRF, permisos y aislamiento; OpenAPI, tipos, lint, build y documentación coherentes."
+        }
+      ],
+      "impactPending": true,
+      "completionVersion": null,
+      "evidence": [
+        {
+          "id": "cef7e6a7-09e5-46a1-8115-5d2a92db7bf9",
+          "kind": "CODE",
+          "url": "https://github.com/eayero/ia-dashboard/commit/8cb94178e51a76580c83fb60ed154659449e0929",
+          "workRevision": 3,
+          "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+          "commit": "8cb94178e51a76580c83fb60ed154659449e0929",
+          "result": null,
+          "acceptedBy": null
+        },
+        {
+          "id": "06cfa222-3c52-41e9-973b-c34e76cda81c",
+          "kind": "TEST",
+          "url": "https://github.com/eayero/ia-dashboard/blob/8cb94178e51a76580c83fb60ed154659449e0929/docs/requirements/REPOSITORY_REGISTRY_RESULT.json",
+          "workRevision": 3,
+          "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+          "commit": "8cb94178e51a76580c83fb60ed154659449e0929",
+          "result": {
+            "total": 197,
+            "passed": 197,
+            "outcome": "PASS"
+          },
+          "acceptedBy": null
+        }
+      ],
+      "approvals": [],
+      "validations": [],
+      "claim": {
+        "principalId": "e5ea545f-c5c0-4c5e-875e-088950fd8288",
+        "sessionId": "4f38579e-a343-482a-b891-35f5d884c1c5",
+        "expiresAt": "2026-11-05T22:59:51.054Z",
+        "fencingToken": "4"
+      },
+      "dependencies": [],
+      "requirements": [
+        {
+          "id": "26564011-7a1b-4294-8f68-4b1a1c483c08",
+          "publicId": "REQ-1",
+          "version": 3,
+          "approvedRevision": null,
+          "evaluatedRevision": null,
+          "impactPending": true
+        },
+        {
+          "id": "d243450b-6b6d-498e-a138-9dc255b6b341",
+          "publicId": "REQ-16",
+          "version": 3,
+          "approvedRevision": null,
+          "evaluatedRevision": null,
+          "impactPending": true
+        }
+      ],
+      "projectSeq": "429"
+    }
+  },
+  "limitations": [
+    "Local only; production not configured",
+    "TASK-26 and TASK-29 IN_REVIEW attempts rejected IMPACT_REVIEW_REQUIRED; statuses remain IN_PROGRESS",
+    "Human decisions pending REQ-19, REQ-1/REQ-16 and REQ-23 for TASK-16",
+    "No human requirement approval, impact evaluation or post-DONE acknowledgement emitted",
+    "No independent review or new visual browser review; UI unchanged"
+  ],
+  "operationalNotes": [
+    "Initial verification attempted before UI startup completed; repeated after Compose completed and passed",
+    "Registration succeeded on first attempt; verification script logout omitted required empty JSON body, corrected and replayed successfully",
+    "Task summary update increments work revision; TASK-26 CODE/TEST reattached to revision 5, preserving historical revision 4 evidence"
+  ]
+}

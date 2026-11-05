@@ -36,6 +36,6 @@ instrucciones. [Comandos pertinentes](COMMANDS.md).
 
 - [Revisión de cierres pendientes](../requirements/PENDING_CLOSURE_REVIEW.md): alcance y evidencia preparados para REQ-19/REQ-23; no constituye aprobación humana.
 
-- [Catálogo REST de repositorios](../requirements/REPOSITORY_REGISTRY_RESULT.json): diseño A aprobado, implementación local verificada con PostgreSQL real; no publicado/desplegado.
+- [Catálogo REST de repositorios](../requirements/REPOSITORY_REGISTRY_RESULT.json): diseño A aprobado, implementación local verificada con PostgreSQL real; publicado y desplegado desde `8cb9417`; [informe](../requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json).
 
 - [Evidencia CODE/TEST de TASK-26 preparada](../requirements/TASK_WORK_TIME_EVIDENCE_READY.json): commit y resultados históricos coincidentes; no enviada sin ID de repositorio real.

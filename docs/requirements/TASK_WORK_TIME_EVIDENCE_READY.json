@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "phase": "PREPARED_NOT_SUBMITTED",
+  "phase": "SUBMITTED_CURRENT_REVISION",
   "task": "ACC-LOCAL-020",
   "taskId": "f3c2ee73-1716-403e-86a8-1762290f9a60",
   "publicId": "TASK-26",
@@ -8,7 +8,7 @@
   "repository": {
     "name": "dashboard",
     "url": "https://github.com/eayero/ia-dashboard",
-    "registeredId": null
+    "registeredId": "ce3490c4-a6cf-44f7-a223-933d369c031d"
   },
   "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
   "criteria": ["c1", "c2", "c3", "c4"],
@@ -20,7 +20,11 @@
     {
       "kind": "TEST",
       "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
-      "result": { "outcome": "PASS", "total": 178, "passed": 178 },
+      "result": {
+        "outcome": "PASS",
+        "total": 178,
+        "passed": 178
+      },
       "countBasis": "66 unit + 112 integration tests recorded in that published commit; protocol and browser checks are separate. These are historical results, not new tests attributed to an old commit."
     }
   ],
@@ -39,5 +43,38 @@
     "reportPublicationFlagsAtCommit": false,
     "laterDeploymentRecord": "docs/requirements/TASK_WORK_TIME_DEPLOYMENT.json",
     "interpretation": "The report preserves the pre-publication verification instant. Later publication/deployment is recorded separately; original tests and code share the same immutable commit."
+  },
+  "submission": {
+    "checkedAt": "2026-11-05T22:54:09.821Z",
+    "taskVersion": 19,
+    "workRevision": 5,
+    "evidence": [
+      {
+        "id": "6cdb38dd-8d74-4ef3-a85d-33012beb1ac2",
+        "kind": "CODE",
+        "url": "https://github.com/eayero/ia-dashboard/commit/02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+        "workRevision": 5,
+        "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+        "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+        "result": null,
+        "acceptedBy": null
+      },
+      {
+        "id": "32354bc5-3d78-4a9a-b6ab-e6d7f6e77951",
+        "kind": "TEST",
+        "url": "https://github.com/eayero/ia-dashboard/blob/02e232f8570139cd57bd2c6271e1d1f70efb7af0/docs/requirements/TASK_WORK_TIME_RESULT.json",
+        "workRevision": 5,
+        "repositoryId": "ce3490c4-a6cf-44f7-a223-933d369c031d",
+        "commit": "02e232f8570139cd57bd2c6271e1d1f70efb7af0",
+        "result": {
+          "total": 178,
+          "passed": 178,
+          "outcome": "PASS"
+        },
+        "acceptedBy": null
+      }
+    ],
+    "transitionRejected": "IMPACT_REVIEW_REQUIRED",
+    "status": "IN_PROGRESS"
   }
 }

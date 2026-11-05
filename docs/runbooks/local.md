@@ -1,7 +1,7 @@
 # Entorno local
 
 Solo desarrollo. Los puertos publicados se limitan a loopback. Compose incluye
-PostgreSQL, Redis, migraciones, bootstrap, API, worker y UI; usa autenticación
+PostgreSQL, Redis, migraciónes, bootstrap, API, worker y UI; usa autenticación
 propia de ACC. Keycloak ya no es una dependencia del entorno actual.
 
 ## Arranque completo con Docker
@@ -30,7 +30,7 @@ y hace proxy de API/MCP y WebSocket; el servidor WS y reconexión están impleme
 
 Migraciones y bootstrap se ejecutan antes de la API. PostgreSQL y Redis tienen
 volúmenes persistentes. Bootstrap monta `.cache` para conservar las credenciales;
-estos archivos no se incluyen en las imágenes. No editar migraciones aplicadas:
+estos archivos no se incluyen en las imágenes. No editar migraciónes aplicadas:
 el migrador comprueba sus checksums y aplica las nuevas en una transacción.
 
 El bootstrap conserva IDs, contraseñas cambiadas, permisos, cuentas deshabilitadas,
@@ -109,6 +109,6 @@ Instancia local actualizada: UI de requisitos, tiempo explícito y requisitos
 obligatorios desplegados con migración 010 y 22 herramientas MCP.
 Ver [despliegue](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json).
 El catálogo REST de repositorios está verificado en código con migración 011,
-pendiente de despliegue autorizado. La API nueva exige 011 al arrancar; conservar
+desplegado desde 8cb9417 con migración 011. Ver docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json. La API exige 011 al arrancar; conservar
 001–010 y actualizar API/worker/UI juntos por el nuevo tipo de evento REPOSITORY.
 No ejecutar migración/despliegue por leer esta guía.

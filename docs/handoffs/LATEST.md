@@ -1,5 +1,9 @@
 # Continuidad de sesión
 
+Actualización verificada 2026-11-05: catálogo REST publicado y desplegado localmente desde `8cb9417`, migración **011** aplicada. API/UI/PG/Redis saludables, worker activo, migrate/bootstrap salida 0. Datos y credenciales conservados; contrato OpenAPI coincide. Dashboard registrado por REST con ID `ce3490c4-a6cf-44f7-a223-933d369c031d`, confirmado por MCP nativo. CODE/TEST adjuntas a TASK-26 (revisión 5) y TASK-29 (revisión 3). Ambas siguen IN_PROGRESS: el servidor rechaza IN_REVIEW con `IMPACT_REVIEW_REQUIRED`; requieren decisión humana sobre REQ-19 y REQ-1/REQ-16. REQ-23 sigue pendiente para TASK-16. Nueve integraciones nuevas de comprobación pasan; cobertura 29/29, cero huérfanas. Sesión finalizada, sin claims activos. [Informe de despliegue](../requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json).
+
+Las notas siguientes conservan el estado anterior; las referencias a publicación/despliegue pendientes del catálogo quedan sustituidas por el informe anterior.
+
 Encargo vigente del 2026-11-05: resolver primero los pendientes de las entregas
 ya implementadas. Seguimiento y evidencias reconciliados sin perder historial;
 [revisión humana](../requirements/PENDING_CLOSURE_REVIEW.md) preparada y
