@@ -4,6 +4,8 @@ import { api } from './api.ts';
 import type { TaskDetail, Session } from './data.ts';
 import { Modal, Notice, Status, date, useCommand } from './components.tsx';
 import { TaskTime } from './task-time.tsx';
+import { Participants } from './participants.tsx';
+import { executionMessage, sprintText } from './iterations-data.ts';
 
 export function TaskPanel({
   projectId,
@@ -40,6 +42,7 @@ export function TaskPanel({
   const writable = manages || reviews;
   const stale = Boolean(task && currentVersion !== undefined && currentVersion !== task.version);
   const disabled = blocked || query.isFetching || query.isError || command.isPending || stale;
+  const executionDisabled = disabled || Boolean(task?.executionBlock);
   const ownSession = sessions.find(
     (s) =>
       s.principalId === principalId && !s.endedAt && new Date(s.expiresAt).getTime() > Date.now(),
@@ -54,6 +57,13 @@ export function TaskPanel({
   const validated = task?.validations.some((validation) => validation.current);
   async function act(name: string, payload: Record<string, unknown> = {}) {
     if (!task || disabled) return;
+    if (
+      task.executionBlock &&
+      (['claim', 'heartbeat', 'work', 'evidence'].includes(name) ||
+        (name === 'transition' &&
+          ['IN_PROGRESS', 'IN_REVIEW', 'IN_QA', 'DONE'].includes(String(payload.to))))
+    )
+      return;
     try {
       await command.mutateAsync({
         path: `/projects/${projectId}/tasks/${taskId}/${name}`,
@@ -101,6 +111,61 @@ export function TaskPanel({
               Cambio confirmado por el servidor.
             </p>
           )}
+          <section>
+            <h3>Sprint heredado</h3>
+            <p>
+              {task.sprintId
+                ? `${task.sprintPublicId} · ${task.sprintName} · ${sprintText[task.sprintStatus ?? ''] ?? task.sprintStatus}`
+                : 'Sin sprint'}
+            </p>
+            {task.executionBlock && (
+              <p className="notice" role="status">
+                {executionMessage(task.executionBlock)}
+              </p>
+            )}
+            <p className="muted">
+              El requisito principal determina el sprint. Los otros vínculos conservan trazabilidad.
+            </p>
+            {manages && (
+              <form
+                onSubmit={(e) =>
+                  form(e, 'primary-requirement', (f) => ({
+                    requirementId: f.get('requirementId'),
+                    reason: f.get('reason'),
+                  }))
+                }
+              >
+                <fieldset disabled={disabled || Boolean(task.claim)}>
+                  <label>
+                    Requisito principal
+                    <select
+                      name="requirementId"
+                      required
+                      defaultValue={task.primaryRequirementId ?? ''}
+                    >
+                      <option value="" disabled>
+                        Seleccionar principal
+                      </option>
+                      {task.requirements.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.publicId}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label>
+                    Motivo de la asignación
+                    <input name="reason" required maxLength={4000} />
+                  </label>
+                  <button type="submit">Guardar requisito principal</button>
+                </fieldset>
+                {task.claim && (
+                  <p className="muted">Libera el claim antes de cambiar de requisito principal.</p>
+                )}
+              </form>
+            )}
+          </section>
+          <Participants projectId={projectId} entityId={taskId} entityType="TASK" />
           <h3>Criterios de aceptación</h3>
           <ul className="criteria">
             {task.criteria.map((c) => (
@@ -111,6 +176,47 @@ export function TaskPanel({
             ))}
           </ul>
           {task.impactPending && <p className="notice">Hay impacto pendiente de revisión.</p>}
+          {task.decisionImpactPending && (
+            <p className="notice">
+              Hay decisiones aprobadas cuyo impacto debe evaluar un gestor antes de revisión, QA o
+              cierre.
+            </p>
+          )}
+          {Boolean(task.questionLinks?.length) && (
+            <section>
+              <h3>Preguntas vinculadas</h3>
+              <ul>
+                {task.questionLinks!.map((q) => (
+                  <li key={q.id}>
+                    {q.publicId} · {q.title} ·{' '}
+                    {q.status === 'OPEN'
+                      ? 'Abierta'
+                      : q.status === 'RESOLVED'
+                        ? 'Resuelta'
+                        : 'Cancelada'}
+                    {q.hard ? ' · Bloqueo duro' : ' · Informativa'}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {Boolean(task.decisionLinks?.length) && (
+            <section>
+              <h3>Decisiones vinculadas</h3>
+              <ul>
+                {task.decisionLinks!.map((d) => (
+                  <li key={d.id}>
+                    {d.publicId} ·{' '}
+                    {d.impactPending
+                      ? 'Impacto pendiente'
+                      : d.evaluatedRevision
+                        ? `Evaluada r${d.evaluatedRevision}`
+                        : 'Sin revisión aprobada'}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           {task.requirements.length > 0 && (
             <>
               <h3>Requisitos vinculados</h3>
@@ -200,7 +306,7 @@ export function TaskPanel({
                 )}
                 {['READY', 'IN_PROGRESS'].includes(task.status) && !task.claim && (
                   <button
-                    disabled={disabled || !ownSession}
+                    disabled={executionDisabled || !ownSession}
                     onClick={() => void act('claim', { sessionId: ownSession!.id })}
                   >
                     Reclamar tarea
@@ -208,7 +314,10 @@ export function TaskPanel({
                 )}
                 {owned && (
                   <>
-                    <button disabled={disabled} onClick={() => void act('heartbeat', claim)}>
+                    <button
+                      disabled={executionDisabled}
+                      onClick={() => void act('heartbeat', claim)}
+                    >
                       Renovar claim
                     </button>
                     <button disabled={disabled} onClick={() => void act('release', claim)}>
@@ -219,7 +328,7 @@ export function TaskPanel({
                 {owned && task.status === 'IN_PROGRESS' && (
                   <button
                     className="primary"
-                    disabled={disabled}
+                    disabled={executionDisabled}
                     onClick={() => void act('transition', { ...claim, to: 'IN_REVIEW' })}
                   >
                     Enviar a revisión
@@ -228,7 +337,7 @@ export function TaskPanel({
                 {reviews && task.status === 'IN_REVIEW' && (
                   <button
                     className="primary"
-                    disabled={disabled}
+                    disabled={executionDisabled}
                     onClick={() => void act('transition', { to: 'IN_QA' })}
                   >
                     Pasar a QA
@@ -237,7 +346,7 @@ export function TaskPanel({
                 {reviews && task.status === 'IN_QA' && (
                   <button
                     className="primary"
-                    disabled={disabled}
+                    disabled={executionDisabled}
                     onClick={() => void act('transition', { to: 'DONE' })}
                   >
                     Completar tarea
@@ -290,7 +399,7 @@ export function TaskPanel({
                     form(event, 'work', (data) => ({ ...claim, summary: data.get('summary') }))
                   }
                 >
-                  <fieldset disabled={disabled}>
+                  <fieldset disabled={executionDisabled}>
                     <label>
                       Resumen de implementación
                       <textarea
@@ -318,7 +427,7 @@ export function TaskPanel({
                     }))
                   }
                 >
-                  <fieldset disabled={disabled}>
+                  <fieldset disabled={executionDisabled}>
                     <label>
                       URL HTTPS del informe
                       <input name="url" type="url" pattern="https://.*" required maxLength={4000} />
@@ -347,7 +456,7 @@ export function TaskPanel({
                     }))
                   }
                 >
-                  <fieldset disabled={disabled}>
+                  <fieldset disabled={executionDisabled}>
                     <label>
                       Motivo de devolución
                       <input name="reason" required maxLength={4000} />

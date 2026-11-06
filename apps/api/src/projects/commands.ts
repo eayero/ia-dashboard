@@ -13,10 +13,16 @@ import {
   sessionHeartbeatSchema,
   startWorkSchema,
   pauseWorkSchema,
+  assignPrimaryRequirementSchema,
 } from '@acc/contracts';
 
 // Runtime dispatch and OpenAPI share this inventory and the actual input schemas.
 export const taskCommands = {
+  'primary-requirement': {
+    method: 'assignPrimaryRequirement',
+    schema: assignPrimaryRequirementSchema,
+    human: true,
+  },
   'start-work': { method: 'startWork', schema: startWorkSchema, agent: true },
   'pause-work': { method: 'pauseWork', schema: pauseWorkSchema, agent: true },
   claim: { method: 'claimTask', schema: claimTaskSchema },

@@ -41,6 +41,9 @@ import { Requirements } from './requirements.tsx';
 import { RequirementPanel } from './requirement-detail.tsx';
 import { RequirementForm } from './requirement-form.tsx';
 import { requirementAttention } from './requirements-data.ts';
+import { Iterations } from './iterations.tsx';
+import { Governance } from './governance.tsx';
+import type { GovernanceItem } from './governance-data.ts';
 
 function App() {
   const client = useQueryClient();
@@ -345,7 +348,18 @@ function Dashboard({
     !data || !online || query.isError || now - data.checkedAt > 30000 || currentProject.archived;
   const attention = tasks.filter((task) => ['BLOCKED', 'IN_REVIEW', 'IN_QA'].includes(task.status));
   const impacts = data ? requirementAttention(data) : [];
-  const attentionCount = attention.length + impacts.length;
+  const questions = data ? entities<GovernanceItem>(data, 'QUESTION') : [];
+  const openQuestions = questions.filter((q) => q.status === 'OPEN');
+  const attentionCount = attention.length + impacts.length + openQuestions.length;
+  const governanceProps = {
+    projectId: project.id,
+    csrf: me.csrfToken,
+    roles,
+    blocked,
+    tasks,
+    questions,
+    requirements: data ? entities<{ id: string; publicId: string }>(data, 'REQUIREMENT') : [],
+  };
   const selected = tasks.find((task) => task.id === taskId);
   const shown = (view === 'attention' ? attention : tasks).filter(
     (task) =>
@@ -356,6 +370,9 @@ function Dashboard({
     { id: 'overview', label: 'Resumen', icon: LayoutDashboard },
     { id: 'tasks', label: 'Tareas', icon: ListTodo },
     { id: 'requirements', label: 'Requisitos', icon: FileText },
+    { id: 'iterations', label: 'Sprints', icon: ListTodo },
+    { id: 'questions', label: 'Preguntas', icon: BellRing },
+    { id: 'decisions', label: 'Decisiones', icon: FileText },
     { id: 'attention', label: 'Atención pendiente', icon: BellRing },
     { id: 'sessions', label: 'Sesiones', icon: Users },
   ];
@@ -437,12 +454,13 @@ function Dashboard({
             >
               <RefreshCw size={18} aria-hidden="true" />
             </button>
-            {writable && view !== 'requirements' && (
-              <button className="primary" disabled={blocked} onClick={() => setCreating(true)}>
-                <Plus size={17} aria-hidden="true" />
-                Crear tarea
-              </button>
-            )}
+            {writable &&
+              !['requirements', 'iterations', 'questions', 'decisions'].includes(view) && (
+                <button className="primary" disabled={blocked} onClick={() => setCreating(true)}>
+                  <Plus size={17} aria-hidden="true" />
+                  Crear tarea
+                </button>
+              )}
           </div>
         </header>
         {query.error && <Notice error={query.error} retry={() => void query.refetch()} />}
@@ -486,7 +504,19 @@ function Dashboard({
                 </div>
               </div>
             )}
-            {view === 'requirements' ? (
+            {['overview', 'attention'].includes(view) && (
+              <Governance {...governanceProps} kind="questions" inbox />
+            )}
+            {view === 'questions' || view === 'decisions' ? (
+              <Governance key={view} {...governanceProps} kind={view} />
+            ) : view === 'iterations' ? (
+              <Iterations
+                projectId={project.id}
+                csrf={me.csrfToken}
+                manages={roles.some((r) => ['OWNER', 'ADMIN', 'MANAGER'].includes(r))}
+                blocked={blocked}
+              />
+            ) : view === 'requirements' ? (
               <Requirements
                 state={data}
                 open={(id) => openRequirement(id)}

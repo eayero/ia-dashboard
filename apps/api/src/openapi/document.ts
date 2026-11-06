@@ -36,10 +36,152 @@ type Definition = {
   response?: keyof typeof responseModels;
   idempotent?: boolean;
   description?: string;
-  query?: 'tasks' | 'context' | 'events' | 'requirements' | 'repositories';
+  query?: 'tasks' | 'context' | 'events' | 'requirements' | 'repositories' | 'governance';
   timeZoneQuery?: boolean;
+  participantQuery?: boolean;
 };
 const definitions: Definition[] = [
+  ...(['questions', 'decisions'] as const).flatMap((kind): Definition[] => [
+    {
+      path: `/projects/{projectId}/${kind}`,
+      method: 'get',
+      operationId: `list${kind === 'questions' ? 'Questions' : 'Decisions'}`,
+      summary: `Consultar ${kind}`,
+      tag: 'Preguntas y decisiones',
+      response: kind === 'questions' ? 'QuestionList' : 'DecisionList',
+      query: 'governance',
+    },
+    {
+      path: `/projects/{projectId}/${kind}/{entityId}`,
+      method: 'get',
+      operationId: `get${kind === 'questions' ? 'Question' : 'Decision'}`,
+      summary: `Detalle de ${kind}`,
+      tag: 'Preguntas y decisiones',
+      response: kind === 'questions' ? 'QuestionDetail' : 'DecisionDetail',
+    },
+    {
+      path: `/projects/{projectId}/${kind}`,
+      method: 'post',
+      operationId: `create${kind === 'questions' ? 'Question' : 'Decision'}`,
+      summary: `Proponer ${kind}`,
+      tag: 'Preguntas y decisiones',
+      body: kind === 'questions' ? contracts.createQuestionSchema : contracts.createDecisionSchema,
+      response: 'GovernanceMutation',
+      idempotent: true,
+    },
+  ]),
+  ...(
+    [
+      ['questions', 'revise', 'reviseQuestion', contracts.reviseQuestionSchema, false],
+      ['questions', 'answer', 'answerQuestion', contracts.answerQuestionSchema, false],
+      ['questions', 'resolve', 'resolveQuestion', contracts.resolveQuestionSchema, true],
+      ['questions', 'status', 'changeQuestionStatus', contracts.questionStatusSchema, true],
+      ['questions', 'links', 'linkQuestion', contracts.linkQuestionSchema, true],
+      ['decisions', 'revise', 'reviseDecision', contracts.reviseDecisionSchema, false],
+      ['decisions', 'approve', 'approveDecision', contracts.approveDecisionSchema, true],
+      ['decisions', 'links', 'linkDecision', contracts.linkDecisionSchema, true],
+      [
+        'decisions',
+        'evaluate-impact',
+        'evaluateDecisionImpact',
+        contracts.evaluateDecisionImpactSchema,
+        true,
+      ],
+    ] as const
+  ).map(([kind, action, operationId, body, human]): Definition => ({
+    path: `/projects/{projectId}/${kind}/{entityId}/${action}`,
+    method: 'post',
+    operationId,
+    summary: operationId,
+    tag: 'Preguntas y decisiones',
+    body,
+    access: human ? 'cookie' : 'either',
+    response: 'GovernanceMutation',
+    idempotent: true,
+  })),
+  {
+    path: '/projects/{projectId}/inbox',
+    method: 'get',
+    operationId: 'getInbox',
+    summary: 'Preguntas abiertas; leer no resuelve',
+    tag: 'Preguntas y decisiones',
+    response: 'QuestionList',
+    query: 'governance',
+  },
+  {
+    path: '/projects/{projectId}/iterations',
+    method: 'get',
+    operationId: 'listIterations',
+    summary: 'Consultar sprints del proyecto',
+    tag: 'Sprints',
+    response: 'IterationList',
+    query: 'requirements',
+  },
+  {
+    path: '/projects/{projectId}/iterations',
+    method: 'post',
+    operationId: 'createIteration',
+    summary: 'Crear sprint planificado',
+    tag: 'Sprints',
+    access: 'cookie',
+    body: contracts.createIterationSchema,
+    response: 'PlanningMutation',
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/iterations/{iterationId}/update',
+    method: 'post',
+    operationId: 'updateIteration',
+    summary: 'Editar sprint con versión vigente',
+    tag: 'Sprints',
+    access: 'cookie',
+    body: contracts.updateIterationSchema,
+    response: 'PlanningMutation',
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/iterations/{iterationId}/transition',
+    method: 'post',
+    operationId: 'transitionIteration',
+    summary: 'Cambiar estado del sprint; detenerlo cierra trabajo y claims',
+    tag: 'Sprints',
+    access: 'cookie',
+    body: contracts.transitionIterationSchema,
+    response: 'PlanningMutation',
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/requirements/{requirementId}/sprint',
+    method: 'post',
+    operationId: 'assignRequirementSprint',
+    summary: 'Asignar sprint al requisito y sus tareas principales',
+    tag: 'Sprints',
+    access: 'cookie',
+    body: contracts.assignRequirementSprintSchema,
+    response: 'PlanningMutation',
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/execution/prepare',
+    method: 'post',
+    operationId: 'prepareSprintExecution',
+    summary: 'Cerrar intervalos y claims antes de activar planificación por sprint',
+    tag: 'Sprints',
+    access: 'cookie',
+    body: contracts.prepareSprintExecutionSchema,
+    response: 'PlanningMutation',
+    idempotent: true,
+  },
+  {
+    path: '/projects/{projectId}/participants',
+    method: 'get',
+    operationId: 'getParticipants',
+    summary: 'Consultar autoría, participantes y tiempo registrado',
+    tag: 'Trazabilidad',
+    response: 'Participants',
+    participantQuery: true,
+    timeZoneQuery: true,
+  },
   {
     path: '/projects/{projectId}/repositories',
     method: 'get',
@@ -533,6 +675,21 @@ export function buildOpenApi() {
         description:
           'Zona IANA válida o UTC. El reparto a medianoche conserva exactamente los totales.',
       });
+    if (definition.participantQuery)
+      parameters.push(
+        {
+          name: 'entityType',
+          in: 'query',
+          required: true,
+          schema: { type: 'string', enum: ['TASK', 'REQUIREMENT'] },
+        },
+        {
+          name: 'entityId',
+          in: 'query',
+          required: true,
+          schema: { type: 'string', format: 'uuid' },
+        },
+      );
     if (definition.query) {
       parameters.push({
         name: 'cursor',
@@ -558,6 +715,24 @@ export function buildOpenApi() {
           required: false,
           schema: schemaFor(contracts.taskStatusSchema),
         });
+      if (definition.query === 'governance')
+        parameters.push(
+          {
+            name: 'status',
+            in: 'query',
+            required: false,
+            schema: {
+              type: 'string',
+              enum: ['OPEN', 'RESOLVED', 'CANCELLED', 'DRAFT', 'APPROVED', 'SUPERSEDED'],
+            },
+          },
+          {
+            name: 'priority',
+            in: 'query',
+            required: false,
+            schema: { type: 'string', enum: ['LOW', 'NORMAL', 'HIGH', 'CRITICAL'] },
+          },
+        );
       if (definition.query === 'events')
         parameters.push({
           name: 'afterSeq',

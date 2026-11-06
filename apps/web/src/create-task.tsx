@@ -48,7 +48,10 @@ export function CreateTask({
     const externalRef = String(form.get('externalRef')).trim();
     const parsed = createTaskSchema.safeParse({
       title: form.get('title'),
-      requirementIds: form.getAll('requirementIds'),
+      primaryRequirementId: form.get('primaryRequirementId'),
+      requirementIds: [
+        ...new Set([form.get('primaryRequirementId'), ...form.getAll('requirementIds')]),
+      ],
       workType: form.get('workType'),
       criteria,
       ...(externalRef ? { externalRef } : {}),
@@ -87,8 +90,21 @@ export function CreateTask({
             <input name="title" required maxLength={300} autoFocus />
           </label>
           <label>
-            Requisitos asociados
-            <select name="requirementIds" multiple required size={4}>
+            Requisito principal
+            <select name="primaryRequirementId" required defaultValue="">
+              <option value="" disabled>
+                Selecciona el requisito que determina el sprint
+              </option>
+              {requirements.data?.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.publicId} · {r.title}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Otros requisitos de trazabilidad (opcionales)
+            <select name="requirementIds" multiple size={4}>
               {requirements.data?.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.publicId} · {r.title}

@@ -1,0 +1,35 @@
+{
+  "checkedAt": "2026-11-05T23:00:13.165Z",
+  "taskId": "03915426-7d84-440e-bbd2-a0df3c6c51c2",
+  "publicId": "TASK-30",
+  "phase": "DESIGN_PENDING_APPROVAL",
+  "optionConfirmed": "A: primary requirement determines inherited sprint",
+  "design": "docs/requirements/SPRINT_ATTRIBUTION_DESIGN.md",
+  "taskStatus": "IN_PROGRESS",
+  "taskVersion": 5,
+  "workRevision": 2,
+  "context": {
+    "pages": 3,
+    "complete": true,
+    "projectSeq": "444"
+  },
+  "delta": {
+    "events": 7,
+    "complete": true,
+    "projectSeq": "444"
+  },
+  "session": {
+    "id": "2743b58c-9b97-438d-8922-0bcf96eac425",
+    "ended": true,
+    "claimsReleased": true
+  },
+  "coverage": {
+    "tasks": 30,
+    "covered": 30,
+    "requirements": 23,
+    "links": 49,
+    "orphans": 0
+  },
+  "functionalChanges": false,
+  "published": false
+}

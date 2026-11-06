@@ -10,7 +10,11 @@ import { success } from '../common/errors.ts';
 export class RequirementsController {
   constructor(@Inject(API_RUNTIME) private runtime: ApiRuntime) {}
   private context(req: ApiRequest, projectId: string) {
-    return { projectId: z.uuid().parse(projectId), principalId: req.identity!.id };
+    return {
+      projectId: z.uuid().parse(projectId),
+      principalId: req.identity!.id,
+      channel: req.identity!.mode === 'COOKIE' ? ('WEB' as const) : ('API' as const),
+    };
   }
   @Get() async list(@Req() req: ApiRequest, @Param('projectId') projectId: string) {
     return success(

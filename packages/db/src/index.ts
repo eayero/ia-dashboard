@@ -3,6 +3,21 @@ import pg from 'pg';
 import { startWorkSchema, pauseWorkSchema } from '@acc/contracts';
 import { startWorkInterval, pauseWorkInterval } from './work-time.ts';
 import { registerRepository } from './repositories.ts';
+import {
+  governanceCommand,
+  governanceSchemas,
+  decisionImpactPending,
+  type GovernanceOperation,
+} from './governance.ts';
+import {
+  planningCommand,
+  planningSchemas,
+  assertTaskSprintActive,
+  type PlanningOperation,
+} from './iterations.ts';
+export { taskPlanning } from './iterations.ts';
+export { readEntityAttribution } from './attribution.ts';
+export { decisionImpactPending } from './governance.ts';
 import { registerRepositorySchema } from '@acc/contracts';
 export { readTaskWorkTime } from './work-time.ts';
 import {
@@ -43,7 +58,11 @@ export { OutboxStore, type OutboxClaim } from './outbox.ts';
 
 // Internal boundary: principalId MUST come from verified authentication, never a request body.
 // Transport adapters authenticate callers before invoking this store.
-export type CommandContext = { projectId: string; principalId: string };
+export type CommandContext = {
+  projectId: string;
+  principalId: string;
+  channel?: 'MCP' | 'WEB' | 'API';
+};
 type Task = { id: string; publicId: string; status: string; version: number; projectSeq: string };
 type Lease = { fencingToken: string; expiresAt: string; version: number; projectSeq: string };
 type LockedTask = {
@@ -137,7 +156,7 @@ export class CoordinationStore {
   private async counter(
     client: pg.PoolClient,
     projectId: string,
-    kind: 'TASK' | 'EVENT' | 'REQ',
+    kind: 'TASK' | 'EVENT' | 'REQ' | 'ITER' | 'Q' | 'DEC',
   ): Promise<string> {
     const result = await client.query<{ value: string }>(
       `INSERT INTO project_counters(project_id,kind,value) VALUES ($1,$2,1)
@@ -154,12 +173,20 @@ export class CoordinationStore {
     action: string,
     payload: unknown,
     sessionId: string | null = null,
-    entityType: 'TASK' | 'SESSION' | 'PRINCIPAL' | 'REQUIREMENT' | 'REPOSITORY' = 'TASK',
+    entityType:
+      | 'TASK'
+      | 'SESSION'
+      | 'PRINCIPAL'
+      | 'REQUIREMENT'
+      | 'REPOSITORY'
+      | 'ITERATION'
+      | 'QUESTION'
+      | 'DECISION' = 'TASK',
   ): Promise<string> {
     const seq = await this.counter(client, context.projectId, 'EVENT');
     const id = randomUUID();
     await client.query(
-      'INSERT INTO audit_events(id,project_id,seq,actor_id,session_id,entity_id,action,payload,trace_id,entity_type) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
+      'INSERT INTO audit_events(id,project_id,seq,actor_id,session_id,entity_id,action,payload,trace_id,entity_type,channel) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)',
       [
         id,
         context.projectId,
@@ -171,6 +198,7 @@ export class CoordinationStore {
         JSON.stringify(payload),
         randomUUID(),
         entityType,
+        context.channel ?? 'UNKNOWN',
       ],
     );
     await client.query('INSERT INTO event_outbox(event_id) VALUES ($1)', [id]);
@@ -191,6 +219,175 @@ export class CoordinationStore {
       true,
       ['OWNER', 'ADMIN', 'MANAGER'],
     );
+  }
+
+  private planning(
+    context: CommandContext,
+    key: string,
+    operation: PlanningOperation,
+    id: string | null,
+    payload: unknown,
+  ) {
+    const input = planningSchemas[operation].parse(payload);
+    return this.command(
+      context,
+      `planning.${operation}`,
+      key,
+      { id, ...input },
+      (client) =>
+        planningCommand(
+          {
+            client,
+            ...context,
+            counter: () => this.counter(client, context.projectId, 'ITER'),
+            event: (entityId, action, data, type) =>
+              this.event(client, context, entityId, action, data, null, type),
+          },
+          operation,
+          id,
+          input,
+        ),
+      true,
+      ['OWNER', 'ADMIN', 'MANAGER'],
+    );
+  }
+  createIteration(context: CommandContext, key: string, payload: unknown) {
+    return this.planning(context, key, 'create', null, payload);
+  }
+  updateIteration(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.planning(context, key, 'update', id, payload);
+  }
+  transitionIteration(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.planning(context, key, 'transition', id, payload);
+  }
+  assignRequirementSprint(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.planning(context, key, 'assignSprint', id, payload);
+  }
+  assignPrimaryRequirement(context: CommandContext, key: string, id: string, payload: unknown) {
+    return this.planning(context, key, 'assignPrimary', id, payload);
+  }
+  prepareSprintExecution(context: CommandContext, key: string, payload: unknown) {
+    return this.planning(context, key, 'prepare', null, payload);
+  }
+
+  private governance(
+    context: CommandContext,
+    key: string,
+    op: GovernanceOperation,
+    id: string | null,
+    payload: unknown,
+  ) {
+    const input = governanceSchemas[op].parse(payload);
+    const humanRoles: Role[] | undefined =
+      op === 'resolveQuestion'
+        ? ['OWNER', 'ADMIN', 'MANAGER', 'REVIEWER']
+        : [
+              'changeQuestionStatus',
+              'linkQuestion',
+              'approveDecision',
+              'linkDecision',
+              'evaluateDecisionImpact',
+            ].includes(op)
+          ? ['OWNER', 'ADMIN', 'MANAGER']
+          : undefined;
+    return this.command(
+      context,
+      `governance.${op}`,
+      key,
+      { id, ...input },
+      (client) =>
+        governanceCommand(
+          {
+            client,
+            ...context,
+            counter: (kind) => this.counter(client, context.projectId, kind),
+            event: (entityId, action, data, type) =>
+              this.event(client, context, entityId, action, data, null, type),
+            questionTask: (taskId, questionId) =>
+              this.reconcileQuestionState(client, context, taskId, questionId),
+          },
+          op,
+          id,
+          input,
+        ),
+      true,
+      humanRoles,
+    );
+  }
+  createQuestion(c: CommandContext, k: string, p: unknown) {
+    return this.governance(c, k, 'createQuestion', null, p);
+  }
+  reviseQuestion(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'reviseQuestion', id, p);
+  }
+  answerQuestion(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'answerQuestion', id, p);
+  }
+  resolveQuestion(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'resolveQuestion', id, p);
+  }
+  changeQuestionStatus(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'changeQuestionStatus', id, p);
+  }
+  linkQuestion(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'linkQuestion', id, p);
+  }
+  createDecision(c: CommandContext, k: string, p: unknown) {
+    return this.governance(c, k, 'createDecision', null, p);
+  }
+  reviseDecision(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'reviseDecision', id, p);
+  }
+  approveDecision(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'approveDecision', id, p);
+  }
+  linkDecision(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'linkDecision', id, p);
+  }
+  evaluateDecisionImpact(c: CommandContext, k: string, id: string, p: unknown) {
+    return this.governance(c, k, 'evaluateDecisionImpact', id, p);
+  }
+
+  private async reconcileQuestionState(
+    client: pg.PoolClient,
+    context: CommandContext,
+    taskId: string,
+    questionId: string,
+  ) {
+    const task = await this.lockTask(client, context, taskId),
+      met = await this.dependenciesMet(client, context, taskId);
+    const open = Boolean(
+      (
+        await client.query(
+          "SELECT 1 FROM question_task_links l JOIN questions q ON q.project_id=l.project_id AND q.id=l.question_id WHERE l.project_id=$1 AND l.task_id=$2 AND l.question_id=$3 AND l.hard AND q.status='OPEN'",
+          [context.projectId, taskId, questionId],
+        )
+      ).rowCount,
+    );
+    if (task.status === 'DONE' && open)
+      await client.query(
+        'INSERT INTO question_task_alerts(id,project_id,question_id,task_id) VALUES ($1,$2,$3,$4)',
+        [randomUUID(), context.projectId, questionId, taskId],
+      );
+    let status = task.status;
+    if (!met && ['BACKLOG', 'READY', 'IN_PROGRESS', 'IN_REVIEW', 'IN_QA'].includes(status)) {
+      status = 'BLOCKED';
+      await this.invalidateClaim(client, taskId);
+      await this.invalidateApprovals(client, taskId);
+    } else if (met && status === 'BLOCKED' && !task.manual_blocked) status = 'READY';
+    await client.query(
+      'UPDATE work_items SET status=$3,version=version+1 WHERE project_id=$1 AND id=$2',
+      [context.projectId, taskId, status],
+    );
+    const version = task.version + 1;
+    await this.event(client, context, taskId, 'task.questionChanged', {
+      questionId,
+      version,
+      from: task.status,
+      to: status,
+      open,
+    });
+    return version;
   }
 
   private requirement(
@@ -249,6 +446,7 @@ export class CoordinationStore {
       async (client, actor) => {
         if (actor.kind !== 'AGENT') throw new DomainError('FORBIDDEN');
         const task = await this.lockTask(client, context, taskId);
+        await assertTaskSprintActive(client, context.projectId, taskId);
         this.assertVersion(task, input.expectedVersion);
         await this.assertLease(client, context, taskId, input);
         if (task.status !== 'IN_PROGRESS') throw new DomainError('INVALID_TRANSITION');
@@ -360,7 +558,7 @@ export class CoordinationStore {
         const id = randomUUID();
         const publicId = `TASK-${await this.counter(client, context.projectId, 'TASK')}`;
         await client.query(
-          'INSERT INTO work_items(id,project_id,public_id,title,criteria,external_ref,created_by,work_type) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+          'INSERT INTO work_items(id,project_id,public_id,title,criteria,external_ref,created_by,work_type,primary_requirement_id) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)',
           [
             id,
             context.projectId,
@@ -370,6 +568,7 @@ export class CoordinationStore {
             input.externalRef ?? null,
             context.principalId,
             input.workType,
+            input.primaryRequirementId,
           ],
         );
         for (const requirement of requirements.rows) {
@@ -435,6 +634,7 @@ export class CoordinationStore {
     const input = claimTaskSchema.parse(payload);
     return this.command(context, 'task.claim', key, { taskId, ...input }, async (client) => {
       const task = await this.lockTask(client, context, taskId);
+      await assertTaskSprintActive(client, context.projectId, taskId);
       await this.session(client, context, input.sessionId);
       const paused = await client.query<{ claims_paused: boolean }>(
         'SELECT claims_paused FROM projects WHERE id=$1',
@@ -490,6 +690,7 @@ export class CoordinationStore {
     const input = heartbeatClaimSchema.parse(payload);
     return this.command(context, 'claim.heartbeat', key, { taskId, ...input }, async (client) => {
       const task = await this.lockTask(client, context, taskId);
+      await assertTaskSprintActive(client, context.projectId, taskId);
       await this.session(client, context, input.sessionId);
       const claim = await client.query(
         `SELECT task_id FROM task_claims WHERE task_id=$1 AND project_id=$2 AND principal_id=$3 AND session_id=$4
@@ -621,6 +822,7 @@ export class CoordinationStore {
     const input = updateWorkSchema.parse(payload);
     return this.command(context, 'task.updateWork', key, { taskId, ...input }, async (client) => {
       const task = await this.lockTask(client, context, taskId);
+      await assertTaskSprintActive(client, context.projectId, taskId);
       await this.assertLease(client, context, taskId, input);
       this.assertVersion(task, input.expectedVersion);
       if (task.status !== 'IN_PROGRESS') throw new DomainError('INVALID_TRANSITION');
@@ -692,7 +894,7 @@ export class CoordinationStore {
     taskId: string,
   ): Promise<boolean> {
     const result = await client.query(
-      `SELECT 1 FROM task_dependencies d JOIN work_items w ON w.project_id=d.project_id AND w.id=d.depends_on WHERE d.project_id=$1 AND d.task_id=$2 AND w.status<>'DONE' LIMIT 1`,
+      `SELECT 1 FROM task_dependencies d JOIN work_items w ON w.project_id=d.project_id AND w.id=d.depends_on WHERE d.project_id=$1 AND d.task_id=$2 AND w.status<>'DONE' UNION ALL SELECT 1 FROM question_task_links l JOIN questions q ON q.project_id=l.project_id AND q.id=l.question_id WHERE l.project_id=$1 AND l.task_id=$2 AND l.hard AND q.status='OPEN' LIMIT 1`,
       [context.projectId, taskId],
     );
     return !result.rowCount;
@@ -745,7 +947,8 @@ export class CoordinationStore {
       evidenceAccepted:
         task.work_type === 'CODE' ? accepted.some(matchesCode) : eligible.length > 0,
       dependenciesMet: await this.dependenciesMet(client, context, task.id),
-      impactPending: task.impact_pending,
+      impactPending:
+        task.impact_pending || (await decisionImpactPending(client, context.projectId, task.id)),
       ...approvalGates(
         task.work_revision,
         approvals.rows.map((a) => ({
@@ -762,6 +965,7 @@ export class CoordinationStore {
     const input = addEvidenceSchema.parse(payload);
     return this.command(context, 'evidence.add', key, { taskId, ...input }, async (client) => {
       const task = await this.lockTask(client, context, taskId);
+      await assertTaskSprintActive(client, context.projectId, taskId);
       // Agents may attach review/QA reports without holding an implementation claim.
       const report = input.kind === 'REVIEW' && ['IN_REVIEW', 'IN_QA'].includes(task.status);
       if (!report) {
@@ -926,6 +1130,8 @@ export class CoordinationStore {
         const task = await this.lockTask(client, context, taskId);
         this.assertVersion(task, input.expectedVersion);
         let hasClaim = false;
+        if (['IN_PROGRESS', 'IN_REVIEW', 'IN_QA', 'DONE'].includes(input.to))
+          await assertTaskSprintActive(client, context.projectId, taskId);
         if (input.sessionId && input.fencingToken) {
           await this.assertLease(client, context, taskId, {
             sessionId: input.sessionId,

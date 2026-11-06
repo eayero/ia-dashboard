@@ -1,0 +1,228 @@
+{
+  "checkedAt": "2026-11-06T14:07:14.545Z",
+  "phase": "IMPLEMENTED_LOCALLY_VERIFIED",
+  "task": {
+    "externalRef": "ACC-LOCAL-024",
+    "publicId": "TASK-30",
+    "id": "03915426-7d84-440e-bbd2-a0df3c6c51c2",
+    "status": "IN_PROGRESS",
+    "version": 17,
+    "workRevision": 5,
+    "claim": null,
+    "sessionEnded": true
+  },
+  "baseCommit": "0e2e6ea",
+  "deployedCommit": "8cb9417",
+  "migration": {
+    "new": "012_sprint_attribution.sql",
+    "appliedToHabitualInstance": false,
+    "habitualVersion": "011",
+    "legacyPreservationTest": "PASS; unambiguous primary links only; legacy author provenance remains unknown",
+    "deploymentPreparation": "When authorized: back up, stop worker/API, migrate, start gated API, run human execution/prepare, choose primary for ambiguous tasks and assign requirements/sprints before enabling workers."
+  },
+  "authorization": {
+    "implementation": true,
+    "commit": false,
+    "push": false,
+    "deploy": false,
+    "installations": false,
+    "delegation": false
+  },
+  "features": [
+    "Immutable authenticated creator, actor and owner snapshots; explicit MCP/WEB/API/UNKNOWN provenance",
+    "Participants from committed mutations; stable principal across credentials; explicit work time per agent and owner",
+    "Human sprint lifecycle and assignments; one ACTIVE sprint per project",
+    "Primary requirement mandatory for new tasks; task inherits sprint; secondary links preserve traceability",
+    "Productive work requires ACTIVE; stop/plan remains possible; stopping sprint closes intervals and revokes claims atomically",
+    "Reassignment preserves historical intervals and technical work revision",
+    "REST management, MCP acc_list_iterations/acc_get_participants (24 tools), context/events/OpenAPI and responsive UI"
+  ],
+  "checks": [
+    {
+      "command": "pnpm test",
+      "status": "PASS",
+      "tests": 74,
+      "log": ".cache/sprint-final-unit.log"
+    },
+    {
+      "command": "pnpm test:integration",
+      "status": "PASS",
+      "tests": 140,
+      "environment": "Real PostgreSQL and Redis; isolated test schemas",
+      "log": ".cache/sprint-final-integration.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "PASS",
+      "packages": 5,
+      "log": ".cache/sprint-final-typecheck.log"
+    },
+    {
+      "command": "pnpm typecheck:foundation",
+      "status": "PASS",
+      "log": ".cache/sprint-final-foundation.log"
+    },
+    {
+      "command": "pnpm lint",
+      "status": "PASS",
+      "log": ".cache/sprint-final-lint.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "PASS",
+      "packages": 5,
+      "log": ".cache/sprint-final-build.log"
+    },
+    {
+      "command": "OpenAPI export/equality integration",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm requirements:check",
+      "status": "PASS",
+      "requirements": 23,
+      "tasks": 30,
+      "covered": 30,
+      "orphans": 0
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    }
+  ],
+  "browser": {
+    "status": "PASS",
+    "origin": "http://localhost:55176",
+    "environment": "Isolated migration 012; synthetic accounts only",
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 1000
+      },
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "checks": [
+      "MCP creator and owner on task and requirement",
+      "Participants including zero recorded time",
+      "Inherited sprint and primary requirement",
+      "Sprint activation and pause through UI",
+      "Paused task execution explanation",
+      "Mobile modal fit and horizontal table scrolling"
+    ],
+    "pageErrors": 0,
+    "artifacts": [
+      "output/playwright/sprints-desktop.png",
+      "output/playwright/sprints-active-desktop.png",
+      "output/playwright/task-attribution-desktop.png",
+      "output/playwright/task-attribution-mobile.png",
+      "output/playwright/requirement-attribution-mobile.png",
+      "output/playwright/sprints-paused-mobile.png",
+      "output/playwright/task-blocked-mobile.png"
+    ],
+    "limitations": [
+      "Complete empty/error/stale/disabled UI state matrix not separately reviewed visually; shared components and integration suites cover server authorization and stale versions.",
+      "Nonzero time calculations verified through PostgreSQL integration and existing duration UI tests; screenshots use zero-time participants."
+    ]
+  },
+  "mcp": {
+    "native": true,
+    "projectSeq": "464",
+    "context": {
+      "pages": 3,
+      "records": 291,
+      "complete": true
+    },
+    "delta": {
+      "afterSeq": "444",
+      "throughSeq": "464",
+      "events": 20,
+      "complete": true
+    }
+  },
+  "review": {
+    "selfReview": true,
+    "independentReview": false
+  },
+  "notRun": [
+    "Publication, deployment and migration 012 on habitual instance (not authorized)",
+    "Published HTTPS CODE/TEST evidence (no publication authorized)"
+  ],
+  "knownLimitations": [
+    "Task remains IN_PROGRESS: published evidence and existing human requirement/impact decisions are pending.",
+    "Build emits existing web chunk-size advisory.",
+    "Legacy metadata without recorded identity/channel is intentionally UNKNOWN; no inferred historic time or sprint."
+  ],
+  "continuation": {
+    "checkedAt": "2026-11-06T15:54:03.290Z",
+    "task": {
+      "status": "IN_PROGRESS",
+      "version": 22,
+      "workRevision": 6,
+      "claim": null
+    },
+    "fixes": [
+      "A later verified action identifies a legacy participant without rewriting original authorship or audit history",
+      "Requirement collaborator aggregation retains authenticated owner display names while preserving historical time/owner IDs"
+    ],
+    "regressionTests": {
+      "focused": 15,
+      "status": "PASS",
+      "redLogs": [".cache/participants-continuation-red.log", ".cache/participants-owner-red.log"]
+    },
+    "positiveTimeBrowserArtifacts": [
+      "output/playwright/participants-positive-time-desktop.png",
+      "output/playwright/requirement-positive-time-desktop.png",
+      "output/playwright/requirement-positive-time-mobile.png"
+    ],
+    "combinedVerification": {
+      "integration": 154,
+      "unit": 77,
+      "status": "PASS",
+      "result": "docs/requirements/QUESTIONS_DECISIONS_RESULT.json"
+    },
+    "mcp": {
+      "method": "Native Codex MCP tracking; official MCP SDK for new isolated tools",
+      "projectSeq": "491",
+      "context": {
+        "pages": 3,
+        "records": 299,
+        "complete": true
+      },
+      "delta": {
+        "afterSeq": "464",
+        "throughSeq": "491",
+        "events": 27,
+        "pages": 1,
+        "complete": true
+      },
+      "sessionsEnded": true,
+      "ownedClaims": 0,
+      "tasks": [
+        {
+          "publicId": "TASK-31",
+          "status": "IN_PROGRESS",
+          "version": 10,
+          "workRevision": 2,
+          "claim": null
+        },
+        {
+          "publicId": "TASK-15",
+          "status": "IN_PROGRESS",
+          "version": 40,
+          "workRevision": 10,
+          "claim": null
+        },
+        {
+          "publicId": "TASK-30",
+          "status": "IN_PROGRESS",
+          "version": 22,
+          "workRevision": 6,
+          "claim": null
+        }
+      ]
+    }
+  }
+}

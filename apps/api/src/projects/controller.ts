@@ -81,7 +81,11 @@ export class ProjectsController {
     );
   }
   private context(req: ApiRequest, projectId: string) {
-    return { projectId: z.uuid().parse(projectId), principalId: req.identity!.id };
+    return {
+      projectId: z.uuid().parse(projectId),
+      principalId: req.identity!.id,
+      channel: req.identity!.mode === 'COOKIE' ? ('WEB' as const) : ('API' as const),
+    };
   }
   @Post(':projectId/tasks') async createTask(
     @Req() req: ApiRequest,

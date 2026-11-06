@@ -129,3 +129,11 @@ es base inicial, sin emitir evaluación humana; DRAFT conserva impacto pendiente
 Aprobaciones, evaluaciones posteriores y modificaciones de vínculos existentes
 conservan autorización humana. Retirar el último vínculo se rechaza en API y DB.
 [Contrato y alcance](requirements/TASK_REQUIREMENT_API.md).
+
+## ACC-LOCAL-024: requisito principal, sprints y autoría
+
+El usuario eligió A y aprobó la implementación con «continua»: un requisito principal determina el sprint de cada tarea; los otros vínculos no alteran la herencia. Se mantienen intervalos explícitos, identidad autenticada y participación por mutaciones confirmadas. Fuera de ACTIVE se bloquea ejecución en el servidor. Detener un sprint cierra intervalos y revoca claims sin modificar evidencia ni revisión técnica. La migración conserva los datos antiguos sin inventar sprints ni identidad ni un requisito principal ambiguo. Publicación y despliegue requieren autorización para esta entrega.
+
+## ACC-LOCAL-025: preguntas y decisiones juntas
+
+El usuario eligió el alcance conjunto y aprobó QUESTIONS_DECISIONS_DESIGN.md con «Aprobar e implementar». Se implementan Q13 (confirmación humana), Q23 (aprobación/supersesión), Q24 (impacto antes de review/QA/cierre) y Q25 (bloqueos duros, revocación y desbloqueo condicionado). Leer no resuelve. Las preguntas críticas se destacan en el inbox; agentes proponen sin resolver ni aprobar. Las tareas completadas reciben alertas sin reapertura automática. El encargo autoriza implementación y verificación local; no extiende las autorizaciones de publicación de entregas anteriores.

@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { Participants } from './participants.tsx';
+import { RequirementSprint } from './iterations.tsx';
 import { api } from './api.ts';
 import { Modal, Notice, date, useCommand } from './components.tsx';
 import { RequirementForm } from './requirement-form.tsx';
@@ -162,6 +164,16 @@ export function RequirementPanel({
                 Cambio confirmado por el servidor.
               </p>
             )}
+            <RequirementSprint
+              projectId={projectId}
+              requirementId={requirementId}
+              version={detail.version}
+              sprintId={detail.sprint?.id ?? null}
+              csrf={csrf}
+              blocked={disabled}
+              manages={manages}
+            />
+            <Participants projectId={projectId} entityId={requirementId} entityType="REQUIREMENT" />
             <div className="requirement-tabs" role="group" aria-label="Secciones del requisito">
               {[
                 ['content', 'Contenido'],

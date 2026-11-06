@@ -4,6 +4,8 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
+Implementado localmente y pendiente de publicación/despliegue: [preguntas, decisiones e inbox humano](docs/requirements/QUESTIONS_DECISIONS_RESULT.json), migración 013, y [sprints/autoría/participantes](docs/requirements/SPRINT_ATTRIBUTION_RESULT.json), migración 012. Ver [contrato de preguntas y decisiones](docs/requirements/QUESTIONS_DECISIONS_API.md).
+
 Entrega publicada y desplegada localmente desde `8cb9417`, migración 011:
 [catálogo REST de repositorios para evidencias](docs/requirements/REPOSITORY_REGISTRY_RESULT.json).
 Diseño A aprobado; migración nueva 011 y dos operaciones REST. Los agentes

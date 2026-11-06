@@ -1,5 +1,7 @@
 # Estado actual de ACC
 
+Encargo actual: **ACC-LOCAL-025 / TASK-31**. El usuario eligió preguntas y decisiones juntas y aprobó el diseño. Implementación local completa: preguntas/respuestas con confirmación humana, decisiones versionadas con aprobación/supersesión, impacto, bloqueos duros e inbox. Migración 013, REST/MCP/contexto/WS/OpenAPI y UI preparados. Ver [contrato](../requirements/QUESTIONS_DECISIONS_API.md) y [resultado](../requirements/QUESTIONS_DECISIONS_RESULT.json). Se preserva la entrega local 012 y se corrigieron dos casos de identidad/tiempo de participantes. La instancia habitual mantiene migración 011; las entregas 012/013 no están publicadas ni desplegadas.
+
 Producto: IMPLEMENTING; MVP incompleto. Instancia local: http://localhost:55173.
 Código publicado y desplegado: `8cb9417`, rama `feat/acc-foundation`.
 
@@ -37,7 +39,8 @@ Disponibles: autenticación propia, administración web/móvil, agentes por usua
 y varios proyectos, tareas/claims/idempotencia, requisitos versionados con UI,
 tiempo explícito por tarea/agente/día, contexto/delta, outbox/WebSocket y OpenAPI.
 
-Pendientes del MVP: preguntas/decisiones, iteraciones, gestión general de
+Implementadas localmente y pendientes de publicar/desplegar: iteraciones y preguntas/decisiones.
+Pendientes del MVP: gestión general de
 proyectos/repositorios, métricas restantes, webhooks, exportación/backups,
 operación/CI y cliente Claude. Producción no configurada. No merge,
 instalaciones ni subagentes autorizados. Conservar datos, credenciales y decisiones.

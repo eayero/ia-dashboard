@@ -7,6 +7,8 @@ import type { ProjectContext } from './projects/context.ts';
 import type { AccountAdministration } from './auth/admin.ts';
 import type { RequirementQueries } from './requirements/queries.ts';
 import type { RepositoryQueries } from './projects/repository-queries.ts';
+import type { PlanningQueries } from './projects/planning-queries.ts';
+import type { GovernanceQueries } from './projects/governance-queries.ts';
 export const API_RUNTIME = Symbol('API_RUNTIME');
 export type ApiRuntime = {
   config: ApiConfiguration;
@@ -18,4 +20,6 @@ export type ApiRuntime = {
   accounts: AccountAdministration;
   requirements: RequirementQueries;
   repositories: RepositoryQueries;
+  planning: PlanningQueries;
+  governance: GovernanceQueries;
 };

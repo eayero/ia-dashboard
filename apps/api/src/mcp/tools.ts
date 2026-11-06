@@ -24,6 +24,13 @@ import {
   startWorkSchema,
   pauseWorkSchema,
   taskTimeQuerySchema,
+  participantQuerySchema,
+  createQuestionSchema,
+  reviseQuestionSchema,
+  answerQuestionSchema,
+  createDecisionSchema,
+  reviseDecisionSchema,
+  governanceQuerySchema,
 } from '@acc/contracts';
 import type { ApiRuntime } from '../context.ts';
 import type { ApiRequest } from '../auth/types.ts';
@@ -34,7 +41,11 @@ export function createMcpServer(runtime: ApiRuntime, req: ApiRequest) {
   const project = { projectId: z.uuid() };
   const mutation = { ...project, idempotencyKey: z.string().trim().min(1).max(200) };
   const task = { ...mutation, taskId: z.uuid() };
-  const context = (projectId: string) => ({ projectId, principalId: req.identity!.id });
+  const context = (projectId: string) => ({
+    projectId,
+    principalId: req.identity!.id,
+    channel: 'MCP' as const,
+  });
   function tool<S extends z.ZodType>(
     name: string,
     description: string,
@@ -60,6 +71,97 @@ export function createMcpServer(runtime: ApiRuntime, req: ApiRequest) {
     };
   }
   const tools = [
+    tool(
+      'acc_list_questions',
+      'Read project questions; follow nextCursor.',
+      z.strictObject({ ...project, query: governanceQuerySchema }),
+      true,
+      (a) => runtime.governance.list(a.projectId, req.identity!.id, 'questions', a.query),
+    ),
+    tool(
+      'acc_get_question',
+      'Read a question, proposed answers and confirmed resolution history.',
+      z.strictObject({ ...project, questionId: z.uuid() }),
+      true,
+      (a) => runtime.governance.detail(a.projectId, req.identity!.id, 'questions', a.questionId),
+    ),
+    tool(
+      'acc_register_question',
+      'Propose a question. Informational links never create hard blocks.',
+      z.strictObject({ ...mutation, input: createQuestionSchema }),
+      false,
+      (a) => runtime.store.createQuestion(context(a.projectId), a.idempotencyKey, a.input),
+    ),
+    tool(
+      'acc_revise_question',
+      'Revise an open question using its current version.',
+      z.strictObject({ ...mutation, questionId: z.uuid(), input: reviseQuestionSchema }),
+      false,
+      (a) =>
+        runtime.store.reviseQuestion(context(a.projectId), a.idempotencyKey, a.questionId, a.input),
+    ),
+    tool(
+      'acc_answer_question',
+      'Propose an answer. A human must explicitly confirm it to resolve the question.',
+      z.strictObject({ ...mutation, questionId: z.uuid(), input: answerQuestionSchema }),
+      false,
+      (a) =>
+        runtime.store.answerQuestion(context(a.projectId), a.idempotencyKey, a.questionId, a.input),
+    ),
+    tool(
+      'acc_list_decisions',
+      'Read project decisions; follow nextCursor.',
+      z.strictObject({ ...project, query: governanceQuerySchema }),
+      true,
+      (a) => runtime.governance.list(a.projectId, req.identity!.id, 'decisions', a.query),
+    ),
+    tool(
+      'acc_get_decision',
+      'Read decision revisions, human approval, links and impact reviews.',
+      z.strictObject({ ...project, decisionId: z.uuid() }),
+      true,
+      (a) => runtime.governance.detail(a.projectId, req.identity!.id, 'decisions', a.decisionId),
+    ),
+    tool(
+      'acc_register_decision',
+      'Propose a versioned decision with alternatives. Human approval remains separate.',
+      z.strictObject({ ...mutation, input: createDecisionSchema }),
+      false,
+      (a) => runtime.store.createDecision(context(a.projectId), a.idempotencyKey, a.input),
+    ),
+    tool(
+      'acc_revise_decision',
+      'Propose a new decision revision without replacing the approved one.',
+      z.strictObject({ ...mutation, decisionId: z.uuid(), input: reviseDecisionSchema }),
+      false,
+      (a) =>
+        runtime.store.reviseDecision(context(a.projectId), a.idempotencyKey, a.decisionId, a.input),
+    ),
+    tool(
+      'acc_get_inbox',
+      'Read open questions needing human attention. Reading does not resolve.',
+      z.strictObject({ ...project, query: governanceQuerySchema }),
+      true,
+      (a) =>
+        runtime.governance.list(a.projectId, req.identity!.id, 'questions', {
+          ...a.query,
+          status: 'OPEN',
+        }),
+    ),
+    tool(
+      'acc_list_iterations',
+      'Read project sprints and their execution states. Follow nextCursor.',
+      z.strictObject({ ...project, query: requirementQuerySchema }),
+      true,
+      (a) => runtime.planning.iterations(a.projectId, req.identity!.id, a.query),
+    ),
+    tool(
+      'acc_get_participants',
+      'Read authenticated creator, successful-action participants and explicitly recorded agent/owner time. Does not infer effort from reads.',
+      z.strictObject({ ...project, query: participantQuerySchema }),
+      true,
+      (a) => runtime.planning.participants(a.projectId, req.identity!.id, a.query),
+    ),
     tool(
       'acc_start_work',
       'Explicitly start recording work for the agent holding a live task claim. Does not infer past time.',

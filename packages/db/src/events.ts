@@ -7,7 +7,15 @@ export type AuditEventRow = {
   action: string;
   occurred_at: Date;
   entity_id: string;
-  entity_type: 'TASK' | 'SESSION' | 'PRINCIPAL' | 'REQUIREMENT' | 'REPOSITORY';
+  entity_type:
+    | 'TASK'
+    | 'SESSION'
+    | 'PRINCIPAL'
+    | 'REQUIREMENT'
+    | 'REPOSITORY'
+    | 'ITERATION'
+    | 'QUESTION'
+    | 'DECISION';
   actor_id: string;
   actor_user_id: string | null;
   session_id: string | null;

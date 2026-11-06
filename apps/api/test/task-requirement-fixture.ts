@@ -8,7 +8,10 @@ export async function withTaskRequirement(
   input: unknown,
 ) {
   const payload = input as Record<string, unknown>;
-  if ('requirementIds' in payload) return payload;
+  if ('requirementIds' in payload) {
+    const ids = payload.requirementIds as string[];
+    return { ...payload, primaryRequirementId: payload.primaryRequirementId ?? ids[0] };
+  }
   const id = `ffffffff-ffff-4fff-8fff-${projectId.replaceAll('-', '').slice(0, 12)}`;
   const client = await pool.connect();
   try {
@@ -29,7 +32,7 @@ export async function withTaskRequirement(
       ).rows[0];
       if (!owner) {
         await client.query('ROLLBACK');
-        return { ...payload, requirementIds: [id] };
+        return { ...payload, requirementIds: [id], primaryRequirementId: id };
       }
       await client.query(
         "INSERT INTO requirements(id,project_id,public_id,created_by,approved_revision) VALUES ($1,$2,'REQ-TEST',$3,1)",
@@ -40,6 +43,12 @@ export async function withTaskRequirement(
         [projectId, id, owner.principal_id],
       );
     }
+    const sprintId = `eeeeeeee-eeee-4eee-8eee-${projectId.replaceAll('-', '').slice(0, 12)}`;
+    await client.query(
+      "INSERT INTO iterations(id,project_id,public_id,name,goal,starts_on,ends_on,status,created_by) SELECT $1,$2,'ITER-TEST','Synthetic sprint','Existing regression execution scope',CURRENT_DATE,CURRENT_DATE,'ACTIVE',created_by FROM requirements WHERE id=$3 ON CONFLICT DO NOTHING",
+      [sprintId, projectId, id],
+    );
+    await client.query('UPDATE requirements SET sprint_id=$2 WHERE id=$1', [id, sprintId]);
     await client.query('COMMIT');
   } catch (error) {
     await client.query('ROLLBACK');
@@ -47,7 +56,7 @@ export async function withTaskRequirement(
   } finally {
     client.release();
   }
-  return { ...payload, requirementIds: [id] };
+  return { ...payload, requirementIds: [id], primaryRequirementId: id };
 }
 export class FixtureCoordinationStore extends RealStore {
   constructor(private fixturePool: InstanceType<typeof Pool>) {

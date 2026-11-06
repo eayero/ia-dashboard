@@ -106,7 +106,7 @@
     "id": "ACC-LOCAL-014",
     "title": "Completar entidades pendientes del MVP",
     "source": "docs/SPECIFICATION.md",
-    "context": "Preguntas, requisitos, decisiones e impacto aún no están implementados como entidades de producto.",
+    "context": "Requisitos e impacto publicados/desplegados. Preguntas y decisiones conjuntamente aprobadas e implementadas localmente en ACC-LOCAL-025, con migración 013 y verificación; sin nueva publicación o despliegue.",
     "criteria": [
       "Desglosar el alcance conforme a la especificación antes de implementar las entidades pendientes."
     ]
@@ -209,6 +209,32 @@
       "Idempotencia y concurrencia sin duplicados por proyecto/URL; entidad, auditoría y outbox atómicos con nueva migración conservando 001–010.",
       "Consultar repositorios por contexto/delta MCP y adjuntar evidencia CODE/TEST del mismo repositorio/commit sin eludir gates.",
       "Verificar PostgreSQL real, REST/CSRF, permisos y aislamiento; OpenAPI, tipos, lint, build y documentación coherentes."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-024",
+    "title": "Autoría, participantes con tiempo y sprint heredado por requisito principal",
+    "source": "docs/requirements/SPRINT_ATTRIBUTION_DESIGN.md",
+    "context": "Diseño A aprobado e implementado localmente; migración 012 pendiente de publicación/despliegue. Continuación: corregidas identidades históricas y nombre del propietario al agregar tiempo; revisión visual con tiempo positivo. Resultado en docs/requirements/SPRINT_ATTRIBUTION_RESULT.json.",
+    "criteria": [
+      "Mostrar creador y participantes autenticados sin inventar identidades históricas.",
+      "Mostrar tiempo explícito por agente y usuario conservando intervalos y evitando doble conteo.",
+      "Gestionar sprints y principal de tarea con herencia y reasignación auditadas.",
+      "Impedir trabajo fuera de sprint ACTIVE en servidor REST/MCP preservando la posibilidad de detener trabajo.",
+      "Conservar datos y verificar PostgreSQL real, contratos, contexto/delta y UI escritorio/móvil."
+    ]
+  },
+  {
+    "id": "ACC-LOCAL-025",
+    "title": "Preguntas, decisiones versionadas e inbox humano",
+    "source": "docs/requirements/QUESTIONS_DECISIONS_DESIGN.md",
+    "context": "Alcance conjunto elegido y diseño aprobado por el usuario. Implementación local bajo TASK-31; publicación/despliegue pendientes. Diseño, contrato y resultado en docs/requirements/QUESTIONS_DECISIONS_*.",
+    "criteria": [
+      "Preguntas, respuestas y confirmación exclusivamente humana con historia e idempotencia.",
+      "Decisiones versionadas, aprobación/supersesión humanas e impacto trazable.",
+      "Bloqueos duros coordinados con tareas, claims, sprints y otros bloqueos; DONE conserva estado y recibe alerta.",
+      "REST/MCP/contexto/delta/WS/OpenAPI y UI coherentes, autenticación, CSRF y aislamiento.",
+      "Migración aditiva, PostgreSQL real, concurrencia/rollback y revisión de navegador escritorio/móvil."
     ]
   }
 ]

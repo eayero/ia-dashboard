@@ -22,9 +22,9 @@ export async function startWorkInterval(
   if (existing.rowCount) throw new DomainError('WORK_ALREADY_RUNNING');
   const id = randomUUID();
   const result = await client.query<{ id: string; startedAt: Date; validUntil: Date }>(
-    `INSERT INTO task_work_intervals(id,project_id,task_id,principal_id,session_id,fencing_token,work_revision,agent_name,owner_user_id,started_at,valid_until)
-    SELECT $1,$2,$3,$4,$5,$6,$7,a.name,a.owner_user_id,clock_timestamp()::timestamptz(3),LEAST(c.expires_at,s.expires_at)::timestamptz(3)
-    FROM agent_profiles a JOIN task_claims c ON c.principal_id=a.principal_id JOIN agent_sessions s ON s.id=c.session_id
+    `INSERT INTO task_work_intervals(id,project_id,task_id,principal_id,session_id,fencing_token,work_revision,agent_name,owner_user_id,started_at,valid_until,requirement_id,sprint_id)
+    SELECT $1,$2,$3,$4,$5,$6,$7,a.name,a.owner_user_id,clock_timestamp()::timestamptz(3),LEAST(c.expires_at,s.expires_at)::timestamptz(3),w.primary_requirement_id,r.sprint_id
+    FROM agent_profiles a JOIN task_claims c ON c.principal_id=a.principal_id JOIN agent_sessions s ON s.id=c.session_id JOIN work_items w ON w.project_id=c.project_id AND w.id=c.task_id JOIN requirements r ON r.project_id=w.project_id AND r.id=w.primary_requirement_id
     WHERE a.principal_id=$4 AND c.project_id=$2 AND c.task_id=$3 AND c.session_id=$5 AND c.fencing_token=$6 AND NOT c.revoked AND c.expires_at>clock_timestamp()+interval '1 millisecond' AND s.expires_at>clock_timestamp()+interval '1 millisecond' AND s.ended_at IS NULL
     RETURNING id,started_at AS "startedAt",valid_until AS "validUntil"`,
     [

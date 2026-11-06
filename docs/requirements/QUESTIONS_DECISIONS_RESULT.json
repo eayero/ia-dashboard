@@ -1,0 +1,216 @@
+{
+  "checkedAt": "2026-11-06T15:54:03.290Z",
+  "phase": "IMPLEMENTED_LOCALLY_VERIFIED",
+  "task": {
+    "externalRef": "ACC-LOCAL-025",
+    "publicId": "TASK-31",
+    "id": "ea9f0b45-cd9f-41e4-bb03-3811dc2b2e84",
+    "status": "IN_PROGRESS",
+    "reason": "Local implementation verified; published evidence and existing human requirement/impact decisions remain pending",
+    "version": 10,
+    "workRevision": 2,
+    "claim": null,
+    "sessionEnded": true
+  },
+  "design": "docs/requirements/QUESTIONS_DECISIONS_DESIGN.md",
+  "plan": "docs/superpowers/plans/2026-11-06-questions-decisions.md",
+  "contract": "docs/requirements/QUESTIONS_DECISIONS_API.md",
+  "authorization": {
+    "implementation": true,
+    "source": "User chose questions and decisions together and approved the joint design",
+    "commit": false,
+    "push": false,
+    "deploy": false,
+    "installations": false,
+    "delegation": false
+  },
+  "migration": {
+    "new": "013_questions_decisions.sql",
+    "requires": "012_sprint_attribution.sql",
+    "habitualInstance": "011",
+    "appliedToHabitualInstance": false,
+    "mode": "Additive; preserve applied migrations and historical records",
+    "futureDeploymentPreparation": "When authorized: back up, stop API/worker, apply 012 and 013, start gated API, run human execution/prepare, select ambiguous primary requirements and assign ACTIVE sprints before resuming workers."
+  },
+  "features": [
+    "Questions OPEN/RESOLVED/CANCELLED, priorities and immutable answers/resolutions",
+    "Human-confirmed answers; agents can propose without resolving or approving",
+    "Decisions with alternatives, context, choice and rationale; immutable revisions and human approval/supersession",
+    "Hard question links coordinate BLOCKED/READY, claims/interval revocation, manual/dependency/sprint gates and DONE alerts",
+    "Decision revision impact evaluated by humans before review/QA/DONE; completed tasks retain state and history",
+    "REST, signed principal/resource/filter cursors, CSRF and project ACL",
+    "Ten new MCP tools, 34 implemented total; no human-confirmation/approval MCP tools",
+    "Context/delta/WS/OpenAPI and responsive questions, decisions and critical-question inbox"
+  ],
+  "checks": [
+    {
+      "command": "pnpm test",
+      "status": "PASS",
+      "tests": 77,
+      "log": ".cache/governance-delivery-unit.log"
+    },
+    {
+      "command": "pnpm test:integration",
+      "status": "PASS",
+      "tests": 154,
+      "environment": "Real PostgreSQL/Redis, isolated schemas",
+      "log": ".cache/governance-delivery-integration.log"
+    },
+    {
+      "command": "Governance cases within the full integration suite",
+      "status": "PASS",
+      "tests": 12,
+      "log": ".cache/governance-delivery-integration.log"
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "PASS",
+      "packages": 5,
+      "log": ".cache/governance-delivery-types.log"
+    },
+    {
+      "command": "pnpm typecheck:foundation",
+      "status": "PASS",
+      "log": ".cache/governance-delivery-foundation.log"
+    },
+    {
+      "command": "pnpm lint",
+      "status": "PASS",
+      "log": ".cache/governance-delivery-lint.log"
+    },
+    {
+      "command": "pnpm build",
+      "status": "PASS",
+      "packages": 5,
+      "log": ".cache/governance-delivery-build.log"
+    },
+    {
+      "command": "OpenAPI equality and route inventory",
+      "status": "PASS"
+    },
+    {
+      "command": "pnpm requirements:check",
+      "status": "PASS",
+      "requirements": 23,
+      "tasks": 31,
+      "covered": 31,
+      "orphans": 0
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    }
+  ],
+  "browser": {
+    "status": "PASS",
+    "origin": "http://localhost:55177",
+    "environment": "Isolated migration 013, synthetic owner/agent/viewer accounts",
+    "viewports": [
+      {
+        "width": 1440,
+        "height": 1000
+      },
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "checks": [
+      "Critical question inbox and linked task blocker",
+      "Human confirmation resolves question and returns task to READY",
+      "Decision approval, impact evaluation, draft revision preserving baseline, and supersession r1 to r2",
+      "Question creation and explicit confirmation from human web forms",
+      "VIEWER reads questions/decisions with mutation controls hidden",
+      "Empty filter; read-error disables creation; retry recovers",
+      "Injected 503 and 409 UI recovery; conflicts and retries do not auto-confirm",
+      "Mobile dialogs, revision history and viewport fit",
+      "Positive participant time and owner name on task and requirement"
+    ],
+    "faultInjection": "503 and 409 were injected only in the isolated browser for error/conflict UI checks; permission/concurrency/rollback checks also ran against real PostgreSQL/API",
+    "artifacts": [
+      "output/playwright/governance-inbox-desktop.png",
+      "output/playwright/governance-question-desktop.png",
+      "output/playwright/governance-question-resolved-desktop.png",
+      "output/playwright/governance-task-unblocked-desktop.png",
+      "output/playwright/governance-decision-draft-desktop.png",
+      "output/playwright/governance-decision-superseded-desktop.png",
+      "output/playwright/governance-decision-mobile.png",
+      "output/playwright/governance-viewer-question-desktop.png",
+      "output/playwright/governance-viewer-question-mobile.png",
+      "output/playwright/governance-viewer-decision-mobile.png",
+      "output/playwright/governance-error-desktop.png",
+      "output/playwright/governance-empty-desktop.png",
+      "output/playwright/governance-stale-desktop.png",
+      "output/playwright/governance-created-question-mobile.png"
+    ]
+  },
+  "attributionContinuation": {
+    "task": "ACC-LOCAL-024 / TASK-30",
+    "bugsFixed": [
+      "A later verified action identifies a legacy participant without rewriting original authorship or audit history",
+      "Requirement collaborator aggregation retains authenticated owner display names while preserving historical time/owner IDs"
+    ],
+    "redLogs": [".cache/participants-continuation-red.log", ".cache/participants-owner-red.log"],
+    "focusedTests": 15,
+    "artifacts": [
+      "output/playwright/participants-positive-time-desktop.png",
+      "output/playwright/requirement-positive-time-desktop.png",
+      "output/playwright/requirement-positive-time-mobile.png"
+    ]
+  },
+  "review": {
+    "selfReview": true,
+    "independentReview": false
+  },
+  "notRun": [
+    "Commit/push/deployment (not authorized)",
+    "Migration 012/013 on habitual instance (not authorized)",
+    "Published HTTPS CODE/TEST evidence (no publication authorized)"
+  ],
+  "limitations": [
+    "Habitual MCP remains on migration 011; new tools were verified with the official MCP SDK against the isolated implementation.",
+    "The full MVP remains incomplete: broader project management, webhooks, export/backups, remaining metrics and operations/CI/Claude work remain.",
+    "Build reports the existing web chunk-size advisory."
+  ],
+  "mcp": {
+    "method": "Native Codex MCP tracking; official MCP SDK for new isolated tools",
+    "projectSeq": "491",
+    "context": {
+      "pages": 3,
+      "records": 299,
+      "complete": true
+    },
+    "delta": {
+      "afterSeq": "464",
+      "throughSeq": "491",
+      "events": 27,
+      "pages": 1,
+      "complete": true
+    },
+    "sessionsEnded": true,
+    "ownedClaims": 0,
+    "tasks": [
+      {
+        "publicId": "TASK-31",
+        "status": "IN_PROGRESS",
+        "version": 10,
+        "workRevision": 2,
+        "claim": null
+      },
+      {
+        "publicId": "TASK-15",
+        "status": "IN_PROGRESS",
+        "version": 40,
+        "workRevision": 10,
+        "claim": null
+      },
+      {
+        "publicId": "TASK-30",
+        "status": "IN_PROGRESS",
+        "version": 22,
+        "workRevision": 6,
+        "claim": null
+      }
+    ]
+  }
+}

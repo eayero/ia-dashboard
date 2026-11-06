@@ -2,6 +2,7 @@ import { ApiError } from './api.ts';
 import { entities, type DashboardState, type Task } from './data.ts';
 
 export type Requirement = {
+  sprintId?: string | null;
   id: string;
   publicId: string;
   version: number;
@@ -29,6 +30,7 @@ export type RequirementLink = {
   impactPending: boolean;
 };
 export type RequirementDetail = Requirement & {
+  sprint: { id: string; publicId: string; name: string; status: string } | null;
   externalRef: string | null;
   createdBy: string;
   createdAt: string;

@@ -11,6 +11,7 @@ import {
 const id = '7f5481cc-9ab3-4e07-a481-cfb8a38f429d';
 const task = {
   requirementIds: [id],
+  primaryRequirementId: id,
   title: '  Cafe\u0301  central ',
   criteria: [{ id: 'AC-1', description: ' Funciona ', required: true }],
 };

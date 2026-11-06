@@ -100,8 +100,8 @@
     "accTaskTracking": "required-by-existing-project-instruction"
   },
   "currentTaskConstraints": {
-    "taskId": "ACC-LOCAL-023",
-    "scope": "Approved design A: immutable repository registration and paginated REST queries, human management permissions, transactional audit/outbox and context/MCP evidence discovery",
+    "taskId": "ACC-LOCAL-025",
+    "scope": "Approved joint questions/decisions design: human-confirmed answers, versioned decision approval/supersession, hard question blockers, impact review, inbox and REST/MCP/context/UI",
     "functionalCodeChanges": true,
     "architectureChanges": false,
     "installations": false,
@@ -116,9 +116,7 @@
       "merge": false,
       "installations": false,
       "delegation": false,
-      "source": "User si explicitly authorizes commit, push, local deployment, repository registration and CODE/TEST evidence attachment after implementation report",
-      "registerRepository": true,
-      "attachTask26Evidence": true
+      "source": "User explicitly requested: publica y despliega los cambios (2026-11-06)"
     },
     "previousDeliveryAuthorization": {
       "implementation": true,
@@ -128,9 +126,25 @@
       "merge": false,
       "installations": false,
       "delegation": false,
-      "source": "Explicit user instruction: haz los coomit el push y despliega"
+      "source": "User si explicitly authorizes commit, push, local deployment, repository registration and CODE/TEST evidence attachment after implementation report",
+      "registerRepository": true,
+      "attachTask26Evidence": true
     },
-    "relatedTaskIds": ["ACC-LOCAL-015", "ACC-LOCAL-020"]
+    "relatedTaskIds": ["ACC-LOCAL-014", "ACC-LOCAL-024"],
+    "previousImplementation": {
+      "taskId": "ACC-LOCAL-024",
+      "scope": "Approved design A: authenticated authorship and participants, explicit recorded time, sprint lifecycle and task inheritance through a primary requirement",
+      "authorizedActions": {
+        "implementation": true,
+        "commit": false,
+        "push": false,
+        "deploy": false,
+        "merge": false,
+        "installations": false,
+        "delegation": false,
+        "source": "User continua approves implementation of sprint/attribution design A; prior delivery publication does not extend to this task"
+      }
+    }
   },
   "quality": {
     "requireApplicableFullSuite": true,

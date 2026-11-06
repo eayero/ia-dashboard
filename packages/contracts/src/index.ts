@@ -2,6 +2,7 @@ import { z } from 'zod';
 export * from './requirements.ts';
 export * from './work-time.ts';
 export * from './repositories.ts';
+export * from './iterations.ts';
 
 export const taskStatusSchema = z.enum([
   'BACKLOG',
@@ -26,8 +27,9 @@ const criterion = z.strictObject({
   description,
   required: z.boolean(),
 });
-export const createTaskSchema = z.strictObject({
+const createTaskBaseSchema = z.strictObject({
   title,
+  primaryRequirementId: z.uuid(),
   requirementIds: z
     .array(z.uuid())
     .min(1)
@@ -44,14 +46,18 @@ export const createTaskSchema = z.strictObject({
     ),
   externalRef: z.string().trim().min(1).max(300).optional(),
 });
+export const createTaskSchema = createTaskBaseSchema.refine(
+  (v) => v.requirementIds.includes(v.primaryRequirementId),
+  { path: ['primaryRequirementId'], message: 'Primary requirement must be linked' },
+);
 export const claimTaskSchema = z.strictObject({ sessionId: z.uuid(), expectedVersion: version });
 export const emptyCommandSchema = z.strictObject({});
 export const sessionHeartbeatSchema = z.strictObject({ expectedVersion: version });
 export const heartbeatClaimSchema = claimTaskSchema.extend({ fencingToken: token });
 export const revokeClaimSchema = z.strictObject({ expectedVersion: version, reason: description });
 export const updateWorkSchema = heartbeatClaimSchema.extend({ summary: description });
-export const reviseTaskSchema = createTaskSchema
-  .omit({ externalRef: true, requirementIds: true })
+export const reviseTaskSchema = createTaskBaseSchema
+  .omit({ externalRef: true, requirementIds: true, primaryRequirementId: true })
   .extend({ expectedVersion: version, reason: description });
 export const approvalKindSchema = z.enum(['REVIEW', 'QA', 'CLOSURE']);
 export const approveTaskSchema = z.strictObject({
@@ -182,7 +188,16 @@ export const eventEnvelopeSchema = z.strictObject({
   occurredAt: z.iso.datetime({ offset: true }),
   entity: z.strictObject({
     id: z.uuid(),
-    type: z.enum(['TASK', 'SESSION', 'PRINCIPAL', 'REQUIREMENT', 'REPOSITORY']),
+    type: z.enum([
+      'TASK',
+      'SESSION',
+      'PRINCIPAL',
+      'REQUIREMENT',
+      'REPOSITORY',
+      'ITERATION',
+      'QUESTION',
+      'DECISION',
+    ]),
   }),
   actorId: z.uuid(),
   actorUserId: z.uuid().nullable().optional(),
@@ -276,3 +291,4 @@ export const agentMembershipSchema = z.strictObject({
   scopes: agentScopesSchema,
   expectedVersion: z.number().int().min(0).max(Number.MAX_SAFE_INTEGER),
 });
+export * from './governance.ts';

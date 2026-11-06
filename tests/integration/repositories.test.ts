@@ -368,9 +368,28 @@ test('registered repositories support paired CODE/TEST evidence and reject forei
     workType: 'CODE',
     criteria: [{ id: 'c1', description: 'Paired evidence', required: true }],
     requirementIds: [requirement.id],
+    primaryRequirementId: requirement.id,
+  });
+  const sprint = await store.createIteration(context(), randomUUID(), {
+    name: 'Evidence scope',
+    goal: 'Exercise evidence',
+    startsOn: '2026-11-05',
+    endsOn: '2026-11-19',
+  });
+  assert.ok(sprint.id);
+  await store.assignRequirementSprint(context(), randomUUID(), requirement.id, {
+    expectedVersion: requirement.version + 1,
+    sprintId: sprint.id,
+    reason: 'Plan evidence task',
+  });
+  await store.transitionIteration(context(), randomUUID(), sprint.id, {
+    expectedVersion: sprint.version,
+    to: 'ACTIVE',
+    reason: 'Execute evidence test',
   });
   const ready = await store.transitionTask(context(), randomUUID(), task.id, {
-    expectedVersion: task.version,
+    expectedVersion: (await pool.query('SELECT version FROM work_items WHERE id=$1', [task.id]))
+      .rows[0].version,
     to: 'READY',
   });
   const agent = { projectId: seeded.projectId, principalId: seeded.agents[0]!.principalId };

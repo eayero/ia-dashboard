@@ -60,7 +60,7 @@ test('migraciones repetidas no cambian ni pierden datos', async () => {
   await migrate(pool);
   assert.equal(
     (await pool.query('SELECT count(*)::int AS count FROM schema_migrations')).rows[0].count,
-    11,
+    13,
   );
   assert.equal(
     (await pool.query('SELECT name FROM projects WHERE id=$1', [projectId])).rows[0].name,

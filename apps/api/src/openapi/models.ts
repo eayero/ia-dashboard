@@ -1,10 +1,17 @@
 import { z } from 'zod';
 import { taskStatusSchema, eventEnvelopeSchema, sequenceSchema } from '@acc/contracts';
+import { iterationStatusSchema } from '@acc/contracts';
 
 const id = z.uuid(),
   version = z.number().int().positive(),
   date = z.iso.datetime({ offset: true });
 const names = z.looseObject({ id, name: z.string() });
+const creator = z.looseObject({
+  principalId: id,
+  createdAt: date,
+  identity: z.record(z.string(), z.unknown()).nullable(),
+  channel: z.enum(['UNKNOWN', 'MCP', 'WEB', 'API']),
+});
 const project = names.extend({ archived: z.boolean(), claimsPaused: z.boolean() });
 const member = names.extend({ active: z.boolean(), version, scopes: z.array(z.string()) });
 const credential = z.looseObject({
@@ -83,7 +90,170 @@ const requirementRevision = z.looseObject({
   approvedBy: id.nullable(),
   approvedAt: date.nullable(),
 });
+const governanceBase = z.looseObject({
+  id,
+  publicId: z.string(),
+  version,
+  createdBy: id,
+  createdAt: date,
+  creatorIdentity: z.record(z.string(), z.unknown()).nullable(),
+});
+const questionFields = {
+  title: z.string(),
+  description: z.string(),
+  priority: z.enum(['LOW', 'NORMAL', 'HIGH', 'CRITICAL']),
+  status: z.enum(['OPEN', 'RESOLVED', 'CANCELLED']),
+};
+const governanceTask = z.looseObject({
+  taskId: id,
+  publicId: z.string(),
+  title: z.string(),
+  taskVersion: version,
+  status: taskStatusSchema,
+});
+const governanceRequirements = z.array(z.looseObject({ id, publicId: z.string() }));
+const questionSummary = governanceBase.extend(questionFields);
+const decisionSummary = governanceBase.extend({
+  title: z.string(),
+  status: z.enum(['DRAFT', 'APPROVED', 'SUPERSEDED']),
+  revision: version,
+  approvedRevision: version.nullable(),
+});
 export const responseModels = {
+  QuestionList: z.strictObject({
+    items: z.array(questionSummary),
+    nextCursor: z.string().nullable(),
+  }),
+  DecisionList: z.strictObject({
+    items: z.array(decisionSummary),
+    nextCursor: z.string().nullable(),
+  }),
+  QuestionDetail: governanceBase.extend({
+    ...questionFields,
+    externalRef: z.string().nullable(),
+    acceptedAnswerId: id.nullable(),
+    tasks: z.array(governanceTask.extend({ hard: z.boolean() })),
+    requirements: governanceRequirements,
+    answers: z.array(
+      z.looseObject({
+        id,
+        text: z.string(),
+        createdBy: id,
+        createdAt: date,
+        creatorIdentity: z.record(z.string(), z.unknown()).nullable(),
+      }),
+    ),
+    resolutions: z.array(
+      z.looseObject({
+        id,
+        answerId: id.nullable(),
+        action: z.enum(['RESOLVE', 'REOPEN', 'CANCEL']),
+        reason: z.string(),
+        principalId: id,
+        createdAt: date,
+      }),
+    ),
+  }),
+  DecisionDetail: governanceBase.extend({
+    externalRef: z.string().nullable(),
+    revision: version,
+    approvedRevision: version.nullable(),
+    tasks: z.array(governanceTask.extend({ evaluatedRevision: version.nullable() })),
+    requirements: governanceRequirements,
+    revisions: z.array(
+      z.looseObject({
+        revision: version,
+        title: z.string(),
+        context: z.string(),
+        alternatives: z.array(z.string()),
+        choice: z.string(),
+        rationale: z.string(),
+        reason: z.string(),
+        status: z.enum(['DRAFT', 'APPROVED', 'SUPERSEDED']),
+        createdBy: id,
+        createdAt: date,
+        approvedBy: id.nullable(),
+        approvedAt: date.nullable(),
+      }),
+    ),
+    questions: z.array(
+      z.looseObject({
+        id,
+        publicId: z.string(),
+        title: z.string(),
+        status: z.enum(['OPEN', 'RESOLVED', 'CANCELLED']),
+      }),
+    ),
+    impactReviews: z.array(
+      z.looseObject({
+        id,
+        taskId: id,
+        revision: version,
+        reason: z.string(),
+        principalId: id,
+        createdAt: date,
+      }),
+    ),
+  }),
+  GovernanceMutation: z.looseObject({
+    id,
+    version,
+    publicId: z.string().optional(),
+    answerId: id.optional(),
+    taskVersion: version.optional(),
+    revision: version.optional(),
+    approvedRevision: version.nullable().optional(),
+    projectSeq: sequenceSchema.optional(),
+  }),
+  IterationList: z.strictObject({
+    items: z.array(
+      z.looseObject({
+        id,
+        publicId: z.string(),
+        name: z.string(),
+        goal: z.string(),
+        startsOn: z.iso.date(),
+        endsOn: z.iso.date(),
+        status: iterationStatusSchema,
+        version,
+        requirementCount: z.number().int().nonnegative(),
+        taskCount: z.number().int().nonnegative(),
+        pendingTasks: z.number().int().nonnegative(),
+      }),
+    ),
+    nextCursor: z.string().nullable(),
+  }),
+  PlanningMutation: z.looseObject({
+    id: id.optional(),
+    version: version.optional(),
+    projectSeq: sequenceSchema.optional(),
+    tasksStopped: z.number().int().optional(),
+  }),
+  Participants: z.looseObject({
+    creator: z.looseObject({
+      principalId: id,
+      createdAt: date,
+      identity: z.record(z.string(), z.unknown()).nullable(),
+      channel: z.string(),
+    }),
+    participants: z.array(
+      z.looseObject({
+        principalId: id,
+        identity: z.record(z.string(), z.unknown()).nullable(),
+        firstAt: date.nullable(),
+        lastAt: date.nullable(),
+        actionCount: z.number().int().nonnegative(),
+        channels: z.array(z.string()),
+        milliseconds: z.string(),
+      }),
+    ),
+    taskCollaborators: z.array(z.record(z.string(), z.unknown())),
+    owners: z.array(z.strictObject({ ownerUserId: id, milliseconds: z.string() })),
+    totalMilliseconds: z.string(),
+    asOf: date,
+    timeZone: z.string(),
+    work: z.array(z.record(z.string(), z.unknown())),
+  }),
   RepositoryList: z.strictObject({
     items: z.array(z.strictObject({ id, name: z.string(), url: z.url() })),
     nextCursor: z.string().nullable(),
@@ -148,6 +318,11 @@ export const responseModels = {
     nextCursor: z.string().nullable(),
   }),
   RequirementDetail: requirement.extend({
+    creator,
+    sprintId: id.nullable(),
+    sprint: z
+      .looseObject({ id, publicId: z.string(), name: z.string(), status: iterationStatusSchema })
+      .nullable(),
     externalRef: z.string().nullable(),
     createdBy: id,
     createdAt: date,
@@ -189,6 +364,15 @@ export const responseModels = {
   Projects: z.array(project),
   TaskList: z.strictObject({ items: z.array(task), nextCursor: z.string().nullable() }),
   TaskDetail: task.extend({
+    creator,
+    primaryRequirementId: id.nullable(),
+    sprintId: id.nullable(),
+    sprintName: z.string().nullable(),
+    sprintPublicId: z.string().nullable(),
+    sprintStatus: iterationStatusSchema.nullable(),
+    executionBlock: z
+      .enum(['PRIMARY_REQUIREMENT_REQUIRED', 'SPRINT_REQUIRED', 'SPRINT_NOT_ACTIVE'])
+      .nullable(),
     summary: z.string(),
     criteria: z.array(
       z.looseObject({ id: z.string(), description: z.string(), required: z.boolean() }),

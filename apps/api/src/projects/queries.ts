@@ -2,7 +2,12 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
 import type pg from 'pg';
 import { taskQuerySchema, taskTimeQuerySchema } from '@acc/contracts';
-import { readTaskWorkTime } from '@acc/db';
+import {
+  readTaskWorkTime,
+  taskPlanning,
+  readEntityAttribution,
+  decisionImpactPending,
+} from '@acc/db';
 import { ApiError } from '../common/errors.ts';
 
 export class ProjectQueries {
@@ -90,7 +95,7 @@ export class ProjectQueries {
         workRevision: number;
         workType: string;
       }>(
-        `SELECT id,title,public_id AS "publicId",status,version,work_revision AS "workRevision",work_type AS "workType" FROM work_items WHERE project_id=$1 AND ($2::text IS NULL OR status=$2) AND ($3::uuid IS NULL OR id>$3) ORDER BY id LIMIT $4`,
+        `SELECT w.id,w.title,w.public_id AS "publicId",w.status,w.version,w.work_revision AS "workRevision",w.work_type AS "workType",w.created_by AS "createdBy",w.created_at AS "createdAt",w.creator_identity AS "creatorIdentity",w.primary_requirement_id AS "primaryRequirementId",r.sprint_id AS "sprintId",i.status AS "sprintStatus" FROM work_items w LEFT JOIN requirements r ON r.project_id=w.project_id AND r.id=w.primary_requirement_id LEFT JOIN iterations i ON i.project_id=r.project_id AND i.id=r.sprint_id WHERE w.project_id=$1 AND ($2::text IS NULL OR w.status=$2) AND ($3::uuid IS NULL OR w.id>$3) ORDER BY w.id LIMIT $4`,
         [projectId, input.status ?? null, after, input.limit + 1],
       );
       const items = rows.rows.slice(0, input.limit);
@@ -146,14 +151,32 @@ export class ProjectQueries {
         "SELECT value FROM project_counters WHERE project_id=$1 AND kind='EVENT'",
         [projectId],
       );
+      const decisionImpact = await decisionImpactPending(client, projectId, taskId);
       return {
         ...found.rows[0],
+        impactPending: found.rows[0].impactPending || decisionImpact,
+        ...(await taskPlanning(client, projectId, taskId)),
+        creator: (await readEntityAttribution(client, projectId, taskId, 'TASK', 'America/Caracas'))
+          .creator,
         evidence: evidence.rows,
         approvals: approvals.rows,
         validations: validations.rows,
         claim: claim.rows[0] ?? null,
         dependencies: dependencies.rows,
         requirements: requirements.rows,
+        decisionImpactPending: decisionImpact,
+        questionLinks: (
+          await client.query(
+            'SELECT q.id,q.public_id AS "publicId",q.title,q.status,q.version,l.hard FROM question_task_links l JOIN questions q ON q.project_id=l.project_id AND q.id=l.question_id WHERE l.project_id=$1 AND l.task_id=$2 ORDER BY q.id',
+            [projectId, taskId],
+          )
+        ).rows,
+        decisionLinks: (
+          await client.query(
+            'SELECT d.id,d.public_id AS "publicId",d.version,d.approved_revision AS "approvedRevision",l.evaluated_revision AS "evaluatedRevision",d.approved_revision IS NOT NULL AND l.evaluated_revision IS DISTINCT FROM d.approved_revision AS "impactPending" FROM decision_task_links l JOIN decisions d ON d.project_id=l.project_id AND d.id=l.decision_id WHERE l.project_id=$1 AND l.task_id=$2 ORDER BY d.id',
+            [projectId, taskId],
+          )
+        ).rows,
         projectSeq: seq.rows[0]?.value ?? '0',
       };
     });

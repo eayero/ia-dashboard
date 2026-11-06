@@ -942,5 +942,55 @@
         ]
       }
     ]
+  },
+  "latestContinuation": {
+    "checkedAt": "2026-11-06T15:54:03.290Z",
+    "phase": "LOCAL_IMPLEMENTATION_VERIFIED_UNPUBLISHED",
+    "projectTasks": 31,
+    "catalogTasks": 25,
+    "requirements": 23,
+    "requirementLinks": 53,
+    "orphans": 0,
+    "context": {
+      "pages": 3,
+      "records": 299,
+      "complete": true
+    },
+    "delta": {
+      "afterSeq": "464",
+      "throughSeq": "491",
+      "events": 27,
+      "pages": 1,
+      "complete": true
+    },
+    "projectSeq": "491",
+    "sessionsEnded": true,
+    "ownedClaims": 0,
+    "tasks": [
+      {
+        "publicId": "TASK-31",
+        "status": "IN_PROGRESS",
+        "version": 10,
+        "workRevision": 2,
+        "claim": null
+      },
+      {
+        "publicId": "TASK-15",
+        "status": "IN_PROGRESS",
+        "version": 40,
+        "workRevision": 10,
+        "claim": null
+      },
+      {
+        "publicId": "TASK-30",
+        "status": "IN_PROGRESS",
+        "version": 22,
+        "workRevision": 6,
+        "claim": null
+      }
+    ],
+    "result": "docs/requirements/QUESTIONS_DECISIONS_RESULT.json",
+    "publicationAuthorized": false,
+    "deploymentAuthorized": false
   }
 }

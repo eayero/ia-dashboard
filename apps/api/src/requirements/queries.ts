@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { z } from 'zod';
+import { readEntityAttribution } from '@acc/db';
 import { requirementQuerySchema } from '@acc/contracts';
 import { ApiError } from '../common/errors.ts';
 import type { ProjectQueries } from '../projects/queries.ts';
@@ -35,7 +36,7 @@ export class RequirementQueries {
     }
     return this.projects.inProject(projectId, principalId, async (client) => {
       const rows = await client.query<{ id: string }>(
-        `SELECT r.id,r.public_id AS "publicId",r.version,r.current_revision AS revision,r.approved_revision AS "approvedRevision",v.title,v.type,v.status FROM requirements r JOIN requirement_revisions v ON v.project_id=r.project_id AND v.requirement_id=r.id AND v.revision=r.current_revision WHERE r.project_id=$1 AND ($2::uuid IS NULL OR r.id>$2) ORDER BY r.id LIMIT $3`,
+        `SELECT r.id,r.public_id AS "publicId",r.version,r.current_revision AS revision,r.approved_revision AS "approvedRevision",r.sprint_id AS "sprintId",v.title,v.type,v.status FROM requirements r JOIN requirement_revisions v ON v.project_id=r.project_id AND v.requirement_id=r.id AND v.revision=r.current_revision WHERE r.project_id=$1 AND ($2::uuid IS NULL OR r.id>$2) ORDER BY r.id LIMIT $3`,
         [projectId, after, input.limit + 1],
       );
       const items = rows.rows.slice(0, input.limit);
@@ -52,7 +53,7 @@ export class RequirementQueries {
     z.uuid().parse(id);
     return this.projects.inProject(projectId, principalId, async (client) => {
       const found = await client.query(
-        'SELECT id,public_id AS "publicId",external_ref AS "externalRef",version,current_revision AS revision,approved_revision AS "approvedRevision",created_by AS "createdBy",created_at AS "createdAt" FROM requirements WHERE project_id=$1 AND id=$2',
+        'SELECT id,public_id AS "publicId",external_ref AS "externalRef",sprint_id AS "sprintId",version,current_revision AS revision,approved_revision AS "approvedRevision",created_by AS "createdBy",created_at AS "createdAt" FROM requirements WHERE project_id=$1 AND id=$2',
         [projectId, id],
       );
       if (!found.rows[0]) throw new ApiError(404, 'REQUIREMENT_NOT_FOUND');
@@ -70,6 +71,16 @@ export class RequirementQueries {
       );
       return {
         ...found.rows[0],
+        creator: (
+          await readEntityAttribution(client, projectId, id, 'REQUIREMENT', 'America/Caracas')
+        ).creator,
+        sprint:
+          (
+            await client.query(
+              'SELECT i.id,i.public_id AS "publicId",i.name,i.status FROM requirements r JOIN iterations i ON i.project_id=r.project_id AND i.id=r.sprint_id WHERE r.project_id=$1 AND r.id=$2',
+              [projectId, id],
+            )
+          ).rows[0] ?? null,
         revisions: revisions.rows,
         links: links.rows,
         impactReviews: reviews.rows,

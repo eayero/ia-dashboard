@@ -29,6 +29,10 @@ import { OpenApiController } from './openapi/controller.ts';
 import { RequirementsController } from './requirements/controller.ts';
 import { RequirementQueries } from './requirements/queries.ts';
 import { RepositoryQueries } from './projects/repository-queries.ts';
+import { PlanningController } from './projects/planning-controller.ts';
+import { GovernanceController } from './projects/governance-controller.ts';
+import { GovernanceQueries } from './projects/governance-queries.ts';
+import { PlanningQueries } from './projects/planning-queries.ts';
 
 export const API_CONTROLLERS = [
   AuthController,
@@ -38,6 +42,8 @@ export const API_CONTROLLERS = [
   UserAgentsController,
   OpenApiController,
   RequirementsController,
+  PlanningController,
+  GovernanceController,
 ];
 
 export async function createApplication(config: ApiConfiguration, pool: pg.Pool) {
@@ -49,11 +55,29 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     'SELECT r.current_revision,l.evaluated_revision FROM requirements r CROSS JOIN requirement_task_links l LIMIT 0',
   );
   await pool.query('SELECT valid_until FROM task_work_intervals LIMIT 0');
+  try {
+    await pool.query(
+      'SELECT i.status,w.primary_requirement_id,r.sprint_id,e.actor_identity FROM iterations i CROSS JOIN work_items w CROSS JOIN requirements r CROSS JOIN audit_events e LIMIT 0',
+    );
+  } catch (cause) {
+    throw new Error('Apply migration 012_sprint_attribution.sql before starting the API', {
+      cause,
+    });
+  }
   const invariant = await pool.query(
     "SELECT 1 FROM pg_trigger WHERE tgrelid='work_items'::regclass AND tgname='task_requires_requirement' AND tgenabled<>'D'",
   );
   if (!invariant.rowCount)
     throw new Error('Apply migration 010_task_requirement_required.sql before starting the API');
+  try {
+    await pool.query(
+      'SELECT q.accepted_answer_id,d.current_revision FROM questions q CROSS JOIN decisions d LIMIT 0',
+    );
+  } catch (cause) {
+    throw new Error('Apply migration 013_questions_decisions.sql before starting the API', {
+      cause,
+    });
+  }
   const queries = new ProjectQueries(pool, config.sessionSecret);
   const repositoryInvariant = await pool.query(
     "SELECT 1 FROM pg_constraint WHERE conrelid='repositories'::regclass AND conname='repositories_project_url_key'",
@@ -70,6 +94,8 @@ export async function createApplication(config: ApiConfiguration, pool: pg.Pool)
     accounts: new AccountAdministration(pool),
     requirements: new RequirementQueries(queries, config.sessionSecret),
     repositories: new RepositoryQueries(queries, config.sessionSecret),
+    planning: new PlanningQueries(queries, config.sessionSecret),
+    governance: new GovernanceQueries(queries, config.sessionSecret),
   };
   @Module({
     controllers: API_CONTROLLERS,

@@ -37,6 +37,18 @@ const taskInput = {
   criteria: [{ id: 'a', description: 'Verificado', required: true }],
 };
 async function post(path: string, input: unknown, key = randomUUID()) {
+  if (
+    path === '/tasks' &&
+    input &&
+    typeof input === 'object' &&
+    'requirementIds' in input &&
+    Array.isArray(input.requirementIds)
+  )
+    input = {
+      ...input,
+      primaryRequirementId:
+        'primaryRequirementId' in input ? input.primaryRequirementId : input.requirementIds[0],
+    };
   return fetch(`${base}/api/v1/projects/${seeded.projectId}${path}`, {
     method: 'POST',
     headers: {
@@ -75,7 +87,12 @@ test('REST y MCP crean tarea y vínculo inicial atómicos, con reintentos y aisl
   assert.equal(response.status, 404);
   assert.equal((await get('/tasks?limit=100')).items.length, 0);
   const key = randomUUID(),
-    input = { ...taskInput, requirementIds: [requirement.id], externalRef: 'task:scope' };
+    input = {
+      ...taskInput,
+      requirementIds: [requirement.id],
+      primaryRequirementId: requirement.id,
+      externalRef: 'task:scope',
+    };
   const created = await post('/tasks', input, key);
   assert.equal(created.status, 201);
   const task = (await created.json()).data;
@@ -170,7 +187,11 @@ test('REST impide retirar la última asociación y permite retirar una de varias
         ).json()
       ).data.id,
     );
-  const task = (await (await post('/tasks', { ...taskInput, requirementIds: ids })).json()).data;
+  const task = (
+    await (
+      await post('/tasks', { ...taskInput, requirementIds: ids, primaryRequirementId: ids[1] })
+    ).json()
+  ).data;
   let req = await get(`/requirements/${ids[0]}`);
   let r = await humanPost(`/requirements/${ids[0]}/link`, {
     expectedVersion: req.version,

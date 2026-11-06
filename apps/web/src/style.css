@@ -1,3 +1,30 @@
+.sprint-group th {
+  background: var(--surface, #f1f5f9);
+  padding-block: 0.75rem;
+}
+.participants {
+  margin-block: 1.5rem;
+}
+.governance {
+  margin-bottom: 1.5rem;
+}
+.governance-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.answer {
+  border-block-start: 1px solid #d9e2dd;
+  padding-block: 1rem;
+}
+.governance details {
+  padding-block: 0.75rem;
+  border-block-end: 1px solid #d9e2dd;
+}
+.governance .criteria li > small,
+.governance p > small {
+  display: block;
+  margin-top: 0.25rem;
+}
 .login-form {
   max-width: 420px;
   margin-top: 28px;

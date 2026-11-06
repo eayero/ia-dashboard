@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import {
   filterRequirements,
   requirementCatalog,
   type RequirementItem,
 } from './requirements-data.ts';
-import type { DashboardState } from './data.ts';
+import { entities, type DashboardState } from './data.ts';
+import { sprintText, type Iteration } from './iterations-data.ts';
 
 export function Requirements({
   state,
@@ -21,9 +22,25 @@ export function Requirements({
 }) {
   const [search, setSearch] = useState(''),
     [type, setType] = useState('ALL'),
-    [filter, setFilter] = useState('ALL');
+    [filter, setFilter] = useState('ALL'),
+    [sprintFilter, setSprintFilter] = useState('ALL');
+  const sprints = entities<Iteration>(state, 'ITERATION');
+  const sprintLabel = (id?: string | null) => {
+    const i = sprints.find((s) => s.id === id);
+    return i ? `${i.publicId} · ${i.name} · ${sprintText[i.status]}` : 'Sin sprint · backlog';
+  };
   const catalog = requirementCatalog(state),
-    shown = filterRequirements(catalog, search, type, filter);
+    shown = filterRequirements(catalog, search, type, filter)
+      .filter(
+        (r) =>
+          sprintFilter === 'ALL' ||
+          (sprintFilter === 'NONE' ? !r.sprintId : r.sprintId === sprintFilter),
+      )
+      .sort(
+        (a, b) =>
+          sprintLabel(a.sprintId).localeCompare(sprintLabel(b.sprintId), 'es') ||
+          a.publicId.localeCompare(b.publicId, 'es', { numeric: true }),
+      );
   return (
     <section className="panel requirements-panel">
       <div className="section-header">
@@ -46,6 +63,18 @@ export function Requirements({
         )}
       </div>
       <div className="filters">
+        <label>
+          Sprint
+          <select value={sprintFilter} onChange={(e) => setSprintFilter(e.target.value)}>
+            <option value="ALL">Todos los sprints</option>
+            <option value="NONE">Sin sprint · backlog</option>
+            {sprints.map((i) => (
+              <option key={i.id} value={i.id}>
+                {i.publicId} · {i.name}
+              </option>
+            ))}
+          </select>
+        </label>
         <label>
           Buscar requisito
           <input
@@ -111,8 +140,17 @@ export function Requirements({
               </tr>
             </thead>
             <tbody>
-              {shown.map((r) => (
-                <RequirementRow key={r.id} item={r} open={open} />
+              {shown.map((r, index) => (
+                <Fragment key={r.id}>
+                  {(index === 0 || shown[index - 1]?.sprintId !== r.sprintId) && (
+                    <tr className="sprint-group">
+                      <th scope="rowgroup" colSpan={4}>
+                        {sprintLabel(r.sprintId)}
+                      </th>
+                    </tr>
+                  )}
+                  <RequirementRow item={r} open={open} />
+                </Fragment>
               ))}
             </tbody>
           </table>

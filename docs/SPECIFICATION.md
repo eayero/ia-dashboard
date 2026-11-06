@@ -201,3 +201,13 @@ integración DB y E2E pertinentes. No modificar BD para eludir claims/auth/versi
 - Changelog: https://modelcontextprotocol.io/specification/draft/changelog
 
 v1.1 reemplaza Next.js por SPA React/Vite; v1.0 fue la versión inicial.
+
+## Sprint heredado por requisito principal
+
+Decisión aprobada e implementada localmente en ACC-LOCAL-024. Las tareas tienen un requisito principal obligatorio entre sus vínculos y heredan su sprint. Los enlaces secundarios son de trazabilidad. Sprints PLANNED, ACTIVE, PAUSED, COMPLETED y CANCELLED; máximo uno ACTIVE por proyecto. Claim, heartbeat, inicio de tiempo, trabajo, evidencia y avance productivo exigen ACTIVE. Al detener un sprint se cierran los tramos y se revocan claims de forma atómica. Planificar y detener trabajo siguen permitidos.
+
+La identidad creadora y de cada intervención proviene de la autenticación del servidor, con agente y propietario MCP. La autoría es inmutable y las mutaciones confirmadas definen participantes. El tiempo suma intervalos explícitos; reasignar no reescribe tiempo, propietario ni sprint histórico. Datos antiguos sin procedencia se presentan como desconocidos. Administración de sprints y asignaciones reservada a humanos OWNER/ADMIN/MANAGER. Ver diseño y resultado SPRINT_ATTRIBUTION en docs/requirements.
+
+## Preguntas y decisiones: entrega conjunta
+
+ACC-LOCAL-025 implementa FR-005/FR-006/FR-012/FR-014 localmente con migración 013, posterior a sprints/autoría (012). Preguntas OPEN/RESOLVED/CANCELLED y prioridad LOW/NORMAL/HIGH/CRITICAL; respuestas append-only y resolución humana explícita. Decisiones con alternativas, contexto, elección y justificación, revisiones DRAFT/APPROVED/SUPERSEDED, aprobación humana y evaluación de impacto por tarea. Los vínculos duros abiertos bloquean, revocan claims/intervalos y respetan bloqueos manuales/dependencias/sprints. DONE conserva estado y recibe alertas. REST/MCP/contexto/delta/WS/OpenAPI e interfaz incluyen el inbox humano. Ver contrato y resultado QUESTIONS_DECISIONS en docs/requirements; publicación/despliegue pendientes.

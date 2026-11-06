@@ -208,6 +208,11 @@ export async function requirementCommand(
           [projectId, link.taskId, id],
         );
         if (!remaining.rowCount) throw new DomainError('TASK_REQUIREMENT_REQUIRED');
+        const primary = await client.query(
+          'SELECT 1 FROM work_items WHERE project_id=$1 AND id=$2 AND primary_requirement_id=$3',
+          [projectId, link.taskId, id],
+        );
+        if (primary.rowCount) throw new DomainError('PRIMARY_REQUIREMENT_MUST_BE_LINKED');
         const removed = await client.query(
           'DELETE FROM requirement_task_links WHERE project_id=$1 AND requirement_id=$2 AND task_id=$3 RETURNING task_id',
           [projectId, id, link.taskId],

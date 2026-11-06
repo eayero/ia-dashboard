@@ -113,6 +113,12 @@ export type Member = {
   roles: string[];
 };
 export type Task = {
+  primaryRequirementId?: string | null;
+  sprintId?: string | null;
+  sprintStatus?: string | null;
+  sprintName?: string | null;
+  sprintPublicId?: string | null;
+  executionBlock?: string | null;
   id: string;
   publicId: string;
   title: string;
@@ -140,6 +146,15 @@ export type Session = {
   endedAt: string | null;
 };
 export type TaskDetail = Task & {
+  decisionImpactPending?: boolean;
+  questionLinks?: { id: string; publicId: string; title: string; status: string; hard: boolean }[];
+  decisionLinks?: {
+    id: string;
+    publicId: string;
+    approvedRevision: number | null;
+    evaluatedRevision: number | null;
+    impactPending: boolean;
+  }[];
   requirements: {
     id: string;
     publicId: string;
