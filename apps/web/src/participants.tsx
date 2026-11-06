@@ -147,8 +147,13 @@ function People({ rows }: { rows: Person[] }) {
                 <small>
                   {p.identity?.kind === 'AGENT'
                     ? `Usuario: ${p.identity.ownerUsername ?? p.identity.ownerUserId ?? 'no registrado'}`
-                    : 'Usuario humano'}{' '}
-                  · {p.channels.join(', ') || 'Origen no registrado'}
+                    : p.identity?.kind === 'HUMAN'
+                      ? 'Usuario humano'
+                      : 'Tipo de identidad no registrado'}{' '}
+                  ·{' '}
+                  {p.channels
+                    .map((channel) => (channel === 'UNKNOWN' ? 'Origen no registrado' : channel))
+                    .join(', ') || 'Origen no registrado'}
                 </small>
               </td>
               <td>{p.actionCount}</td>

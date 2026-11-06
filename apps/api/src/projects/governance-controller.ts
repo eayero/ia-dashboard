@@ -4,7 +4,7 @@ import { API_RUNTIME, type ApiRuntime } from '../context.ts';
 import type { ApiRequest } from '../auth/types.ts';
 import { ApiError, success } from '../common/errors.ts';
 import { AuthenticationGuard } from '../auth/guard.ts';
-import type { GovernanceOperation } from '../../../../packages/db/src/governance.ts';
+import type { GovernanceOperation } from '@acc/db';
 @Controller('api/v1/projects/:projectId')
 @UseGuards(AuthenticationGuard)
 export class GovernanceController {

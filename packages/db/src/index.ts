@@ -18,6 +18,7 @@ import {
 export { taskPlanning } from './iterations.ts';
 export { readEntityAttribution } from './attribution.ts';
 export { decisionImpactPending } from './governance.ts';
+export type { GovernanceOperation } from './governance.ts';
 import { registerRepositorySchema } from '@acc/contracts';
 export { readTaskWorkTime } from './work-time.ts';
 import {

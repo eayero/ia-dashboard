@@ -89,9 +89,16 @@ pnpm test:integration
 pnpm typecheck
 pnpm typecheck:foundation
 pnpm build
+node scripts/check-api-dist.mjs
 pnpm lint
 pnpm format:check
 ```
+
+Antes de empaquetar la API, `check-api-dist.mjs` debe confirmar que el contrato
+de `apps/api/dist/openapi/document.js` coincide con `docs/openapi.json`. La API
+fija `rootDir=src`; importar tipos de otros paquetes mediante sus exportaciones,
+sin rutas relativas hacia sus fuentes, para evitar emitir un árbol anidado y
+arrancar artefactos antiguos desde `dist/main.js`.
 
 Las integraciones usan esquemas PostgreSQL aleatorios `acc_test_*` y los eliminan
 al finalizar; no modifican el esquema habitual ni borran volúmenes. Solo ejecutarlas
