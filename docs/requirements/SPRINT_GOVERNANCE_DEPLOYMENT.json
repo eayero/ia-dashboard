@@ -1,0 +1,306 @@
+{
+  "checkedAt": "2026-11-06T18:25:58.403Z",
+  "phase": "PUBLISHED_AND_DEPLOYED_LOCALLY",
+  "branch": "feat/acc-foundation",
+  "codeCommit": "55fdb9455f0c4ebd70ddb1d09a37f9f23840868f",
+  "featureCommit": "191190493dbfcf751f6c3005cdf4f3eafce672f0",
+  "remoteVerified": true,
+  "origin": "http://localhost:55173",
+  "authorization": {
+    "source": "User: publica y despliega los cambios",
+    "commit": true,
+    "push": true,
+    "localDeploy": true
+  },
+  "migrations": {
+    "applied": ["012_sprint_attribution.sql", "013_questions_decisions.sql"],
+    "total": 13,
+    "previousChecksumsPreserved": true
+  },
+  "backup": {
+    "privateIgnored": true,
+    "format": "PostgreSQL custom",
+    "bytes": 361172,
+    "tocEntries": 231,
+    "validated": true,
+    "path": ".cache/acc-sprints-governance-predeploy.dump"
+  },
+  "preservation": {
+    "checkedAt": "2026-11-06T18:16:02.581Z",
+    "migrations": 13,
+    "previousChecksumsPreserved": true,
+    "previousRowsPreserved": true,
+    "credentialFilesPreserved": true,
+    "preparedTasks": 0,
+    "planning": {
+      "tasks": 31,
+      "primarypending": 9
+    },
+    "counts": {
+      "agent_credentials": {
+        "before": 8,
+        "after": 8
+      },
+      "agent_profiles": {
+        "before": 5,
+        "after": 5
+      },
+      "agent_sessions": {
+        "before": 41,
+        "after": 42
+      },
+      "approvals": {
+        "before": 3,
+        "after": 3
+      },
+      "audit_events": {
+        "before": 512,
+        "after": 514
+      },
+      "evidence": {
+        "before": 32,
+        "after": 32
+      },
+      "evidence_criteria": {
+        "before": 86,
+        "after": 86
+      },
+      "local_users": {
+        "before": 4,
+        "after": 4
+      },
+      "oidc_identities": {
+        "before": 3,
+        "after": 3
+      },
+      "principals": {
+        "before": 9,
+        "after": 9
+      },
+      "project_counters": {
+        "before": 4,
+        "after": 4
+      },
+      "project_members": {
+        "before": 11,
+        "after": 11
+      },
+      "projects": {
+        "before": 2,
+        "after": 2
+      },
+      "repositories": {
+        "before": 1,
+        "after": 1
+      },
+      "requirement_impact_alerts": {
+        "before": 0,
+        "after": 0
+      },
+      "requirement_impact_reviews": {
+        "before": 0,
+        "after": 0
+      },
+      "requirement_revisions": {
+        "before": 23,
+        "after": 23
+      },
+      "requirement_task_links": {
+        "before": 53,
+        "after": 53
+      },
+      "requirements": {
+        "before": 23,
+        "after": 23
+      },
+      "security_events": {
+        "before": 62,
+        "after": 64
+      },
+      "task_alerts": {
+        "before": 0,
+        "after": 0
+      },
+      "task_claims": {
+        "before": 18,
+        "after": 18
+      },
+      "task_dependencies": {
+        "before": 0,
+        "after": 0
+      },
+      "task_validations": {
+        "before": 3,
+        "after": 3
+      },
+      "task_work_intervals": {
+        "before": 1,
+        "after": 1
+      },
+      "work_items": {
+        "before": 31,
+        "after": 31
+      }
+    }
+  },
+  "services": {
+    "api": "healthy",
+    "ui": "healthy",
+    "postgres": "healthy",
+    "redis": "healthy",
+    "worker": "running",
+    "migrateExit": 0,
+    "bootstrapExit": 0,
+    "legacyKeycloak": "previously stopped; unchanged"
+  },
+  "images": {
+    "api": {
+      "id": "sha256:e8ea215011dc53760f91c75ac5afb8a373764cba102a798407c78b69b345947a",
+      "codeCommit": "55fdb9455f0c4ebd70ddb1d09a37f9f23840868f"
+    },
+    "ui": {
+      "id": "sha256:6e97b4924c89cbf1085ec34dba5d785bff75f9e1ee6b4906670a373a2212e79a",
+      "codeCommit": "55fdb9455f0c4ebd70ddb1d09a37f9f23840868f"
+    },
+    "rollbackRuntimeTags": [
+      "acc-api:before-governance-1911904",
+      "acc-ui:before-governance-1911904"
+    ],
+    "build": "Derived from preserved local runtimes; unchanged dependency manifests and lockfile; current sources, compiled assets and migrations copied without installation"
+  },
+  "runtimeCorrection": {
+    "problem": "Relative cross-package source type import changed inferred TypeScript root, emitting a nested tree and leaving stale flat dist/main.js artifacts",
+    "fix": "Export type through @acc/db, explicit API rootDir=src, clean build after preserving previous dist, permanent scripts/check-api-dist.mjs",
+    "compiledContractGuard": "RED reproduced, GREEN after correction; deployed contract exact match"
+  },
+  "verification": {
+    "unit": {
+      "passed": 77,
+      "failed": 0
+    },
+    "integration": {
+      "passed": 154,
+      "failed": 0,
+      "realPostgresAndRedis": true
+    },
+    "types": "PASS",
+    "foundationTypes": "PASS",
+    "lint": "PASS",
+    "build": "PASS",
+    "compiledApiContract": "PASS",
+    "deployedSmoke": {
+      "checkedAt": "2026-11-06T18:15:52.521Z",
+      "origin": "http://localhost:55173",
+      "readiness": 200,
+      "ui": 200,
+      "existingHumanCredentialsValid": true,
+      "existingMcpCredentialsValid": true,
+      "openApiMatchesArtifact": true,
+      "mcpTools": 34,
+      "counts": {
+        "sprints": 0,
+        "questions": 0,
+        "decisions": 0
+      },
+      "creatorLegacyProvenancePreserved": true,
+      "executionGuard": "PRIMARY_REQUIREMENT_REQUIRED",
+      "preparedProjects": 2,
+      "preparedTasks": 0
+    },
+    "deployedBrowser": {
+      "desktop": "PASS",
+      "mobile": "PASS",
+      "legacyIdentityLabels": "PASS",
+      "sprintQuestionDecisionNavigation": "PASS",
+      "unexpectedPageErrors": 0,
+      "scope": "Read-only real deployed data; full mutation workflows previously checked in isolated browser QA; screenshots remain private"
+    },
+    "coverage": {
+      "tasks": 31,
+      "requirements": 23,
+      "links": 53,
+      "orphans": 0
+    }
+  },
+  "tracking": {
+    "nativeReconciliation": {
+      "checkedAt": "2026-11-06T18:24:47.019Z",
+      "method": "native Codex MCP tools",
+      "codeCommit": "55fdb9455f0c4ebd70ddb1d09a37f9f23840868f",
+      "context": {
+        "pages": 4,
+        "records": 325,
+        "complete": true,
+        "projectSeq": "506"
+      },
+      "delta": {
+        "afterSeq": "491",
+        "events": 15,
+        "complete": true,
+        "throughSeq": "506"
+      },
+      "tasks": 31,
+      "statusCounts": {
+        "IN_PROGRESS": 7,
+        "BACKLOG": 9,
+        "DONE": 11,
+        "CANCELLED": 4
+      },
+      "activeClaims": 0,
+      "sessionsEnded": true,
+      "currentTasks": [
+        {
+          "id": "ea9f0b45-cd9f-41e4-bb03-3811dc2b2e84",
+          "status": "IN_PROGRESS",
+          "version": 16,
+          "workRevision": 3,
+          "executionBlock": "PRIMARY_REQUIREMENT_REQUIRED",
+          "claimActive": false,
+          "evidenceIds": [
+            "80b2431c-ac9b-49ce-8122-12556fa136f1",
+            "f9f3d1b5-8a33-4770-84c9-8783d361e5a2"
+          ]
+        },
+        {
+          "id": "03915426-7d84-440e-bbd2-a0df3c6c51c2",
+          "status": "IN_PROGRESS",
+          "version": 27,
+          "workRevision": 7,
+          "executionBlock": "PRIMARY_REQUIREMENT_REQUIRED",
+          "claimActive": false,
+          "evidenceIds": [
+            "9193caa1-c360-4b63-a569-39617733441e",
+            "a9430598-f1a9-4d8b-a5ae-4263f0acc0e0"
+          ]
+        }
+      ]
+    },
+    "evidenceCommit": "191190493dbfcf751f6c3005cdf4f3eafce672f0",
+    "evidenceState": "DECLARED; not human accepted",
+    "task31Evidence": [
+      "80b2431c-ac9b-49ce-8122-12556fa136f1",
+      "f9f3d1b5-8a33-4770-84c9-8783d361e5a2"
+    ],
+    "task30Evidence": [
+      "9193caa1-c360-4b63-a569-39617733441e",
+      "a9430598-f1a9-4d8b-a5ae-4263f0acc0e0"
+    ],
+    "finalFixEvidence": "Pending primary requirement and ACTIVE sprint planning; no guard bypass or fabricated evidence",
+    "postDeploymentTaskSummary": "Pending same execution gates; repository report records final state"
+  },
+  "pending": {
+    "ambiguousPrimaryTasks": 9,
+    "sprints": 0,
+    "task30And31": "IN_PROGRESS; requirement/impact human actions still pending",
+    "next": "Choose primary requirements where ambiguous, assign requirements to a sprint and activate it before claiming or starting work",
+    "humanApprovalsInferred": false,
+    "automaticPlanning": false
+  },
+  "limits": {
+    "deployment": "Local Docker Compose only; production not configured",
+    "merge": false,
+    "installations": false,
+    "delegation": false,
+    "rollback": "Images and private pre-migration backup retained. Returning to old runtime requires coordinated database restoration; do not run old API against the migrated schema."
+  }
+}

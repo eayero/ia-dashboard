@@ -4,13 +4,13 @@ Control de proyectos con agentes, coordinación transaccional y validación huma
 Aplicación local ejecutable con API, gateway MCP y dashboard autenticados.
 El MVP completo continúa en construcción.
 
-Implementado localmente y pendiente de publicación/despliegue: [preguntas, decisiones e inbox humano](docs/requirements/QUESTIONS_DECISIONS_RESULT.json), migración 013, y [sprints/autoría/participantes](docs/requirements/SPRINT_ATTRIBUTION_RESULT.json), migración 012. Ver [contrato de preguntas y decisiones](docs/requirements/QUESTIONS_DECISIONS_API.md).
+Publicado y desplegado localmente desde `55fdb94`: [preguntas, decisiones e inbox humano](docs/requirements/QUESTIONS_DECISIONS_RESULT.json) y [sprints/autoría/participantes](docs/requirements/SPRINT_ATTRIBUTION_RESULT.json). Migraciones 012/013, 34 herramientas MCP; [informe y pendientes de planificación](docs/requirements/SPRINT_GOVERNANCE_DEPLOYMENT.json). Las entregas siguientes conservan su contexto histórico.
 
 Entrega publicada y desplegada localmente desde `8cb9417`, migración 011:
 [catálogo REST de repositorios para evidencias](docs/requirements/REPOSITORY_REGISTRY_RESULT.json).
 Diseño A aprobado; migración nueva 011 y dos operaciones REST. Los agentes
 consultan el catálogo mediante el contexto MCP existente; el registro exige
-permisos humanos de gestión. La instancia habitual tiene migración 011. Ver [despliegue y pendientes humanos](docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json).
+permisos humanos de gestión. La instancia habitual tiene migración 013. Ver [despliegue y pendientes humanos](docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json).
 
 Entrega publicada y desplegada localmente: [requisitos obligatorios al
 crear tareas por API/MCP](docs/requirements/TASK_REQUIREMENT_API.md). Incluye

@@ -1,5 +1,9 @@
 # Entorno local
 
+Instancia vigente: commit `55fdb94`, migraciones **012/013** y **34 herramientas MCP**, desplegados en http://localhost:55173. [Informe verificado](../requirements/SPRINT_GOVERNANCE_DEPLOYMENT.json). Las notas de versiones anteriores conservan su alcance histórico.
+
+Antes de trabajar, elegir requisito principal cuando sea ambiguo y asignar el requisito a un sprint ACTIVE. La tarea hereda el sprint; el servidor impide claim/inicio/escritura productiva fuera de ejecución. Preguntas y decisiones ya están disponibles; solo humanos confirman respuestas y aprueban decisiones.
+
 Solo desarrollo. Los puertos publicados se limitan a loopback. Compose incluye
 PostgreSQL, Redis, migraciónes, bootstrap, API, worker y UI; usa autenticación
 propia de ACC. Keycloak ya no es una dependencia del entorno actual.
@@ -109,13 +113,12 @@ La migración 005 añade usuarios locales, credenciales de agentes, límites de 
 y auditoría de identidad; las tablas OIDC históricas conservan sus referencias.
 La coordinación sigue validando identidad, membresía, versión, claim y gates
 dentro de transacciones. Redis recibe eventos después del commit mediante outbox.
-Requisitos versionados, su UI y servidor WS están implementados; preguntas y
-decisiones siguen pendientes.
+Requisitos versionados, preguntas, decisiones, su UI y servidor WS están desplegados.
 
 Instancia local actualizada: UI de requisitos, tiempo explícito y requisitos
 obligatorios desplegados con migración 010 y 22 herramientas MCP.
 Ver [despliegue](../requirements/TASK_REQUIREMENT_DEPLOYMENT.json).
 El catálogo REST de repositorios está verificado en código con migración 011,
-desplegado desde 8cb9417 con migración 011. Ver docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json. La API exige 011 al arrancar; conservar
+desplegado desde 8cb9417 con migración 011. Ver docs/requirements/REPOSITORY_REGISTRY_DEPLOYMENT.json. La entrega 011 exigía esa migración; la API actual exige 013. Conservar
 001–010 y actualizar API/worker/UI juntos por el nuevo tipo de evento REPOSITORY.
 No ejecutar migración/despliegue por leer esta guía.

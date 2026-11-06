@@ -992,5 +992,57 @@
     "result": "docs/requirements/QUESTIONS_DECISIONS_RESULT.json",
     "publicationAuthorized": false,
     "deploymentAuthorized": false
+  },
+  "governanceDeployment": {
+    "checkedAt": "2026-11-06T18:24:47.019Z",
+    "method": "native Codex MCP tools",
+    "codeCommit": "55fdb9455f0c4ebd70ddb1d09a37f9f23840868f",
+    "context": {
+      "pages": 4,
+      "records": 325,
+      "complete": true,
+      "projectSeq": "506"
+    },
+    "delta": {
+      "afterSeq": "491",
+      "events": 15,
+      "complete": true,
+      "throughSeq": "506"
+    },
+    "tasks": 31,
+    "statusCounts": {
+      "IN_PROGRESS": 7,
+      "BACKLOG": 9,
+      "DONE": 11,
+      "CANCELLED": 4
+    },
+    "activeClaims": 0,
+    "sessionsEnded": true,
+    "currentTasks": [
+      {
+        "id": "ea9f0b45-cd9f-41e4-bb03-3811dc2b2e84",
+        "status": "IN_PROGRESS",
+        "version": 16,
+        "workRevision": 3,
+        "executionBlock": "PRIMARY_REQUIREMENT_REQUIRED",
+        "claimActive": false,
+        "evidenceIds": [
+          "80b2431c-ac9b-49ce-8122-12556fa136f1",
+          "f9f3d1b5-8a33-4770-84c9-8783d361e5a2"
+        ]
+      },
+      {
+        "id": "03915426-7d84-440e-bbd2-a0df3c6c51c2",
+        "status": "IN_PROGRESS",
+        "version": 27,
+        "workRevision": 7,
+        "executionBlock": "PRIMARY_REQUIREMENT_REQUIRED",
+        "claimActive": false,
+        "evidenceIds": [
+          "9193caa1-c360-4b63-a569-39617733441e",
+          "a9430598-f1a9-4d8b-a5ae-4263f0acc0e0"
+        ]
+      }
+    ]
   }
 }

@@ -1,5 +1,9 @@
 # API local autenticada
 
+Instancia vigente: commit `55fdb94`, migraciones **012/013** y **34 herramientas MCP**, desplegados en http://localhost:55173. [Informe verificado](../requirements/SPRINT_GOVERNANCE_DEPLOYMENT.json). Las notas de versiones anteriores conservan su alcance histórico.
+
+Antes de trabajar, elegir requisito principal cuando sea ambiguo y asignar el requisito a un sprint ACTIVE. La tarea hereda el sprint; el servidor impide claim/inicio/escritura productiva fuera de ejecución. Preguntas y decisiones ya están disponibles; solo humanos confirman respuestas y aprueban decisiones.
+
 La continuación local de creación de tareas exige `requirementIds` y migración
 010; API/MCP y UI deben actualizarse juntos. El retiro del último vínculo devuelve 409. Ver [contrato y reglas](../requirements/TASK_REQUIREMENT_API.md).
 

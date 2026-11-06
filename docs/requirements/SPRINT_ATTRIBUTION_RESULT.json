@@ -224,5 +224,11 @@
         }
       ]
     }
+  },
+  "subsequentDeployment": {
+    "report": "docs/requirements/SPRINT_GOVERNANCE_DEPLOYMENT.json",
+    "codeCommit": "55fdb9455f0c4ebd70ddb1d09a37f9f23840868f",
+    "status": "PUBLISHED_AND_DEPLOYED_LOCALLY",
+    "historicalFields": "Original checks and authorizations above describe their checkedAt; this later deployment supersedes publication-pending status"
   }
 }

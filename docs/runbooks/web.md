@@ -1,5 +1,9 @@
 # Dashboard local
 
+Instancia vigente: commit `55fdb94`, migraciones **012/013** y **34 herramientas MCP**, desplegados en http://localhost:55173. [Informe verificado](../requirements/SPRINT_GOVERNANCE_DEPLOYMENT.json). Las notas de versiones anteriores conservan su alcance histórico.
+
+Antes de trabajar, elegir requisito principal cuando sea ambiguo y asignar el requisito a un sprint ACTIVE. La tarea hereda el sprint; el servidor impide claim/inicio/escritura productiva fuera de ejecución. Preguntas y decisiones ya están disponibles; solo humanos confirman respuestas y aprueban decisiones.
+
 SPA React/Vite con TanStack Router y Query, en la dirección visual aprobada:
 navegación verde oscuro, superficie clara, tabla de trabajo y bandeja de atención.
 Los datos proceden de PostgreSQL a través de la API; no hay contadores sintéticos.

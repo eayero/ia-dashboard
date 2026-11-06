@@ -1,5 +1,9 @@
 # Evidencias y alcance de verificación
 
+Instancia vigente: commit `55fdb94`, migraciones **012/013** y **34 herramientas MCP**, desplegados en http://localhost:55173. [Informe verificado](../requirements/SPRINT_GOVERNANCE_DEPLOYMENT.json). Las notas de versiones anteriores conservan su alcance histórico.
+
+Antes de trabajar, elegir requisito principal cuando sea ambiguo y asignar el requisito a un sprint ACTIVE. La tarea hereda el sprint; el servidor impide claim/inicio/escritura productiva fuera de ejecución. Preguntas y decisiones ya están disponibles; solo humanos confirman respuestas y aprueban decisiones.
+
 Continuación local: [UI de requisitos](../requirements/REQUIREMENTS_UI_RESULT.json)
 y [tiempo por tarea/agente/día](../requirements/TASK_WORK_TIME_RESULT.json).
 Incluyen navegador real con datos aislados y suites de esa entrega. La publicación
